@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace Project.Infrastructure;
 
-namespace Project.Infrastructure;
-
-/// <summary>
-/// Auth: Store of tokens used to refresh JWT tokens once they expire.
-/// </summary>
-public partial class RefreshToken
-{
+public partial class RefreshToken {
     public Guid? InstanceId { get; set; }
 
     public long Id { get; set; }

@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace Project.Infrastructure;
 
-namespace Project.Infrastructure;
-
-/// <summary>
-/// auth: stores metadata about factors
-/// </summary>
-public partial class MfaFactor
-{
+public partial class MfaFactor {
     public Guid Id { get; set; }
 
     public Guid UserId { get; set; }

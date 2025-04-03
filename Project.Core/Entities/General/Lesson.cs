@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace Project.Infrastructure;
 
-namespace Project.Infrastructure;
-
-public partial class Lesson
-{
+public partial class Lesson {
     public Guid Id { get; set; }
 
     public Guid ModuleId { get; set; }

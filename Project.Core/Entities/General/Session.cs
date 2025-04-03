@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
+﻿using System.Net;
 
 namespace Project.Infrastructure;
 
-/// <summary>
-/// Auth: Stores session data associated to a user.
-/// </summary>
-public partial class Session
-{
+public partial class Session {
     public Guid Id { get; set; }
 
     public Guid UserId { get; set; }
@@ -19,9 +13,6 @@ public partial class Session
 
     public Guid? FactorId { get; set; }
 
-    /// <summary>
-    /// Auth: Not after is a nullable column that contains a timestamp after which the session should be regarded as expired.
-    /// </summary>
     public DateTime? NotAfter { get; set; }
 
     public DateTime? RefreshedAt { get; set; }

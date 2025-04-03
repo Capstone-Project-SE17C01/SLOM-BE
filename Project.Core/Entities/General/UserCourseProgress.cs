@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace Project.Infrastructure;
 
-namespace Project.Infrastructure;
-
-public partial class UserCourseProgress
-{
+public partial class UserCourseProgress {
     public Guid UserId { get; set; }
 
     public Guid LessonId { get; set; }

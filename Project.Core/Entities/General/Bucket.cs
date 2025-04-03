@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace Project.Infrastructure;
 
-namespace Project.Infrastructure;
-
-public partial class Bucket
-{
+public partial class Bucket {
     public string Id { get; set; } = null!;
 
     public string Name { get; set; } = null!;
 
-    /// <summary>
-    /// Field is deprecated, use owner_id instead
-    /// </summary>
+
     public Guid? Owner { get; set; }
 
     public DateTime? CreatedAt { get; set; }
