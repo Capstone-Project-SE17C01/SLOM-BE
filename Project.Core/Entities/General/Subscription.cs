@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace Project.Infrastructure;
 
-namespace Project.Infrastructure;
-
-public partial class Subscription
-{
+public partial class Subscription {
     public long Id { get; set; }
 
     public Guid SubscriptionId { get; set; }

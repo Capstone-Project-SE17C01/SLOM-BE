@@ -1,18 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace Project.Infrastructure;
 
-namespace Project.Infrastructure;
 
-/// <summary>
-/// Auth: Manages SSO identity provider information; see saml_providers for SAML.
-/// </summary>
-public partial class SsoProvider
-{
+public partial class SsoProvider {
     public Guid Id { get; set; }
 
-    /// <summary>
-    /// Auth: Uniquely identifies a SSO provider according to a user-chosen resource ID (case insensitive), useful in infrastructure as code.
-    /// </summary>
     public string? ResourceId { get; set; }
 
     public DateTime? CreatedAt { get; set; }

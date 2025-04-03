@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace Project.Infrastructure;
 
-namespace Project.Infrastructure;
-
-public partial class Language
-{
+public partial class Language {
     public Guid Id { get; set; }
 
     public string Code { get; set; } = null!;

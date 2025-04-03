@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace Project.Infrastructure;
 
-namespace Project.Infrastructure;
-
-public partial class S3MultipartUpload
-{
+public partial class S3MultipartUpload {
     public string Id { get; set; } = null!;
 
     public long InProgressSize { get; set; }

@@ -2,15 +2,12 @@
 
 namespace Project.Infrastructure.Data;
 
-public partial class ApplicationDbContext : DbContext
-{
-    public ApplicationDbContext()
-    {
+public partial class ApplicationDbContext : DbContext {
+    public ApplicationDbContext() {
     }
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-        : base(options)
-    {
+        : base(options) {
     }
 
     public virtual DbSet<AuditLog> AuditLogs { get; set; }
@@ -99,8 +96,7 @@ public partial class ApplicationDbContext : DbContext
 
     public virtual DbSet<UserSubscription> UserSubscriptions { get; set; }
 
-    protected override void OnModelCreating(ModelBuilder builder)
-    {
+    protected override void OnModelCreating(ModelBuilder builder) {
         ApplicationDbContextConfigurations.Configure(builder);
         ApplicationDbContextConfigurations.SeedData(builder);
     }

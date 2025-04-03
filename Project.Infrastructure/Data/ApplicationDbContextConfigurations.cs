@@ -1,12 +1,9 @@
 ﻿using Bogus;
 using Microsoft.EntityFrameworkCore;
 
-namespace Project.Infrastructure.Data
-{
-    public class ApplicationDbContextConfigurations
-    {
-        public static void Configure(ModelBuilder modelBuilder)
-        {
+namespace Project.Infrastructure.Data {
+    public class ApplicationDbContextConfigurations {
+        public static void Configure(ModelBuilder modelBuilder) {
             modelBuilder
             .HasPostgresEnum("auth", "aal_level", new[] { "aal1", "aal2", "aal3" })
             .HasPostgresEnum("auth", "code_challenge_method", new[] { "s256", "plain" })
@@ -25,8 +22,7 @@ namespace Project.Infrastructure.Data
             .HasPostgresExtension("pgsodium", "pgsodium")
             .HasPostgresExtension("vault", "supabase_vault");
 
-            modelBuilder.Entity<AuditLog>(entity =>
-            {
+            modelBuilder.Entity<AuditLog>(entity => {
                 entity.HasKey(e => e.Id).HasName("audit_logs_pkey");
 
                 entity.ToTable("audit_logs");
@@ -56,8 +52,7 @@ namespace Project.Infrastructure.Data
                     .HasConstraintName("audit_logs_user_id_fkey");
             });
 
-            modelBuilder.Entity<AuditLogEntry>(entity =>
-            {
+            modelBuilder.Entity<AuditLogEntry>(entity => {
                 entity.HasKey(e => e.Id).HasName("audit_log_entries_pkey");
 
                 entity.ToTable("audit_log_entries", "auth", tb => tb.HasComment("Auth: Audit trail for user actions."));
@@ -78,8 +73,7 @@ namespace Project.Infrastructure.Data
                     .HasColumnName("payload");
             });
 
-            modelBuilder.Entity<Bucket>(entity =>
-            {
+            modelBuilder.Entity<Bucket>(entity => {
                 entity.HasKey(e => e.Id).HasName("buckets_pkey");
 
                 entity.ToTable("buckets", "storage");
@@ -108,8 +102,7 @@ namespace Project.Infrastructure.Data
                     .HasColumnName("updated_at");
             });
 
-            modelBuilder.Entity<Course>(entity =>
-            {
+            modelBuilder.Entity<Course>(entity => {
                 entity.HasKey(e => e.Id).HasName("courses_pkey");
 
                 entity.ToTable("courses");
@@ -151,8 +144,7 @@ namespace Project.Infrastructure.Data
                     .HasConstraintName("courses_language_id_fkey");
             });
 
-            modelBuilder.Entity<CourseCategory>(entity =>
-            {
+            modelBuilder.Entity<CourseCategory>(entity => {
                 entity.HasKey(e => e.Id).HasName("course_categories_pkey");
 
                 entity.ToTable("course_categories");
@@ -172,8 +164,7 @@ namespace Project.Infrastructure.Data
                     .HasConstraintName("course_categories_parent_category_id_fkey");
             });
 
-            modelBuilder.Entity<CourseReview>(entity =>
-            {
+            modelBuilder.Entity<CourseReview>(entity => {
                 entity.HasKey(e => e.Id).HasName("course_reviews_pkey");
 
                 entity.ToTable("course_reviews");
@@ -200,8 +191,7 @@ namespace Project.Infrastructure.Data
                     .HasConstraintName("course_reviews_user_id_fkey");
             });
 
-            modelBuilder.Entity<DecryptedSecret>(entity =>
-            {
+            modelBuilder.Entity<DecryptedSecret>(entity => {
                 entity
                     .HasNoKey()
                     .ToView("decrypted_secrets", "vault");
@@ -219,8 +209,7 @@ namespace Project.Infrastructure.Data
                 entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
             });
 
-            modelBuilder.Entity<FlowState>(entity =>
-            {
+            modelBuilder.Entity<FlowState>(entity => {
                 entity.HasKey(e => e.Id).HasName("flow_state_pkey");
 
                 entity.ToTable("flow_state", "auth", tb => tb.HasComment("stores metadata for pkce logins"));
@@ -246,8 +235,7 @@ namespace Project.Infrastructure.Data
                 entity.Property(e => e.UserId).HasColumnName("user_id");
             });
 
-            modelBuilder.Entity<Identity>(entity =>
-            {
+            modelBuilder.Entity<Identity>(entity => {
                 entity.HasKey(e => e.Id).HasName("identities_pkey");
 
                 entity.ToTable("identities", "auth", tb => tb.HasComment("Auth: Stores identities associated to a user."));
@@ -280,8 +268,7 @@ namespace Project.Infrastructure.Data
                     .HasConstraintName("identities_user_id_fkey");
             });
 
-            modelBuilder.Entity<Instance>(entity =>
-            {
+            modelBuilder.Entity<Instance>(entity => {
                 entity.HasKey(e => e.Id).HasName("instances_pkey");
 
                 entity.ToTable("instances", "auth", tb => tb.HasComment("Auth: Manages users across multiple sites."));
@@ -295,8 +282,7 @@ namespace Project.Infrastructure.Data
                 entity.Property(e => e.Uuid).HasColumnName("uuid");
             });
 
-            modelBuilder.Entity<Language>(entity =>
-            {
+            modelBuilder.Entity<Language>(entity => {
                 entity.HasKey(e => e.Id).HasName("languages_pkey");
 
                 entity.ToTable("languages");
@@ -317,8 +303,7 @@ namespace Project.Infrastructure.Data
                     .HasColumnName("region");
             });
 
-            modelBuilder.Entity<Lesson>(entity =>
-            {
+            modelBuilder.Entity<Lesson>(entity => {
                 entity.HasKey(e => e.Id).HasName("lessons_pkey");
 
                 entity.ToTable("lessons");
@@ -345,8 +330,7 @@ namespace Project.Infrastructure.Data
                     .HasConstraintName("lessons_module_id_fkey");
             });
 
-            modelBuilder.Entity<Meeting>(entity =>
-            {
+            modelBuilder.Entity<Meeting>(entity => {
                 entity.HasKey(e => e.Id).HasName("meetings_pkey");
 
                 entity.ToTable("meetings");
@@ -382,8 +366,7 @@ namespace Project.Infrastructure.Data
                     .HasConstraintName("meetings_host_id_fkey");
             });
 
-            modelBuilder.Entity<MeetingParticipant>(entity =>
-            {
+            modelBuilder.Entity<MeetingParticipant>(entity => {
                 entity.HasKey(e => new { e.MeetingId, e.UserId }).HasName("meeting_participants_pkey");
 
                 entity.ToTable("meeting_participants");
@@ -411,8 +394,7 @@ namespace Project.Infrastructure.Data
                     .HasConstraintName("meeting_participants_user_id_fkey");
             });
 
-            modelBuilder.Entity<MeetingRecording>(entity =>
-            {
+            modelBuilder.Entity<MeetingRecording>(entity => {
                 entity.HasKey(e => e.Id).HasName("meeting_recordings_pkey");
 
                 entity.ToTable("meeting_recordings");
@@ -434,8 +416,7 @@ namespace Project.Infrastructure.Data
                     .HasConstraintName("meeting_recordings_meeting_id_fkey");
             });
 
-            modelBuilder.Entity<MfaAmrClaim>(entity =>
-            {
+            modelBuilder.Entity<MfaAmrClaim>(entity => {
                 entity.HasKey(e => e.Id).HasName("amr_id_pk");
 
                 entity.ToTable("mfa_amr_claims", "auth", tb => tb.HasComment("auth: stores authenticator method reference claims for multi factor authentication"));
@@ -455,8 +436,7 @@ namespace Project.Infrastructure.Data
                     .HasConstraintName("mfa_amr_claims_session_id_fkey");
             });
 
-            modelBuilder.Entity<MfaChallenge>(entity =>
-            {
+            modelBuilder.Entity<MfaChallenge>(entity => {
                 entity.HasKey(e => e.Id).HasName("mfa_challenges_pkey");
 
                 entity.ToTable("mfa_challenges", "auth", tb => tb.HasComment("auth: stores metadata about challenge requests made"));
@@ -480,8 +460,7 @@ namespace Project.Infrastructure.Data
                     .HasConstraintName("mfa_challenges_auth_factor_id_fkey");
             });
 
-            modelBuilder.Entity<MfaFactor>(entity =>
-            {
+            modelBuilder.Entity<MfaFactor>(entity => {
                 entity.HasKey(e => e.Id).HasName("mfa_factors_pkey");
 
                 entity.ToTable("mfa_factors", "auth", tb => tb.HasComment("auth: stores metadata about factors"));
@@ -518,8 +497,7 @@ namespace Project.Infrastructure.Data
                     .HasConstraintName("mfa_factors_user_id_fkey");
             });
 
-            modelBuilder.Entity<Migration>(entity =>
-            {
+            modelBuilder.Entity<Migration>(entity => {
                 entity.HasKey(e => e.Id).HasName("migrations_pkey");
 
                 entity.ToTable("migrations", "storage");
@@ -541,8 +519,7 @@ namespace Project.Infrastructure.Data
                     .HasColumnName("name");
             });
 
-            modelBuilder.Entity<Module>(entity =>
-            {
+            modelBuilder.Entity<Module>(entity => {
                 entity.HasKey(e => e.Id).HasName("modules_pkey");
 
                 entity.ToTable("modules");
@@ -567,8 +544,7 @@ namespace Project.Infrastructure.Data
                     .HasConstraintName("modules_course_id_fkey");
             });
 
-            modelBuilder.Entity<Object>(entity =>
-            {
+            modelBuilder.Entity<Object>(entity => {
                 entity.HasKey(e => e.Id).HasName("objects_pkey");
 
                 entity.ToTable("objects", "storage");
@@ -613,8 +589,7 @@ namespace Project.Infrastructure.Data
                     .HasConstraintName("objects_bucketId_fkey");
             });
 
-            modelBuilder.Entity<OneTimeToken>(entity =>
-            {
+            modelBuilder.Entity<OneTimeToken>(entity => {
                 entity.HasKey(e => e.Id).HasName("one_time_tokens_pkey");
 
                 entity.ToTable("one_time_tokens", "auth");
@@ -643,8 +618,7 @@ namespace Project.Infrastructure.Data
                     .HasConstraintName("one_time_tokens_user_id_fkey");
             });
 
-            modelBuilder.Entity<Payment>(entity =>
-            {
+            modelBuilder.Entity<Payment>(entity => {
                 entity.HasKey(e => e.Id).HasName("payments_pkey");
 
                 entity.ToTable("payments");
@@ -676,8 +650,7 @@ namespace Project.Infrastructure.Data
                     .HasConstraintName("payments_user_id_fkey");
             });
 
-            modelBuilder.Entity<Profile>(entity =>
-            {
+            modelBuilder.Entity<Profile>(entity => {
                 entity.HasKey(e => e.Id).HasName("profiles_pkey");
 
                 entity.ToTable("profiles");
@@ -713,8 +686,7 @@ namespace Project.Infrastructure.Data
                     .HasConstraintName("profiles_preferred_language_fkey");
             });
 
-            modelBuilder.Entity<Quiz>(entity =>
-            {
+            modelBuilder.Entity<Quiz>(entity => {
                 entity.HasKey(e => e.Id).HasName("quizzes_pkey");
 
                 entity.ToTable("quizzes");
@@ -738,8 +710,7 @@ namespace Project.Infrastructure.Data
                     .HasConstraintName("quizzes_lesson_id_fkey");
             });
 
-            modelBuilder.Entity<QuizAttempt>(entity =>
-            {
+            modelBuilder.Entity<QuizAttempt>(entity => {
                 entity.HasKey(e => e.Id).HasName("quiz_attempts_pkey");
 
                 entity.ToTable("quiz_attempts");
@@ -765,8 +736,7 @@ namespace Project.Infrastructure.Data
                     .HasConstraintName("quiz_attempts_user_id_fkey");
             });
 
-            modelBuilder.Entity<RefreshToken>(entity =>
-            {
+            modelBuilder.Entity<RefreshToken>(entity => {
                 entity.HasKey(e => e.Id).HasName("refresh_tokens_pkey");
 
                 entity.ToTable("refresh_tokens", "auth", tb => tb.HasComment("Auth: Store of tokens used to refresh JWT tokens once they expire."));
@@ -805,8 +775,7 @@ namespace Project.Infrastructure.Data
                     .HasConstraintName("refresh_tokens_session_id_fkey");
             });
 
-            modelBuilder.Entity<S3MultipartUpload>(entity =>
-            {
+            modelBuilder.Entity<S3MultipartUpload>(entity => {
                 entity.HasKey(e => e.Id).HasName("s3_multipart_uploads_pkey");
 
                 entity.ToTable("s3_multipart_uploads", "storage");
@@ -837,8 +806,7 @@ namespace Project.Infrastructure.Data
                     .HasConstraintName("s3_multipart_uploads_bucket_id_fkey");
             });
 
-            modelBuilder.Entity<S3MultipartUploadsPart>(entity =>
-            {
+            modelBuilder.Entity<S3MultipartUploadsPart>(entity => {
                 entity.HasKey(e => e.Id).HasName("s3_multipart_uploads_parts_pkey");
 
                 entity.ToTable("s3_multipart_uploads_parts", "storage");
@@ -872,8 +840,7 @@ namespace Project.Infrastructure.Data
                     .HasConstraintName("s3_multipart_uploads_parts_upload_id_fkey");
             });
 
-            modelBuilder.Entity<SamlProvider>(entity =>
-            {
+            modelBuilder.Entity<SamlProvider>(entity => {
                 entity.HasKey(e => e.Id).HasName("saml_providers_pkey");
 
                 entity.ToTable("saml_providers", "auth", tb => tb.HasComment("Auth: Manages SAML Identity Provider connections."));
@@ -901,8 +868,7 @@ namespace Project.Infrastructure.Data
                     .HasConstraintName("saml_providers_sso_provider_id_fkey");
             });
 
-            modelBuilder.Entity<SamlRelayState>(entity =>
-            {
+            modelBuilder.Entity<SamlRelayState>(entity => {
                 entity.HasKey(e => e.Id).HasName("saml_relay_states_pkey");
 
                 entity.ToTable("saml_relay_states", "auth", tb => tb.HasComment("Auth: Contains SAML Relay State information for each Service Provider initiated login."));
@@ -934,8 +900,7 @@ namespace Project.Infrastructure.Data
                     .HasConstraintName("saml_relay_states_sso_provider_id_fkey");
             });
 
-            modelBuilder.Entity<SchemaMigration>(entity =>
-            {
+            modelBuilder.Entity<SchemaMigration>(entity => {
                 entity.HasKey(e => e.Version).HasName("schema_migrations_pkey");
 
                 entity.ToTable("schema_migrations", "realtime");
@@ -948,8 +913,7 @@ namespace Project.Infrastructure.Data
                     .HasColumnName("inserted_at");
             });
 
-            modelBuilder.Entity<SchemaMigration1>(entity =>
-            {
+            modelBuilder.Entity<SchemaMigration1>(entity => {
                 entity.HasKey(e => e.Version).HasName("schema_migrations_pkey");
 
                 entity.ToTable("schema_migrations", "auth", tb => tb.HasComment("Auth: Manages updates to the auth system."));
@@ -959,8 +923,7 @@ namespace Project.Infrastructure.Data
                     .HasColumnName("version");
             });
 
-            modelBuilder.Entity<Session>(entity =>
-            {
+            modelBuilder.Entity<Session>(entity => {
                 entity.HasKey(e => e.Id).HasName("sessions_pkey");
 
                 entity.ToTable("sessions", "auth", tb => tb.HasComment("Auth: Stores session data associated to a user."));
@@ -993,8 +956,7 @@ namespace Project.Infrastructure.Data
                     .HasConstraintName("sessions_user_id_fkey");
             });
 
-            modelBuilder.Entity<SsoDomain>(entity =>
-            {
+            modelBuilder.Entity<SsoDomain>(entity => {
                 entity.HasKey(e => e.Id).HasName("sso_domains_pkey");
 
                 entity.ToTable("sso_domains", "auth", tb => tb.HasComment("Auth: Manages SSO email address domain mapping to an SSO Identity Provider."));
@@ -1014,8 +976,7 @@ namespace Project.Infrastructure.Data
                     .HasConstraintName("sso_domains_sso_provider_id_fkey");
             });
 
-            modelBuilder.Entity<SsoProvider>(entity =>
-            {
+            modelBuilder.Entity<SsoProvider>(entity => {
                 entity.HasKey(e => e.Id).HasName("sso_providers_pkey");
 
                 entity.ToTable("sso_providers", "auth", tb => tb.HasComment("Auth: Manages SSO identity provider information; see saml_providers for SAML."));
@@ -1030,8 +991,7 @@ namespace Project.Infrastructure.Data
                 entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
             });
 
-            modelBuilder.Entity<Subscription>(entity =>
-            {
+            modelBuilder.Entity<Subscription>(entity => {
                 entity.HasKey(e => e.Id).HasName("pk_subscription");
 
                 entity.ToTable("subscription", "realtime");
@@ -1049,8 +1009,7 @@ namespace Project.Infrastructure.Data
                 entity.Property(e => e.SubscriptionId).HasColumnName("subscription_id");
             });
 
-            modelBuilder.Entity<SubscriptionPlan>(entity =>
-            {
+            modelBuilder.Entity<SubscriptionPlan>(entity => {
                 entity.HasKey(e => e.Id).HasName("subscription_plans_pkey");
 
                 entity.ToTable("subscription_plans");
@@ -1072,8 +1031,7 @@ namespace Project.Infrastructure.Data
                     .HasColumnName("price");
             });
 
-            modelBuilder.Entity<Translation>(entity =>
-            {
+            modelBuilder.Entity<Translation>(entity => {
                 entity.HasKey(e => e.Id).HasName("translations_pkey");
 
                 entity.ToTable("translations");
@@ -1109,8 +1067,7 @@ namespace Project.Infrastructure.Data
                     .HasConstraintName("translations_user_id_fkey");
             });
 
-            modelBuilder.Entity<User>(entity =>
-            {
+            modelBuilder.Entity<User>(entity => {
                 entity.HasKey(e => e.Id).HasName("users_pkey");
 
                 entity.ToTable("users", "auth", tb => tb.HasComment("Auth: Stores user login data within a secure schema."));
@@ -1226,8 +1183,7 @@ namespace Project.Infrastructure.Data
                 entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
             });
 
-            modelBuilder.Entity<UserActivity>(entity =>
-            {
+            modelBuilder.Entity<UserActivity>(entity => {
                 entity.HasKey(e => e.Id).HasName("user_activities_pkey");
 
                 entity.ToTable("user_activities");
@@ -1254,8 +1210,7 @@ namespace Project.Infrastructure.Data
                     .HasConstraintName("user_activities_user_id_fkey");
             });
 
-            modelBuilder.Entity<UserCourseProgress>(entity =>
-            {
+            modelBuilder.Entity<UserCourseProgress>(entity => {
                 entity.HasKey(e => new { e.UserId, e.LessonId }).HasName("user_course_progress_pkey");
 
                 entity.ToTable("user_course_progress");
@@ -1277,8 +1232,7 @@ namespace Project.Infrastructure.Data
                     .HasConstraintName("user_course_progress_user_id_fkey");
             });
 
-            modelBuilder.Entity<UserSubscription>(entity =>
-            {
+            modelBuilder.Entity<UserSubscription>(entity => {
                 entity.HasKey(e => e.Id).HasName("user_subscriptions_pkey");
 
                 entity.ToTable("user_subscriptions");
@@ -1307,8 +1261,7 @@ namespace Project.Infrastructure.Data
             modelBuilder.HasSequence<int>("seq_schema_version", "graphql").IsCyclic();
         }
 
-        public static void SeedData(ModelBuilder modelBuilder)
-        {
+        public static void SeedData(ModelBuilder modelBuilder) {
 
         }
 

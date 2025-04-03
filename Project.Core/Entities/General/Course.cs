@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace Project.Infrastructure;
 
-namespace Project.Infrastructure;
-
-public partial class Course
-{
+public partial class Course {
     public Guid Id { get; set; }
 
     public string Title { get; set; } = null!;

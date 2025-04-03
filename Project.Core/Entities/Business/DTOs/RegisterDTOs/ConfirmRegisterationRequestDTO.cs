@@ -7,6 +7,5 @@
         public string? confirmNewPassword { get; set; }
         public string? role { get; set; }
         public bool isPasswordReset { get; set; } = false;
-
     }
 }
