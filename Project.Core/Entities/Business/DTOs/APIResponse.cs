@@ -1,9 +1,6 @@
-﻿namespace Project.Core.Entities.Business.DTOs
-{
-    public class APIResponse
-    {
-        public APIResponse()
-        {
+﻿namespace Project.Core.Entities.Business.DTOs {
+    public class APIResponse {
+        public APIResponse() {
             errorMessages = new List<string>();
         }
         public List<string> errorMessages { get; set; }

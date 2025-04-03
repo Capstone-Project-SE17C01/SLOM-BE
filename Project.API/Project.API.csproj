@@ -17,7 +17,11 @@
     <PackageReference Include="Serilog" Version="4.2.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
-
+	
+	<ItemGroup>
+		<Folder Include="Controllers\" />
+	</ItemGroup>
+	
   <ItemGroup>
     <ProjectReference Include="..\Project.Core\Project.Core.csproj" />
     <ProjectReference Include="..\Project.Infrastructure\Project.Infrastructure.csproj" />

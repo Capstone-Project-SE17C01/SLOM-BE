@@ -1,7 +1,5 @@
-﻿namespace Project.Core.Entities.Business.DTOs.RegisterDTOs
-{
-    public class ConfirmRegisterationRequestDTO
-    {
+﻿namespace Project.Core.Entities.Business.DTOs.RegisterDTOs {
+    public class ConfirmRegisterationRequestDTO {
         public string? username { get; set; }
         public string email { get; set; }
         public string confirmationCode { get; set; }
