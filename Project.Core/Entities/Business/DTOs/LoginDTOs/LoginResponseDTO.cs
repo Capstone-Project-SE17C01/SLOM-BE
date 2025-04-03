@@ -1,9 +1,9 @@
 ﻿namespace Project.Core.Entities.Business.DTOs.LoginDTOs {
     public class LoginResponseDTO {
-        public string idToken { get; set; }
-        public string accessToken { get; set; }
-        public string refreshToken { get; set; }
-        public string userEmail { get; set; }
+        public required string idToken { get; set; }
+        public required string accessToken { get; set; }
+        public required string refreshToken { get; set; }
+        public string? userEmail { get; set; }
 
         public LoginResponseDTO() {
         }
