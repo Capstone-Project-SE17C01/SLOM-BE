@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace Project.Infrastructure;
 
-namespace Project.Infrastructure;
-
-/// <summary>
-/// auth: stores authenticator method reference claims for multi factor authentication
-/// </summary>
-public partial class MfaAmrClaim
-{
+public partial class MfaAmrClaim {
     public Guid SessionId { get; set; }
 
     public DateTime CreatedAt { get; set; }

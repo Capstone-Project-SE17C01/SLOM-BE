@@ -1,9 +1,7 @@
 ﻿using Project.Core.Entities.Business;
 
-namespace Project.Core.Interfaces.IRepositories
-{
-    public interface IBaseRepository<T> where T : class
-    {
+namespace Project.Core.Interfaces.IRepositories {
+    public interface IBaseRepository<T> where T : class {
         Task<IEnumerable<T>> GetAll();
         Task<PaginatedDataViewModel<T>> GetPaginatedData(int pageNumber, int pageSize);
         Task<T> GetById<Tid>(Tid id);

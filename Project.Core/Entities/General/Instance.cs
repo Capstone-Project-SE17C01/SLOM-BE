@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace Project.Infrastructure;
 
-namespace Project.Infrastructure;
-
-/// <summary>
-/// Auth: Manages users across multiple sites.
-/// </summary>
-public partial class Instance
-{
+public partial class Instance {
     public Guid Id { get; set; }
 
     public Guid? Uuid { get; set; }

@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace Project.Infrastructure;
 
-namespace Project.Infrastructure;
-
-public partial class Translation
-{
+public partial class Translation {
     public long Id { get; set; }
 
     public Guid MeetingId { get; set; }
