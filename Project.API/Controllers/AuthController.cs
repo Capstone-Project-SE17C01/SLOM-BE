@@ -304,22 +304,22 @@ namespace Project.API.Controllers
         [HttpPost("changePassword")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest changePasswordRequest)
         {
-           
-                if (string.IsNullOrEmpty(changePasswordRequest.AccessToken))
-                {
-                    //Access token is required to reset password
-                    return BadRequest("User is not authenticated.");
-                }
 
-                if (string.IsNullOrEmpty(changePasswordRequest.PreviousPassword))
-                {
-                    return BadRequest("Previous Password is required.");
-                }
+            if (string.IsNullOrEmpty(changePasswordRequest.AccessToken))
+            {
+                //Access token is required to reset password
+                return BadRequest("User is not authenticated.");
+            }
 
-                if (string.IsNullOrEmpty(changePasswordRequest.ProposedPassword))
-                {
-                    return BadRequest("New Password is required.");
-                }
+            if (string.IsNullOrEmpty(changePasswordRequest.PreviousPassword))
+            {
+                return BadRequest("Previous Password is required.");
+            }
+
+            if (string.IsNullOrEmpty(changePasswordRequest.ProposedPassword))
+            {
+                return BadRequest("New Password is required.");
+            }
             try
             {
                 var response = await _provider.ChangePasswordAsync(changePasswordRequest);
@@ -397,7 +397,7 @@ namespace Project.API.Controllers
         }
     }
 }
-   
 
-    
+
+
 
