@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace Project.Infrastructure;
 
-namespace Project.Infrastructure;
-
-public partial class Profile
-{
+public partial class Profile {
     public Guid Id { get; set; }
 
     public string? Username { get; set; }

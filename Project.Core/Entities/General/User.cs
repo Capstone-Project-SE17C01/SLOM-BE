@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace Project.Infrastructure;
 
-namespace Project.Infrastructure;
-
-/// <summary>
-/// Auth: Stores user login data within a secure schema.
-/// </summary>
-public partial class User
-{
+public partial class User {
     public Guid? InstanceId { get; set; }
 
     public Guid Id { get; set; }
@@ -72,9 +65,6 @@ public partial class User
 
     public DateTime? ReauthenticationSentAt { get; set; }
 
-    /// <summary>
-    /// Auth: Set this column to true when the account comes from SSO. These accounts can have duplicate emails.
-    /// </summary>
     public bool IsSsoUser { get; set; }
 
     public DateTime? DeletedAt { get; set; }

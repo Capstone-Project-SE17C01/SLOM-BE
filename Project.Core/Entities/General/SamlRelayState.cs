@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace Project.Infrastructure;
 
-namespace Project.Infrastructure;
-
-/// <summary>
-/// Auth: Contains SAML Relay State information for each Service Provider initiated login.
-/// </summary>
-public partial class SamlRelayState
-{
+public partial class SamlRelayState {
     public Guid Id { get; set; }
 
     public Guid SsoProviderId { get; set; }

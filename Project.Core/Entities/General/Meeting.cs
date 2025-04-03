@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace Project.Infrastructure;
 
-namespace Project.Infrastructure;
-
-public partial class Meeting
-{
+public partial class Meeting {
     public Guid Id { get; set; }
 
     public Guid HostId { get; set; }

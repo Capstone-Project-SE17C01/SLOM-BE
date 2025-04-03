@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace Project.Infrastructure;
 
-namespace Project.Infrastructure;
-
-public partial class CourseReview
-{
+public partial class CourseReview {
     public Guid Id { get; set; }
 
     public Guid CourseId { get; set; }

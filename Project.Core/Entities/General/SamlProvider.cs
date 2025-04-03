@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace Project.Infrastructure;
 
-namespace Project.Infrastructure;
-
-/// <summary>
-/// Auth: Manages SAML Identity Provider connections.
-/// </summary>
-public partial class SamlProvider
-{
+public partial class SamlProvider {
     public Guid Id { get; set; }
 
     public Guid SsoProviderId { get; set; }

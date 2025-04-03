@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
+﻿using System.Net;
 
 namespace Project.Infrastructure;
 
-/// <summary>
-/// auth: stores metadata about challenge requests made
-/// </summary>
-public partial class MfaChallenge
-{
+public partial class MfaChallenge {
     public Guid Id { get; set; }
 
     public Guid FactorId { get; set; }

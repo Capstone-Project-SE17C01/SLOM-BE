@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace Project.Infrastructure;
 
-namespace Project.Infrastructure;
-
-/// <summary>
-/// stores metadata for pkce logins
-/// </summary>
-public partial class FlowState
-{
+public partial class FlowState {
     public Guid Id { get; set; }
 
     public Guid? UserId { get; set; }
