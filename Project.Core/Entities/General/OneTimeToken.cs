@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace Project.Infrastructure;
 
-namespace Project.Infrastructure;
-
-public partial class OneTimeToken
-{
+public partial class OneTimeToken {
     public Guid Id { get; set; }
 
     public Guid UserId { get; set; }

@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace Project.Infrastructure;
 
-namespace Project.Infrastructure;
-
-public partial class S3MultipartUploadsPart
-{
+public partial class S3MultipartUploadsPart {
     public Guid Id { get; set; }
 
     public string UploadId { get; set; } = null!;

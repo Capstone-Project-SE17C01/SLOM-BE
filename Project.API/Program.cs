@@ -10,7 +10,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(
                 .GetConnectionString("DefaultConnection")));
 
 // Add services to the container.
-
+builder.Services.AddCors();
 builder.Services.RegisterService();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -29,6 +29,11 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseCors(x => x
+    .AllowAnyOrigin()
+       .AllowAnyMethod()
+          .AllowAnyHeader());
 
 app.MapControllers();
 

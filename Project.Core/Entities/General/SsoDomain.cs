@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace Project.Infrastructure;
 
-namespace Project.Infrastructure;
-
-/// <summary>
-/// Auth: Manages SSO email address domain mapping to an SSO Identity Provider.
-/// </summary>
-public partial class SsoDomain
-{
+public partial class SsoDomain {
     public Guid Id { get; set; }
 
     public Guid SsoProviderId { get; set; }
