@@ -28,6 +28,7 @@ public partial class ApplicationDbContext : DbContext {
     public DbSet<QuizAttempt> QuizAttempts { get; set; }
     public DbSet<UserCourseProgress> UserCourseProgress { get; set; }
     public DbSet<CourseReview> CourseReviews { get; set; }
+    public DbSet<Role> Roles { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder) {
         ApplicationDbContextConfigurations.Configure(builder);

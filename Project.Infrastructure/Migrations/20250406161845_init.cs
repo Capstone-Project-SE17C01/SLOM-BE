@@ -50,6 +50,21 @@ namespace Project.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "roles",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    description = table.Column<string>(type: "text", nullable: true),
+                    is_active = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("roles_pkey", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "subscription_plans",
                 columns: table => new
                 {
@@ -72,7 +87,7 @@ namespace Project.Infrastructure.Migrations
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     username = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     email = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
-                    role = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: true, defaultValueSql: "'registered'::character varying"),
+                    role_id = table.Column<Guid>(type: "uuid", nullable: true),
                     avatar_url = table.Column<string>(type: "text", nullable: true),
                     preferred_language = table.Column<Guid>(type: "uuid", nullable: true),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()"),
@@ -86,6 +101,12 @@ namespace Project.Infrastructure.Migrations
                         column: x => x.preferred_language,
                         principalTable: "languages",
                         principalColumn: "id");
+                    table.ForeignKey(
+                        name: "profiles_role_id_fkey",
+                        column: x => x.role_id,
+                        principalTable: "roles",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -557,6 +578,11 @@ namespace Project.Infrastructure.Migrations
                 column: "preferred_language");
 
             migrationBuilder.CreateIndex(
+                name: "IX_profiles_role_id",
+                table: "profiles",
+                column: "role_id");
+
+            migrationBuilder.CreateIndex(
                 name: "profiles_username_key",
                 table: "profiles",
                 column: "username",
@@ -576,6 +602,12 @@ namespace Project.Infrastructure.Migrations
                 name: "IX_quizzes_lesson_id",
                 table: "quizzes",
                 column: "lesson_id");
+
+            migrationBuilder.CreateIndex(
+                name: "roles_name_key",
+                table: "roles",
+                column: "name",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "subscription_plans_name_key",
@@ -672,6 +704,9 @@ namespace Project.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "languages");
+
+            migrationBuilder.DropTable(
+                name: "roles");
         }
     }
 }

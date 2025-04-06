@@ -16,6 +16,19 @@ namespace Project.Infrastructure.Data {
                 entity.Property(e => e.Region).HasMaxLength(50).HasColumnName("region");
             });
 
+            modelBuilder.Entity<Role>(entity =>
+            {
+                entity.HasKey(e => e.Id).HasName("roles_pkey");
+                entity.ToTable("roles");
+                entity.HasIndex(e => e.Name, "roles_name_key").IsUnique();
+
+                entity.Property(e => e.Id).ValueGeneratedNever().HasColumnName("id");
+                entity.Property(e => e.Name).HasMaxLength(50).HasColumnName("name");
+                entity.Property(e => e.Description).HasColumnName("description");
+                entity.Property(e => e.IsActive).HasDefaultValue(true).HasColumnName("is_active");
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("now()").HasColumnName("created_at");
+            });
+
             modelBuilder.Entity<Profile>(entity => {
                 entity.HasKey(e => e.Id).HasName("profiles_pkey");
                 entity.ToTable("profiles");
@@ -24,11 +37,17 @@ namespace Project.Infrastructure.Data {
                 entity.Property(e => e.Id).ValueGeneratedNever().HasColumnName("id");
                 entity.Property(e => e.Username).HasMaxLength(50).HasColumnName("username");
                 entity.Property(e => e.Email).HasMaxLength(255).HasColumnName("email");
-                entity.Property(e => e.Role).HasMaxLength(20).HasDefaultValueSql("'registered'::character varying").HasColumnName("role");
                 entity.Property(e => e.AvatarUrl).HasColumnName("avatar_url");
                 entity.Property(e => e.PreferredLanguageId).HasColumnName("preferred_language");
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("now()").HasColumnName("created_at");
                 entity.Property(e => e.UpdatedAt).HasDefaultValueSql("now()").HasColumnName("updated_at");
+                entity.Property(e => e.RoleId).HasColumnName("role_id");
+
+                entity.HasOne(d => d.Role)
+                    .WithMany(p => p.Profiles)
+                    .HasForeignKey(d => d.RoleId)
+                    .OnDelete(DeleteBehavior.SetNull)
+                    .HasConstraintName("profiles_role_id_fkey");
 
                 entity.HasOne(d => d.PreferredLanguage)
                     .WithMany(p => p.Profiles)

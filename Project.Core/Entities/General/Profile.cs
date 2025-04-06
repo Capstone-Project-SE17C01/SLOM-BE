@@ -6,7 +6,7 @@
 
         public string? Email { get; set; }
 
-        public string? Role { get; set; }
+        public Guid? RoleId { get; set; }
 
         public string? AvatarUrl { get; set; }
 
@@ -26,5 +26,6 @@
         public ICollection<QuizAttempt> QuizAttempts { get; set; } = new List<QuizAttempt>();
         public ICollection<UserCourseProgress> CourseProgresses { get; set; } = new List<UserCourseProgress>();
         public ICollection<CourseReview> CourseReviews { get; set; } = new List<CourseReview>();
+        public Role? Role { get; set; }
     }
 }

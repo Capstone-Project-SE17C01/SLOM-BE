@@ -516,12 +516,9 @@ namespace Project.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("preferred_language");
 
-                    b.Property<string>("Role")
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)")
-                        .HasColumnName("role")
-                        .HasDefaultValueSql("'registered'::character varying");
+                    b.Property<Guid?>("RoleId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("role_id");
 
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
@@ -538,6 +535,8 @@ namespace Project.Infrastructure.Migrations
                         .HasName("profiles_pkey");
 
                     b.HasIndex("PreferredLanguageId");
+
+                    b.HasIndex("RoleId");
 
                     b.HasIndex(new[] { "Username" }, "profiles_username_key")
                         .IsUnique();
@@ -629,6 +628,43 @@ namespace Project.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("quiz_attempts", (string)null);
+                });
+
+            modelBuilder.Entity("Project.Core.Entities.General.Role", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text")
+                        .HasColumnName("description");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("is_active");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("name");
+
+                    b.HasKey("Id")
+                        .HasName("roles_pkey");
+
+                    b.HasIndex(new[] { "Name" }, "roles_name_key")
+                        .IsUnique();
+
+                    b.ToTable("roles", (string)null);
                 });
 
             modelBuilder.Entity("Project.Core.Entities.General.SubscriptionPlan", b =>
@@ -955,7 +991,15 @@ namespace Project.Infrastructure.Migrations
                         .HasForeignKey("PreferredLanguageId")
                         .HasConstraintName("profiles_preferred_language_fkey");
 
+                    b.HasOne("Project.Core.Entities.General.Role", "Role")
+                        .WithMany("Profiles")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("profiles_role_id_fkey");
+
                     b.Navigation("PreferredLanguage");
+
+                    b.Navigation("Role");
                 });
 
             modelBuilder.Entity("Project.Core.Entities.General.Quiz", b =>
@@ -1136,6 +1180,11 @@ namespace Project.Infrastructure.Migrations
             modelBuilder.Entity("Project.Core.Entities.General.Quiz", b =>
                 {
                     b.Navigation("Attempts");
+                });
+
+            modelBuilder.Entity("Project.Core.Entities.General.Role", b =>
+                {
+                    b.Navigation("Profiles");
                 });
 
             modelBuilder.Entity("Project.Core.Entities.General.SubscriptionPlan", b =>
