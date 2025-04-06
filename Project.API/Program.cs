@@ -5,9 +5,15 @@ using Project.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<ApplicationDbContext>(
-                options => options.UseNpgsql(builder.Configuration
-                .GetConnectionString("DefaultConnection")));
+var connection = builder.Configuration
+                .GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseNpgsql(connection, npgsqlOptionsAction: sqlOptions => {
+        sqlOptions.EnableRetryOnFailure(
+            maxRetryCount: 3,
+            maxRetryDelay: TimeSpan.FromSeconds(3),
+            errorCodesToAdd: null);
+    }));
 
 // Add services to the container.
 builder.Services.AddCors();

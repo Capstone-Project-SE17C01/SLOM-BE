@@ -1,19 +1,23 @@
-﻿namespace Project.Infrastructure;
+﻿namespace Project.Core.Entities.General {
+    public class Quiz {
+        public Guid Id { get; set; }
 
-public partial class Quiz {
-    public Guid Id { get; set; }
+        public Guid LessonId { get; set; }
 
-    public Guid LessonId { get; set; }
+        public string Question { get; set; } = null!;
 
-    public string Question { get; set; } = null!;
+        public string? Options { get; set; }
 
-    public string? Options { get; set; }
+        public string CorrectAnswer { get; set; } = null!;
 
-    public string CorrectAnswer { get; set; } = null!;
+        public string? Explanation { get; set; }
 
-    public int? MaxScore { get; set; }
+        public int MaxScore { get; set; } = 10;
 
-    public virtual Lesson Lesson { get; set; } = null!;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-    public virtual ICollection<QuizAttempt> QuizAttempts { get; set; } = new List<QuizAttempt>();
+        public Lesson Lesson { get; set; } = null!;
+
+        public ICollection<QuizAttempt> Attempts { get; set; } = new List<QuizAttempt>();
+    }
 }

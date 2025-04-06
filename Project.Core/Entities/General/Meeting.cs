@@ -1,29 +1,30 @@
-﻿namespace Project.Infrastructure;
+﻿namespace Project.Core.Entities.General {
+    public class Meeting {
+        public Guid Id { get; set; }
 
-public partial class Meeting {
-    public Guid Id { get; set; }
+        public Guid HostId { get; set; }
 
-    public Guid HostId { get; set; }
+        public string? Title { get; set; }
 
-    public string? Title { get; set; }
+        public string? Description { get; set; }
 
-    public DateTime StartTime { get; set; }
+        public DateTime StartTime { get; set; }
 
-    public DateTime? EndTime { get; set; }
+        public DateTime? EndTime { get; set; }
 
-    public string? Status { get; set; }
+        public string? Status { get; set; }
 
-    public string? GuestCode { get; set; }
+        public int MaxParticipants { get; set; } = 50;
 
-    public bool? AllowGuests { get; set; }
+        public bool IsPrivate { get; set; } = false;
 
-    public DateTime? CreatedAt { get; set; }
+        public string? GuestCode { get; set; }
 
-    public virtual Profile Host { get; set; } = null!;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-    public virtual ICollection<MeetingParticipant> MeetingParticipants { get; set; } = new List<MeetingParticipant>();
-
-    public virtual ICollection<MeetingRecording> MeetingRecordings { get; set; } = new List<MeetingRecording>();
-
-    public virtual ICollection<Translation> Translations { get; set; } = new List<Translation>();
+        public Profile Host { get; set; } = null!;
+        public ICollection<MeetingParticipant> Participants { get; set; } = new List<MeetingParticipant>();
+        public ICollection<MeetingRecording> Recordings { get; set; } = new List<MeetingRecording>();
+        public ICollection<Translation> Translations { get; set; } = new List<Translation>();
+    }
 }

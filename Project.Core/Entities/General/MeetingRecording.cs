@@ -1,17 +1,19 @@
-﻿namespace Project.Infrastructure;
+﻿namespace Project.Core.Entities.General {
+    public class MeetingRecording {
+        public Guid Id { get; set; }
 
-public partial class MeetingRecording {
-    public Guid Id { get; set; }
+        public Guid MeetingId { get; set; }
 
-    public Guid MeetingId { get; set; }
+        public string StoragePath { get; set; } = null!;
 
-    public string StoragePath { get; set; } = null!;
+        public int? Duration { get; set; }
 
-    public int? Duration { get; set; }
+        public bool Processed { get; set; } = false;
 
-    public bool? Processed { get; set; }
+        public string? Transcription { get; set; }
 
-    public string? Transcription { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-    public virtual Meeting Meeting { get; set; } = null!;
+        public Meeting Meeting { get; set; } = null!;
+    }
 }

@@ -1,15 +1,17 @@
-﻿namespace Project.Infrastructure;
+﻿namespace Project.Core.Entities.General {
+    public class SubscriptionPlan {
+        public Guid Id { get; set; }
 
-public partial class SubscriptionPlan {
-    public Guid Id { get; set; }
+        public string Name { get; set; } = null!;
 
-    public string Name { get; set; } = null!;
+        public decimal Price { get; set; }
 
-    public decimal? Price { get; set; }
+        public int DurationDays { get; set; }
 
-    public int? DurationDays { get; set; }
+        public string? Features { get; set; }
 
-    public string? Features { get; set; }
+        public bool IsActive { get; set; } = true;
 
-    public virtual ICollection<UserSubscription> UserSubscriptions { get; set; } = new List<UserSubscription>();
+        public ICollection<UserSubscription> UserSubscriptions { get; set; } = new List<UserSubscription>();
+    }
 }

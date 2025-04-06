@@ -1,15 +1,17 @@
-﻿namespace Project.Infrastructure;
+﻿namespace Project.Core.Entities.General {
+    public class CourseCategory {
+        public Guid Id { get; set; }
 
-public partial class CourseCategory {
-    public Guid Id { get; set; }
+         public string Name { get; set; } = null!;
 
-    public string Name { get; set; } = null!;
+        public string? Description { get; set; }
 
-    public Guid? ParentCategoryId { get; set; }
+        public Guid? ParentId { get; set; }
 
-    public virtual ICollection<Course> Courses { get; set; } = new List<Course>();
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-    public virtual ICollection<CourseCategory> InverseParentCategory { get; set; } = new List<CourseCategory>();
-
-    public virtual CourseCategory? ParentCategory { get; set; }
+        public CourseCategory? Parent { get; set; }
+        public ICollection<CourseCategory> Subcategories { get; set; } = new List<CourseCategory>();
+        public ICollection<Course> Courses { get; set; } = new List<Course>();
+    }
 }

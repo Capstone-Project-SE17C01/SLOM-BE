@@ -1,27 +1,28 @@
-﻿namespace Project.Infrastructure;
+﻿namespace Project.Core.Entities.General {
+    public class Translation {
+        public long Id { get; set; }
 
-public partial class Translation {
-    public long Id { get; set; }
+        public Guid? MeetingId { get; set; }
 
-    public Guid MeetingId { get; set; }
+        public Guid? UserId { get; set; }
 
-    public Guid? UserId { get; set; }
+        public Guid? SourceLanguageId { get; set; }
 
-    public string? OriginalText { get; set; }
+        public Guid? TargetLanguageId { get; set; }
 
-    public string TranslatedText { get; set; } = null!;
+        public string? OriginalText { get; set; }
 
-    public DateTime? Timestamp { get; set; }
+        public string TranslatedText { get; set; } = null!;
 
-    public Guid? SourceLanguage { get; set; }
+        public float? Confidence { get; set; }
 
-    public Guid? TargetLanguage { get; set; }
+        public bool IsCorrected { get; set; } = false;
 
-    public virtual Meeting Meeting { get; set; } = null!;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-    public virtual Language? SourceLanguageNavigation { get; set; }
-
-    public virtual Language? TargetLanguageNavigation { get; set; }
-
-    public virtual Profile? User { get; set; }
+        public Meeting Meeting { get; set; } = null!;
+        public Profile? User { get; set; } 
+        public Language? SourceLanguage { get; set; }
+        public Language? TargetLanguage { get; set; }
+    }
 }

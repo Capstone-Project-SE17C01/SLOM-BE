@@ -1,43 +1,30 @@
-﻿namespace Project.Infrastructure;
+﻿namespace Project.Core.Entities.General {
+    public class Profile {
+        public Guid Id { get; set; }
 
-public partial class Profile {
-    public Guid Id { get; set; }
+        public string? Username { get; set; }
 
-    public string? Username { get; set; }
+        public string? Email { get; set; }
 
-    public string? Role { get; set; }
+        public string? Role { get; set; }
 
-    public string? AvatarUrl { get; set; }
+        public string? AvatarUrl { get; set; }
 
-    public DateTime? CreatedAt { get; set; }
+        public Guid? PreferredLanguageId { get; set; }
 
-    public DateTime? UpdatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-    public Guid? PreferredLanguage { get; set; }
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
-    public virtual ICollection<AuditLog> AuditLogs { get; set; } = new List<AuditLog>();
-
-    public virtual ICollection<CourseReview> CourseReviews { get; set; } = new List<CourseReview>();
-
-    public virtual ICollection<Course> Courses { get; set; } = new List<Course>();
-
-    public virtual User IdNavigation { get; set; } = null!;
-
-    public virtual ICollection<MeetingParticipant> MeetingParticipants { get; set; } = new List<MeetingParticipant>();
-
-    public virtual ICollection<Meeting> Meetings { get; set; } = new List<Meeting>();
-
-    public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
-
-    public virtual Language? PreferredLanguageNavigation { get; set; }
-
-    public virtual ICollection<QuizAttempt> QuizAttempts { get; set; } = new List<QuizAttempt>();
-
-    public virtual ICollection<Translation> Translations { get; set; } = new List<Translation>();
-
-    public virtual ICollection<UserActivity> UserActivities { get; set; } = new List<UserActivity>();
-
-    public virtual ICollection<UserCourseProgress> UserCourseProgresses { get; set; } = new List<UserCourseProgress>();
-
-    public virtual ICollection<UserSubscription> UserSubscriptions { get; set; } = new List<UserSubscription>();
+        public Language? PreferredLanguage { get; set; }
+        public ICollection<UserSubscription> UserSubscriptions { get; set; } = new List<UserSubscription>();
+        public ICollection<Payment> Payments { get; set; } = new List<Payment>();
+        public ICollection<Meeting> HostedMeetings { get; set; } = new List<Meeting>();
+        public ICollection<MeetingParticipant> MeetingParticipations { get; set; } = new List<MeetingParticipant>();
+        public ICollection<Translation> Translations { get; set; } = new List<Translation>();
+        public ICollection<Course> CreatedCourses { get; set; } = new List<Course>();
+        public ICollection<QuizAttempt> QuizAttempts { get; set; } = new List<QuizAttempt>();
+        public ICollection<UserCourseProgress> CourseProgresses { get; set; } = new List<UserCourseProgress>();
+        public ICollection<CourseReview> CourseReviews { get; set; } = new List<CourseReview>();
+    }
 }
