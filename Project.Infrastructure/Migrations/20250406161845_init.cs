@@ -649,6 +649,13 @@ namespace Project.Infrastructure.Migrations
                 name: "IX_user_subscriptions_user_id",
                 table: "user_subscriptions",
                 column: "user_id");
+
+            migrationBuilder.AddColumn<int>(
+               name: "OrderCode",
+               table: "payments",
+               type: "integer",
+               nullable: false,
+               defaultValue: 0);
         }
 
         /// <inheritdoc />

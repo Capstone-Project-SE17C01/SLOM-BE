@@ -3,5 +3,6 @@ namespace Project.Core.Entities.Business.DTOs.RegisterDTOs {
         public required string email { get; set; }
         public required string password { get; set; }
         public required string role { get; set; }
+        public string? languageCode { get; set; }
     }
 }

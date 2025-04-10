@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace Project.Core.Entities.Business.DTOs.RegisterDTOs {
     public class ConfirmRegisterationRequestDTO {
         public string? username { get; set; }

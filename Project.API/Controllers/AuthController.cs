@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 using Project.Core.Entities.Business.DTOs.ForgotPasswordDTOs;
 using Project.Core.Entities.Business.DTOs.LoginDTOs;
 using Project.Core.Entities.Business.DTOs.RegisterDTOs;
+using Project.Core.Interfaces.IRepositories;
+using Project.Infrastructure.Data;
+using Project.Infrastructure.Repositories;
 using System.IdentityModel.Tokens.Jwt;
 
 namespace Project.API.Controllers {
@@ -16,11 +19,20 @@ namespace Project.API.Controllers {
         private readonly CognitoUserPool _userPool;
         private readonly IConfiguration _configuration;
         private readonly IServiceProvider _serviceProvider;
+        private readonly IProfileRepository _profileRepository;
+        private readonly ILanguageRepository _languageRepository;
+        private readonly IRoleRepository _roleRepository;
+        private readonly ApplicationDbContext _db;
 
 
-        public AuthController(IConfiguration configuration, IServiceProvider serviceProvider) {
+        public AuthController(IConfiguration configuration, IServiceProvider serviceProvider, ApplicationDbContext db) {
             _configuration = configuration;
             _serviceProvider = serviceProvider;
+
+            _db = db;
+            _profileRepository = new ProfileRepository(_db);
+            _languageRepository = new LanguageRepository(_db);
+            _roleRepository = new RoleRepository(_db);
 
             var accessKey = _configuration["AWS:AccessKey"];
             var secretKey = _configuration["AWS:SecretKey"];
@@ -80,10 +92,36 @@ namespace Project.API.Controllers {
                 var response = await _provider.SignUpAsync(signUpRequest);
 
                 if (response.HttpStatusCode == System.Net.HttpStatusCode.OK) {
-                    return Ok(registerDTO);
+
+                    var langCode = registerDTO.languageCode != null ? registerDTO.languageCode.ToLower() : "en";
+                    var enLangId = await _languageRepository.GetIdByCodeAsync(langCode);
+                    var RoleId = await _roleRepository.GetIdByNameAsync(registerDTO.role);
+
+                    var profile = new Core.Entities.General.Profile {
+                        Username = registerDTO.email.Split('@')[0].Trim(),
+                        Email = registerDTO.email.Trim(),
+                        RoleId = RoleId,
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow,
+                        PreferredLanguageId = enLangId,
+                        AvatarUrl = "https://avatar.iran.liara.run/public/5",
+                        Id = Guid.Parse(response.UserSub),
+                    };
+                    try {
+                        var registerProfile = await _profileRepository.Create(profile);
+                        return Ok(registerDTO);
+                    } catch (Exception ex) {
+                        var deleteUserRequest = new AdminDeleteUserRequest {
+                            Username = registerDTO.email,
+                            UserPoolId = _configuration["AWS:UserPoolId"]
+                        };
+
+                        await _provider.AdminDeleteUserAsync(deleteUserRequest);
+                        return BadRequest(ex.InnerException);
+                    }
 
                 } else {
-                    return BadRequest("registration failed");
+                    return BadRequest("Registration failed");
                 }
                 #endregion
             } catch (Exception ex) {

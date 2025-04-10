@@ -1,12 +1,15 @@
 ﻿using AutoMapper;
+using Net.payOS;
 
-namespace Project.API.Extensions
-{
-    public static class ServiceExtension
-    {
-        public static IServiceCollection RegisterService(this IServiceCollection services)
-        {
+namespace Project.API.Extensions {
+    public static class ServiceExtension {
+        public static IServiceCollection RegisterService(this IServiceCollection services) {
             #region Services
+            IConfiguration config = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
+            PayOS payOS = new PayOS(config["Environment:PAYOS_CLIENT_ID"] ?? throw new Exception("Cannot find environment"),
+                    config["Environment:PAYOS_API_KEY"] ?? throw new Exception("Cannot find environment"),
+                    config["Environment:PAYOS_CHECKSUM_KEY"] ?? throw new Exception("Cannot find environment"));
+            services.AddSingleton(payOS);
             // services.AddScoped<>();
             #endregion
 
@@ -15,8 +18,7 @@ namespace Project.API.Extensions
             #endregion
 
             #region Mapper
-            var configuration = new MapperConfiguration(cfg =>
-            {
+            var configuration = new MapperConfiguration(cfg => {
                 // cfg.CreateMap<>();
             });
 
