@@ -454,6 +454,9 @@ namespace Project.Infrastructure.Migrations
                         .HasColumnName("currency")
                         .HasDefaultValueSql("'USD'::character varying");
 
+                    b.Property<int>("OrderCode")
+                        .HasColumnType("integer");
+
                     b.Property<string>("PaymentMethod")
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)")
