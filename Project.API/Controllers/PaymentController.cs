@@ -28,9 +28,9 @@ namespace Project.API.Controllers {
         }
 
         [HttpGet("GetAllPlan")]
-        public IActionResult GetAllPlan() {
+        public async Task<IActionResult> GetAllPlan() {
             try {
-                var plans = _subscriptionPlanRepository.GetAllSubscriptionPlans();
+                var plans = await _subscriptionPlanRepository.GetAll();
                 return Ok(new APIResponse {
                     result = plans,
                 });
