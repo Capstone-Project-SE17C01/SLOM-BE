@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using Net.payOS;
+using Project.Core.Interfaces.IRepositories;
+using Project.Infrastructure.Repositories;
 
 namespace Project.API.Extensions {
     public static class ServiceExtension {
@@ -14,6 +16,7 @@ namespace Project.API.Extensions {
             #endregion
 
             #region Repositories
+            services.AddTransient<IProfileRepository, ProfileRepository>();
             // services.AddTransient<>();
             #endregion
 

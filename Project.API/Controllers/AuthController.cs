@@ -18,7 +18,6 @@ namespace Project.API.Controllers {
         private readonly AmazonCognitoIdentityProviderClient _provider;
         private readonly CognitoUserPool _userPool;
         private readonly IConfiguration _configuration;
-        private readonly IServiceProvider _serviceProvider;
         private readonly IProfileRepository _profileRepository;
         private readonly ILanguageRepository _languageRepository;
         private readonly IRoleRepository _roleRepository;
@@ -27,8 +26,6 @@ namespace Project.API.Controllers {
 
         public AuthController(IConfiguration configuration, IServiceProvider serviceProvider, ApplicationDbContext db) {
             _configuration = configuration;
-            _serviceProvider = serviceProvider;
-
             _db = db;
             _profileRepository = new ProfileRepository(_db);
             _languageRepository = new LanguageRepository(_db);
