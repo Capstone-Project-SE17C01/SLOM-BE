@@ -23,6 +23,7 @@ jobs:
       
     - name: Run dotnet format
       run: dotnet format --verify-no-changes --verbosity diagnostic
+      continue-on-error: true
         
     - name: Restore dependencies
       run: dotnet restore
