@@ -656,6 +656,32 @@ namespace Project.Infrastructure.Migrations
                type: "integer",
                nullable: false,
                defaultValue: 0);
+
+            migrationBuilder.AddColumn<string>(
+               name: "Description",
+               table: "subscription_plans",
+               type: "text",
+               nullable: true);
+
+            migrationBuilder.AlterColumn<Guid>(
+                name: "user_id",
+                table: "payments",
+                type: "uuid",
+                nullable: false,
+                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"),
+                oldClrType: typeof(Guid),
+                oldType: "uuid",
+                oldNullable: true);
+
+            migrationBuilder.AlterColumn<Guid>(
+                name: "subscription_id",
+                table: "payments",
+                type: "uuid",
+                nullable: false,
+                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"),
+                oldClrType: typeof(Guid),
+                oldType: "uuid",
+                oldNullable: true);
         }
 
         /// <inheritdoc />

@@ -3,6 +3,7 @@ using Amazon.CognitoIdentityProvider;
 using Amazon.CognitoIdentityProvider.Model;
 using Amazon.Extensions.CognitoAuthentication;
 using Microsoft.AspNetCore.Mvc;
+using Project.Core.Entities.Business.DTOs;
 using Project.Core.Entities.Business.DTOs.ForgotPasswordDTOs;
 using Project.Core.Entities.Business.DTOs.LoginDTOs;
 using Project.Core.Entities.Business.DTOs.RegisterDTOs;
@@ -106,7 +107,7 @@ namespace Project.API.Controllers {
                     };
                     try {
                         var registerProfile = await _profileRepository.Create(profile);
-                        return Ok(registerDTO);
+                        return Ok(new APIResponse() { result = registerProfile });
                     } catch (Exception ex) {
                         var deleteUserRequest = new AdminDeleteUserRequest {
                             Username = registerDTO.email,
@@ -114,15 +115,37 @@ namespace Project.API.Controllers {
                         };
 
                         await _provider.AdminDeleteUserAsync(deleteUserRequest);
-                        return BadRequest(ex.InnerException);
+                        return BadRequest(new APIResponse() { errorMessages = new List<string> { ex.Message } });
                     }
 
                 } else {
-                    return BadRequest("Registration failed");
+                    return BadRequest(new APIResponse() { errorMessages = new List<string> { "Error Profile create" } });
                 }
                 #endregion
             } catch (Exception ex) {
-                return BadRequest(ex.Message);
+                List<string> errorMess = new List<string>();
+                switch (ex) {
+                    case InvalidPasswordException:
+                        errorMess.Add(ex.Message.Split(":")[1]);
+                        break;
+                    case TooManyFailedAttemptsException:
+                        errorMess.Add("Too many failed attempts");
+                        break;
+                    case UserNotFoundException:
+                        errorMess.Add("User not found");
+                        break;
+                    case UsernameExistsException:
+                        errorMess.Add("Username already exists");
+                        break;
+                    case NotAuthorizedException:
+                        errorMess.Add("Not authorized");
+                        break;
+
+                    default:
+                        errorMess.Add("An unknown error occurred");
+                        break;
+                }
+                return BadRequest(new APIResponse() { errorMessages = errorMess });
             }
 
         }
@@ -137,8 +160,6 @@ namespace Project.API.Controllers {
 
             try {
                 var authResponse = await user.StartWithSrpAuthAsync(authRequest).ConfigureAwait(false);
-                var handler = new JwtSecurityTokenHandler();
-                var jsonToken = handler.ReadToken(authResponse.AuthenticationResult.IdToken) as JwtSecurityToken;
                 if (authResponse.AuthenticationResult != null) {
                     var loginResponse = new LoginResponseDTO {
                         idToken = authResponse.AuthenticationResult.IdToken,
@@ -146,13 +167,12 @@ namespace Project.API.Controllers {
                         refreshToken = authResponse.AuthenticationResult.RefreshToken,
                         userEmail = loginRequestDTO.email
                     };
-                    return Ok(loginResponse);
+                    return Ok(new APIResponse() { result = loginResponse });
                 } else {
-                    return BadRequest("Authen Failed");
+                    return BadRequest(new APIResponse() { errorMessages = new List<string> { "Server error" } });
                 }
             } catch (Exception ex) {
-                return BadRequest(ex.Message);
-
+                return BadRequest(new APIResponse() { errorMessages = new List<string> { ex.Message } });
             }
         }
 
@@ -200,7 +220,7 @@ namespace Project.API.Controllers {
 
         private async Task<IActionResult> HandleRegistrationConfirmation(ConfirmRegisterationRequestDTO confirmRegisterationRequest) {
             if (string.IsNullOrEmpty(confirmRegisterationRequest.username)) {
-                return BadRequest("Username is required for registration confirmation.");
+                return BadRequest(new APIResponse() { errorMessages = new List<string> { "Username is required for registration confirmation." } });
             }
 
             var confirmSignUpRequest = new ConfirmSignUpRequest {
@@ -215,13 +235,13 @@ namespace Project.API.Controllers {
                 if (response.HttpStatusCode == System.Net.HttpStatusCode.OK) {
                     return Ok(response);
                 } else {
-                    return BadRequest("Confirmation failed.");
+                    return BadRequest(new APIResponse() { errorMessages = new List<string> { "Error register confirmation" } });
                 }
-            } catch (CodeMismatchException) {
-                return BadRequest("Invalid confirmation code.");
+            } catch (CodeMismatchException ex) {
+                return BadRequest(new APIResponse() { errorMessages = new List<string> { ex.Message } });
 
             } catch (Exception ex) {
-                return BadRequest(ex.Message);
+                return BadRequest(new APIResponse() { errorMessages = new List<string> { ex.Message } });
             }
         }
 
@@ -245,43 +265,8 @@ namespace Project.API.Controllers {
                     return BadRequest("Failed to resend confirmation code.");
                 }
             } catch (Exception ex) {
-                return BadRequest($"Error: {ex.Message}");
+                return BadRequest($"{ex.Message}");
             }
-        }
-
-        [HttpPost("ChangePassword")]
-        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest changePasswordRequest) {
-
-            if (string.IsNullOrEmpty(changePasswordRequest.AccessToken)) {
-                return BadRequest("User is not authenticated.");
-            }
-
-            if (string.IsNullOrEmpty(changePasswordRequest.PreviousPassword)) {
-                return BadRequest("Previous Password is required.");
-            }
-
-            if (string.IsNullOrEmpty(changePasswordRequest.ProposedPassword)) {
-                return BadRequest("New Password is required.");
-            }
-            try {
-                var response = await _provider.ChangePasswordAsync(changePasswordRequest);
-
-                if (response.HttpStatusCode == System.Net.HttpStatusCode.OK) {
-                    return Ok(response);
-                } else {
-                    return BadRequest("Change password failed");
-                }
-            } catch (InvalidPasswordException ex) {
-                return BadRequest(ex.Message);
-
-            } catch (NotAuthorizedException ex) {
-                return BadRequest(ex.Message);
-
-            } catch (Exception ex) {
-
-                return BadRequest(ex.Message);
-            }
-
         }
 
         [HttpPost("ForgotPassword")]
@@ -304,14 +289,13 @@ namespace Project.API.Controllers {
                     return BadRequest("reset new password failed");
                 }
             } catch (InvalidPasswordException ex) {
-                return BadRequest(ex.Message);
-
+                return BadRequest(new APIResponse() { errorMessages = new List<string> { ex.Message } });
             } catch (NotAuthorizedException ex) {
-                return BadRequest(ex.Message);
-
+                return BadRequest(new APIResponse() { errorMessages = new List<string> { ex.Message } });
+            } catch (LimitExceededException ex) {
+                return BadRequest(new APIResponse() { errorMessages = new List<string> { ex.Message } });
             } catch (Exception ex) {
-
-                return BadRequest(ex.Message);
+                return BadRequest(new APIResponse() { errorMessages = new List<string> { ex.Message } });
             }
 
         }
