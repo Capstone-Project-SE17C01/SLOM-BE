@@ -12,7 +12,7 @@ using Project.Infrastructure.Data;
 using Project.Infrastructure.Repositories;
 
 namespace Project.API.Controllers
-    {
+{
     [Route("api/Auth")]
     [ApiController]
     public class AuthController : ControllerBase {

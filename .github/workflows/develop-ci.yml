@@ -16,14 +16,31 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 9.0.103
+        dotnet-version: 8.0.x
 
     - name: Install dotnet format
       run: dotnet tool install -g dotnet-format
       
-    - name: Run dotnet format
-      run: dotnet format --verbosity diagnostic
-        
+    - name: Run dotnet format check
+      run: dotnet format --verify-no-changes
+
+    - name: Run dotnet format fix
+      run: dotnet format --fix all --check --verbosity diagnostic --include /src/Project.API/Project.API.csproj --include /src/Project.Infrastructure/Project.Infrastructure.csproj --include /src/Project.Domain/Project.Domain.csproj --include /src/Project.Application/Project.Application.csproj --include /src/Project.Tests/Project.Tests.csproj --include /src/Project.Tests.Integration/Project.Tests.Integration.csproj --include /src/Project.Tests.Unit/Project.Tests.Unit.csproj
+
+    - name: Inspect Code Format Changes
+      id: verify_diff
+      run: git diff --quiet . || echo "changed=true" >> $
+      
+    - name: Commit Changes
+      if: steps.verify_diff.outputs.changed == 'true'
+      run: |
+        git config --global user.name 'MathNumber'
+        git config --global user.email 'ducpd82@gmail.com'
+        git config --global core.autocrlf false
+        git pull
+        git commit -am "CI: autoformat"
+        git push
+
     - name: Restore dependencies
       run: dotnet restore
       
