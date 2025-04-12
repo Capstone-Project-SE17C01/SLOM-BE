@@ -1,4 +1,4 @@
-﻿namespace Project.Core.Entities.General {
+namespace Project.Core.Entities.General {
     public class SubscriptionPlan {
         public Guid Id { get; set; }
 

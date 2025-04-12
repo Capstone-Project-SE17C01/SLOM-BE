@@ -1,4 +1,4 @@
-﻿namespace Project.Core.Entities.General {
+namespace Project.Core.Entities.General {
     public class Module {
         public Guid Id { get; set; }
 

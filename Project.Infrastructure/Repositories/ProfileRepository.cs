@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Project.Core.Entities.General;
 using Project.Core.Exceptions;
 using Project.Core.Interfaces.IRepositories;

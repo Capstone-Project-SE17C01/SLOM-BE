@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace Project.Core.Entities.Business.DTOs.PaymentDTOs {
     public class ReturnUrlQuery {

@@ -1,5 +1,5 @@
-﻿using Net.payOS.Types;
 using System.ComponentModel.DataAnnotations;
+using Net.payOS.Types;
 
 namespace Project.Core.Entities.Business.DTOs.PaymentDTOs {
 

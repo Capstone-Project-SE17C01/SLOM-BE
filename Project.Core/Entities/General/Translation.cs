@@ -1,4 +1,4 @@
-﻿namespace Project.Core.Entities.General {
+namespace Project.Core.Entities.General {
     public class Translation {
         public long Id { get; set; }
 
@@ -21,7 +21,7 @@
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public Meeting Meeting { get; set; } = null!;
-        public Profile? User { get; set; } 
+        public Profile? User { get; set; }
         public Language? SourceLanguage { get; set; }
         public Language? TargetLanguage { get; set; }
     }

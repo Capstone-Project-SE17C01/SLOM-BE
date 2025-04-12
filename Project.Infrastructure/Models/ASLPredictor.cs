@@ -1,6 +1,6 @@
-﻿using Microsoft.ML.OnnxRuntime;
-using OpenCvSharp;
+using Microsoft.ML.OnnxRuntime;
 using Microsoft.ML.OnnxRuntime.Tensors;
+using OpenCvSharp;
 
 namespace Project.Infrastructure.Model.ASLPredictor {
     public class ASLPredictor : IDisposable {

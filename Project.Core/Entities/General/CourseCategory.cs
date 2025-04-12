@@ -1,8 +1,8 @@
-﻿namespace Project.Core.Entities.General {
+namespace Project.Core.Entities.General {
     public class CourseCategory {
         public Guid Id { get; set; }
 
-         public string Name { get; set; } = null!;
+        public string Name { get; set; } = null!;
 
         public string? Description { get; set; }
 

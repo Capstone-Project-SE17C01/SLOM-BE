@@ -1,4 +1,4 @@
-﻿namespace Project.Core.Entities.General {
+namespace Project.Core.Entities.General {
     public class Language {
         public Guid Id { get; set; }
         public string Code { get; set; } = null!;

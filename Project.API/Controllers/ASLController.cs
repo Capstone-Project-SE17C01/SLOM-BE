@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using OpenCvSharp;
 using Project.Core.Entities.Business.DTOs.ASLDTOs;
 using Project.Infrastructure.Model.ASLPredictor;
@@ -37,7 +37,8 @@ namespace Project.API.Controllers {
                     Word = word.ToUpper(),
                     Confidence = confidence
                 });
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 _logger.LogError(ex, "Error processing prediction request");
                 return StatusCode(500, "Internal server error while processing image");
             }
@@ -59,7 +60,8 @@ namespace Project.API.Controllers {
                 _predictor.AddFrame(mat);
 
                 return Ok();
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 _logger.LogError(ex, "Error processing buffer request");
                 return StatusCode(500, "Internal server error while buffering image");
             }
@@ -74,7 +76,8 @@ namespace Project.API.Controllers {
                     Word = word.ToUpper(),
                     Confidence = confidence
                 });
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 _logger.LogError(ex, "Error processing get prediction request");
                 return StatusCode(500, "Internal server error while getting prediction");
             }

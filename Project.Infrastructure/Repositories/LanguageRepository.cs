@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Project.Core.Entities.General;
 using Project.Core.Exceptions;
 using Project.Core.Interfaces.IRepositories;
@@ -37,7 +37,7 @@ namespace Project.Infrastructure.Repositories {
         public async Task<Guid> GetIdByCodeAsync(string code) {
             var language = await _dbContext.Languages
                 .AsNoTracking()
-                .FirstOrDefaultAsync(l => l.Code.ToUpper() == code.ToUpper());
+                .FirstOrDefaultAsync(l => string.Equals(l.Code, code, StringComparison.OrdinalIgnoreCase));
 
             if (language == null) {
                 throw new NotFoundException("Language not found");

@@ -1,29 +1,24 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Project.Infrastructure.Migrations
-{
+namespace Project.Infrastructure.Migrations {
     /// <inheritdoc />
-    public partial class init : Migration
-    {
+    public partial class init : Migration {
         /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
+        protected override void Up(MigrationBuilder migrationBuilder) {
             migrationBuilder.CreateTable(
                 name: "course_categories",
-                columns: table => new
-                {
+                columns: table => new {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     description = table.Column<string>(type: "text", nullable: true),
                     parent_id = table.Column<Guid>(type: "uuid", nullable: true),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()")
                 },
-                constraints: table =>
-                {
+                constraints: table => {
                     table.PrimaryKey("course_categories_pkey", x => x.id);
                     table.ForeignKey(
                         name: "course_categories_parent_id_fkey",
@@ -35,8 +30,7 @@ namespace Project.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "languages",
-                columns: table => new
-                {
+                columns: table => new {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     code = table.Column<string>(type: "character varying(5)", maxLength: 5, nullable: false),
                     name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
@@ -44,30 +38,26 @@ namespace Project.Infrastructure.Migrations
                     IsActive = table.Column<bool>(type: "boolean", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
-                constraints: table =>
-                {
+                constraints: table => {
                     table.PrimaryKey("languages_pkey", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "roles",
-                columns: table => new
-                {
+                columns: table => new {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     description = table.Column<string>(type: "text", nullable: true),
                     is_active = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()")
                 },
-                constraints: table =>
-                {
+                constraints: table => {
                     table.PrimaryKey("roles_pkey", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "subscription_plans",
-                columns: table => new
-                {
+                columns: table => new {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     price = table.Column<decimal>(type: "numeric(10,2)", precision: 10, scale: 2, nullable: false),
@@ -75,15 +65,13 @@ namespace Project.Infrastructure.Migrations
                     features = table.Column<string>(type: "jsonb", nullable: true),
                     is_active = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true)
                 },
-                constraints: table =>
-                {
+                constraints: table => {
                     table.PrimaryKey("subscription_plans_pkey", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "profiles",
-                columns: table => new
-                {
+                columns: table => new {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     username = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     email = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
@@ -93,8 +81,7 @@ namespace Project.Infrastructure.Migrations
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()"),
                     updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()")
                 },
-                constraints: table =>
-                {
+                constraints: table => {
                     table.PrimaryKey("profiles_pkey", x => x.id);
                     table.ForeignKey(
                         name: "profiles_preferred_language_fkey",
@@ -111,8 +98,7 @@ namespace Project.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "courses",
-                columns: table => new
-                {
+                columns: table => new {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     description = table.Column<string>(type: "text", nullable: true),
@@ -125,8 +111,7 @@ namespace Project.Infrastructure.Migrations
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()"),
                     updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()")
                 },
-                constraints: table =>
-                {
+                constraints: table => {
                     table.PrimaryKey("courses_pkey", x => x.id);
                     table.ForeignKey(
                         name: "courses_category_id_fkey",
@@ -149,8 +134,7 @@ namespace Project.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "meetings",
-                columns: table => new
-                {
+                columns: table => new {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     host_id = table.Column<Guid>(type: "uuid", nullable: false),
                     title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
@@ -163,8 +147,7 @@ namespace Project.Infrastructure.Migrations
                     guest_code = table.Column<string>(type: "text", nullable: true),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()")
                 },
-                constraints: table =>
-                {
+                constraints: table => {
                     table.PrimaryKey("meetings_pkey", x => x.id);
                     table.ForeignKey(
                         name: "meetings_host_id_fkey",
@@ -176,8 +159,7 @@ namespace Project.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "user_subscriptions",
-                columns: table => new
-                {
+                columns: table => new {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     user_id = table.Column<Guid>(type: "uuid", nullable: false),
                     plan_id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -186,8 +168,7 @@ namespace Project.Infrastructure.Migrations
                     status = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: true),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()")
                 },
-                constraints: table =>
-                {
+                constraints: table => {
                     table.PrimaryKey("user_subscriptions_pkey", x => x.id);
                     table.ForeignKey(
                         name: "user_subscriptions_plan_id_fkey",
@@ -205,8 +186,7 @@ namespace Project.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "course_reviews",
-                columns: table => new
-                {
+                columns: table => new {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     course_id = table.Column<Guid>(type: "uuid", nullable: false),
                     user_id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -214,8 +194,7 @@ namespace Project.Infrastructure.Migrations
                     comment = table.Column<string>(type: "text", nullable: true),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()")
                 },
-                constraints: table =>
-                {
+                constraints: table => {
                     table.PrimaryKey("course_reviews_pkey", x => x.id);
                     table.ForeignKey(
                         name: "course_reviews_course_id_fkey",
@@ -233,8 +212,7 @@ namespace Project.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "modules",
-                columns: table => new
-                {
+                columns: table => new {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     course_id = table.Column<Guid>(type: "uuid", nullable: false),
                     title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
@@ -242,8 +220,7 @@ namespace Project.Infrastructure.Migrations
                     order_number = table.Column<int>(type: "integer", nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()")
                 },
-                constraints: table =>
-                {
+                constraints: table => {
                     table.PrimaryKey("modules_pkey", x => x.id);
                     table.ForeignKey(
                         name: "modules_course_id_fkey",
@@ -255,16 +232,14 @@ namespace Project.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "meeting_participants",
-                columns: table => new
-                {
+                columns: table => new {
                     meeting_id = table.Column<Guid>(type: "uuid", nullable: false),
                     user_id = table.Column<Guid>(type: "uuid", nullable: false),
                     join_time = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()"),
                     leave_time = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     device_info = table.Column<string>(type: "jsonb", nullable: true)
                 },
-                constraints: table =>
-                {
+                constraints: table => {
                     table.PrimaryKey("meeting_participants_pkey", x => new { x.meeting_id, x.user_id });
                     table.ForeignKey(
                         name: "meeting_participants_meeting_id_fkey",
@@ -282,8 +257,7 @@ namespace Project.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "meeting_recordings",
-                columns: table => new
-                {
+                columns: table => new {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     meeting_id = table.Column<Guid>(type: "uuid", nullable: false),
                     storage_path = table.Column<string>(type: "text", nullable: false),
@@ -292,8 +266,7 @@ namespace Project.Infrastructure.Migrations
                     transcription = table.Column<string>(type: "text", nullable: true),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()")
                 },
-                constraints: table =>
-                {
+                constraints: table => {
                     table.PrimaryKey("meeting_recordings_pkey", x => x.id);
                     table.ForeignKey(
                         name: "meeting_recordings_meeting_id_fkey",
@@ -305,8 +278,7 @@ namespace Project.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "translations",
-                columns: table => new
-                {
+                columns: table => new {
                     id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     meeting_id = table.Column<Guid>(type: "uuid", nullable: true),
@@ -319,8 +291,7 @@ namespace Project.Infrastructure.Migrations
                     is_corrected = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()")
                 },
-                constraints: table =>
-                {
+                constraints: table => {
                     table.PrimaryKey("translations_pkey", x => x.id);
                     table.ForeignKey(
                         name: "translations_meeting_id_fkey",
@@ -348,8 +319,7 @@ namespace Project.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "payments",
-                columns: table => new
-                {
+                columns: table => new {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     user_id = table.Column<Guid>(type: "uuid", nullable: true),
                     subscription_id = table.Column<Guid>(type: "uuid", nullable: true),
@@ -360,8 +330,7 @@ namespace Project.Infrastructure.Migrations
                     transaction_id = table.Column<string>(type: "text", nullable: true),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()")
                 },
-                constraints: table =>
-                {
+                constraints: table => {
                     table.PrimaryKey("payments_pkey", x => x.id);
                     table.ForeignKey(
                         name: "payments_subscription_id_fkey",
@@ -379,8 +348,7 @@ namespace Project.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "lessons",
-                columns: table => new
-                {
+                columns: table => new {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     module_id = table.Column<Guid>(type: "uuid", nullable: false),
                     title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
@@ -390,8 +358,7 @@ namespace Project.Infrastructure.Migrations
                     order_number = table.Column<int>(type: "integer", nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()")
                 },
-                constraints: table =>
-                {
+                constraints: table => {
                     table.PrimaryKey("lessons_pkey", x => x.id);
                     table.ForeignKey(
                         name: "lessons_module_id_fkey",
@@ -403,8 +370,7 @@ namespace Project.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "quizzes",
-                columns: table => new
-                {
+                columns: table => new {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     lesson_id = table.Column<Guid>(type: "uuid", nullable: false),
                     question = table.Column<string>(type: "text", nullable: false),
@@ -414,8 +380,7 @@ namespace Project.Infrastructure.Migrations
                     max_score = table.Column<int>(type: "integer", nullable: false, defaultValue: 10),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()")
                 },
-                constraints: table =>
-                {
+                constraints: table => {
                     table.PrimaryKey("quizzes_pkey", x => x.id);
                     table.ForeignKey(
                         name: "quizzes_lesson_id_fkey",
@@ -427,14 +392,12 @@ namespace Project.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "user_course_progress",
-                columns: table => new
-                {
+                columns: table => new {
                     user_id = table.Column<Guid>(type: "uuid", nullable: false),
                     lesson_id = table.Column<Guid>(type: "uuid", nullable: false),
                     completed_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()")
                 },
-                constraints: table =>
-                {
+                constraints: table => {
                     table.PrimaryKey("user_course_progress_pkey", x => new { x.user_id, x.lesson_id });
                     table.ForeignKey(
                         name: "user_course_progress_lesson_id_fkey",
@@ -452,8 +415,7 @@ namespace Project.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "quiz_attempts",
-                columns: table => new
-                {
+                columns: table => new {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     user_id = table.Column<Guid>(type: "uuid", nullable: false),
                     quiz_id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -461,8 +423,7 @@ namespace Project.Infrastructure.Migrations
                     score = table.Column<int>(type: "integer", nullable: false),
                     completed_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()")
                 },
-                constraints: table =>
-                {
+                constraints: table => {
                     table.PrimaryKey("quiz_attempts_pkey", x => x.id);
                     table.ForeignKey(
                         name: "quiz_attempts_quiz_id_fkey",
@@ -685,8 +646,7 @@ namespace Project.Infrastructure.Migrations
         }
 
         /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
+        protected override void Down(MigrationBuilder migrationBuilder) {
             migrationBuilder.DropTable(
                 name: "course_reviews");
 

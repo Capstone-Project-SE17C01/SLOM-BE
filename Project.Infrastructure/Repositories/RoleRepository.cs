@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Project.Core.Entities.General;
 using Project.Core.Exceptions;
 using Project.Core.Interfaces.IRepositories;
@@ -23,7 +23,7 @@ namespace Project.Infrastructure.Repositories {
         public async Task<Guid> GetIdByNameAsync(string name) {
             var role = await _dbContext.Roles
                 .AsNoTracking()
-                .FirstOrDefaultAsync(r => r.Name.ToUpper() == name.ToUpper());
+                .FirstOrDefaultAsync(r => string.Equals(r.Name, name, StringComparison.OrdinalIgnoreCase));
 
             if (role == null) {
                 throw new NotFoundException("Role not found");

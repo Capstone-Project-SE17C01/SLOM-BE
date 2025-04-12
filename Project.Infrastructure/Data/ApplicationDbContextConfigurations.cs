@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Project.Core.Entities.General;
 
 namespace Project.Infrastructure.Data {
-    public class ApplicationDbContextConfigurations {
+    public static class ApplicationDbContextConfigurations {
         public static void Configure(ModelBuilder modelBuilder) {
 
             modelBuilder.Entity<Language>(entity => {
@@ -16,8 +16,7 @@ namespace Project.Infrastructure.Data {
                 entity.Property(e => e.Region).HasMaxLength(50).HasColumnName("region");
             });
 
-            modelBuilder.Entity<Role>(entity =>
-            {
+            modelBuilder.Entity<Role>(entity => {
                 entity.HasKey(e => e.Id).HasName("roles_pkey");
                 entity.ToTable("roles");
                 entity.HasIndex(e => e.Name, "roles_name_key").IsUnique();
