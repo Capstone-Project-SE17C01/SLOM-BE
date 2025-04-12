@@ -42,26 +42,11 @@ jobs:
         dotnet reportgenerator -reports:"**/coverage.cobertura.xml" -targetdir:"./CodeCoverage" -reporttypes:Html
       continue-on-error: true 
 
-    - name: Create report directories
-      run: |
-        mkdir -p ./CodeCoverage
-        touch ./CodeCoverage/.gitkeep
-
     - name: Verify migrations
       run: |
         dotnet tool install --global dotnet-ef
         dotnet ef migrations script --idempotent --output=migrations-script.sql --project Project.Infrastructure --startup-project Project.API
       continue-on-error: true  
-
-    - name: Upload analysis results
-      uses: actions/upload-artifact@v3
-      with:
-        name: analysis-results
-        path: |
-          ./CodeCoverage/
-          ./migrations-script.sql
-        if-no-files-found: warn
-      continue-on-error: true
 
   docker:
     runs-on: ubuntu-latest
