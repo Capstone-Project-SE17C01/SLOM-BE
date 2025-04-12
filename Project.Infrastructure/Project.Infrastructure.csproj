@@ -17,7 +17,19 @@
 	  <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.21.0" />
 	  <PackageReference Include="OpenCvSharp4" Version="4.10.0.20241108" />
 	  <PackageReference Include="OpenCvSharp4.runtime.win" Version="4.10.0.20241108" />
-	</ItemGroup>
+	  <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="8.0.0">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  </PackageReference>
+	  <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.507">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  </PackageReference>
+	  <PackageReference Include="Roslynator.Analyzers" Version="4.9.0">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  </PackageReference>
+	  </ItemGroup>
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Project.Core\Project.Core.csproj" />
