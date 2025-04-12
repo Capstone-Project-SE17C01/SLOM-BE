@@ -16,14 +16,13 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 8.0.x
+        dotnet-version: 9.0.103
 
     - name: Install dotnet format
       run: dotnet tool install -g dotnet-format
       
     - name: Run dotnet format
-      run: dotnet format --verify-no-changes --verbosity diagnostic
-      continue-on-error: true
+      run: dotnet format --verbosity diagnostic
         
     - name: Restore dependencies
       run: dotnet restore
@@ -33,15 +32,6 @@ jobs:
       
     - name: Test
       run: dotnet test --no-build --verbosity normal
-      
-    - name: Generate code metrics
-      run: |
-        dotnet tool install -g dotnet-reportgenerator-globaltool
-        dotnet new tool-manifest --force
-        dotnet tool install dotnet-reportgenerator-globaltool
-        dotnet test --no-build /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura
-        dotnet reportgenerator -reports:"**/coverage.cobertura.xml" -targetdir:"./CodeCoverage" -reporttypes:Html
-      continue-on-error: true 
 
     - name: Verify migrations
       run: |

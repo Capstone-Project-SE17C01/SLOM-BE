@@ -10,7 +10,6 @@ using Project.Core.Entities.Business.DTOs.RegisterDTOs;
 using Project.Core.Interfaces.IRepositories;
 using Project.Infrastructure.Data;
 using Project.Infrastructure.Repositories;
-using System.IdentityModel.Tokens.Jwt;
 
 namespace Project.API.Controllers
     {
