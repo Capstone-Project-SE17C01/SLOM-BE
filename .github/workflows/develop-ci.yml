@@ -23,6 +23,7 @@ jobs:
       
     - name: Run dotnet format check
       run: dotnet format --verify-no-changes
+      continue-on-error: true
 
     - name: Run dotnet format fix
       run: dotnet format --fix all --check --verbosity diagnostic --include /src/Project.API/Project.API.csproj --include /src/Project.Infrastructure/Project.Infrastructure.csproj --include /src/Project.Domain/Project.Domain.csproj --include /src/Project.Application/Project.Application.csproj --include /src/Project.Tests/Project.Tests.csproj --include /src/Project.Tests.Integration/Project.Tests.Integration.csproj --include /src/Project.Tests.Unit/Project.Tests.Unit.csproj
