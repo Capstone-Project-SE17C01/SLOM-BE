@@ -42,6 +42,11 @@ jobs:
         dotnet reportgenerator -reports:"**/coverage.cobertura.xml" -targetdir:"./CodeCoverage" -reporttypes:Html
       continue-on-error: true 
 
+    - name: Create report directories
+      run: |
+        mkdir -p ./CodeCoverage
+        touch ./CodeCoverage/.gitkeep
+
     - name: Verify migrations
       run: |
         dotnet tool install --global dotnet-ef
@@ -53,8 +58,9 @@ jobs:
       with:
         name: analysis-results
         path: |
-          ./CodeCoverage
+          ./CodeCoverage/
           ./migrations-script.sql
+        if-no-files-found: warn
       continue-on-error: true
 
   docker:
