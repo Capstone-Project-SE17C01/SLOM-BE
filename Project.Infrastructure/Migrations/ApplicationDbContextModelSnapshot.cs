@@ -469,7 +469,7 @@ namespace Project.Infrastructure.Migrations
                         .HasColumnName("status")
                         .HasDefaultValueSql("'pending'::character varying");
 
-                    b.Property<Guid?>("SubscriptionId")
+                    b.Property<Guid>("SubscriptionId")
                         .HasColumnType("uuid")
                         .HasColumnName("subscription_id");
 
@@ -477,7 +477,7 @@ namespace Project.Infrastructure.Migrations
                         .HasColumnType("text")
                         .HasColumnName("transaction_id");
 
-                    b.Property<Guid?>("UserId")
+                    b.Property<Guid>("UserId")
                         .HasColumnType("uuid")
                         .HasColumnName("user_id");
 
@@ -675,6 +675,9 @@ namespace Project.Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
                         .HasColumnName("id");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
 
                     b.Property<int>("DurationDays")
                         .HasColumnType("integer")
@@ -974,12 +977,14 @@ namespace Project.Infrastructure.Migrations
                         .WithMany("Payments")
                         .HasForeignKey("SubscriptionId")
                         .OnDelete(DeleteBehavior.SetNull)
+                        .IsRequired()
                         .HasConstraintName("payments_subscription_id_fkey");
 
                     b.HasOne("Project.Core.Entities.General.Profile", "User")
                         .WithMany("Payments")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.SetNull)
+                        .IsRequired()
                         .HasConstraintName("payments_user_id_fkey");
 
                     b.Navigation("Subscription");
