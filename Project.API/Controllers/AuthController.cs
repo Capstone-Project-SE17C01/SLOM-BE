@@ -1,4 +1,4 @@
-﻿using Amazon;
+using Amazon;
 using Amazon.CognitoIdentityProvider;
 using Amazon.CognitoIdentityProvider.Model;
 using Amazon.Extensions.CognitoAuthentication;
@@ -12,7 +12,8 @@ using Project.Infrastructure.Data;
 using Project.Infrastructure.Repositories;
 using System.IdentityModel.Tokens.Jwt;
 
-namespace Project.API.Controllers {
+namespace Project.API.Controllers
+    {
     [Route("api/Auth")]
     [ApiController]
     public class AuthController : ControllerBase {

@@ -26,4 +26,10 @@
     <Using Include="Xunit" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="API\" />
+    <Folder Include="Core\" />
+    <Folder Include="Infrastructure\" />
+  </ItemGroup>
+
 </Project>
