@@ -15,7 +15,6 @@ jobs:
 
     - name: Checkout as Administrator
       uses: actions/checkout@v4
-      if: github.event_name != 'pull_request'
       with:
         token: ${{ secrets.GH_TOKEN }}
     
@@ -46,8 +45,7 @@ jobs:
         git config --global core.autocrlf false
         git pull
         git commit -am "CI: autoformat"
-        git checkout -b format-fix
-        git push origin format-fix
+        git push
 
     - name: Restore dependencies
       run: dotnet restore
