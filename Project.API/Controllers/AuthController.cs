@@ -12,8 +12,8 @@ using Project.Infrastructure.Data;
 using Project.Infrastructure.Repositories;
 
 namespace Project.API.Controllers
-{
-    [Route("api/Auth")]
+    {
+  [Route("api/Auth")]
     [ApiController]
     public class AuthController : ControllerBase {
         private readonly AmazonCognitoIdentityProviderClient _provider;

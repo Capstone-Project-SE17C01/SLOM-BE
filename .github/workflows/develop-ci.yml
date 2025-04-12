@@ -30,7 +30,7 @@ jobs:
 
     - name: Inspect Code Format Changes
       id: verify_diff
-      run: git diff --quiet . || echo "changed=true" >> $
+      run: git diff --quiet . || echo "changed=true" >> $GITHUB_OUTPUT
       
     - name: Commit Changes
       if: steps.verify_diff.outputs.changed == 'true'
