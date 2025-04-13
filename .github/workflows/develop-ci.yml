@@ -33,7 +33,6 @@ jobs:
       with:
         languages: csharp
         build-mode: manual
-        queries: ./codeql-queries
     
     - name: Build with analyzers
       run: dotnet build --no-restore /p:EnforceCodeStyleInBuild=true /p:AnalysisMode=All
@@ -67,6 +66,8 @@ jobs:
 
     - name: Security Scan
       uses: github/codeql-action/analyze@v3
+      with:
+        category: "/language:csharp"
 
     - name: Verify migrations
       run: |
