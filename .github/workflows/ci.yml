@@ -1,0 +1,33 @@
+name: CI
+
+on:
+    push:
+        branches: [develop]
+    pull_request:
+        branches: [develop]
+
+jobs:
+    autoformat:
+      name: "Autoformat"
+      uses: ./.github/workflows/format.yml
+      secrets:
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}
+    build-and-test:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+            - name: Setup .NET
+              uses: actions/setup-dotnet@v3
+              with:
+                  dotnet-version: 8.0.x
+            - name: Restore dependencies
+              run: dotnet restore
+            - name: Build with analyzers
+              run: dotnet build --no-restore /p:EnforceCodeStyleInBuild=true /p:AnalysisMode=All
+            - name: Test
+              run: dotnet test --no-build --verbosity normal
+            - name: Verify migrations
+              run: |
+                  dotnet tool install --global dotnet-ef
+                  dotnet ef migrations script --idempotent --output=migrations-script.sql --project Project.Infrastructure --startup-project Project.API
+              continue-on-error: true
