@@ -27,12 +27,6 @@ jobs:
 
     - name: Restore dependencies
       run: dotnet restore
-
-    - name: Setup CodeQL
-      uses: github/codeql-action/init@v3
-      with:
-        languages: csharp
-        build-mode: manual
     
     - name: Build with analyzers
       run: dotnet build --no-restore /p:EnforceCodeStyleInBuild=true /p:AnalysisMode=All
@@ -63,6 +57,12 @@ jobs:
         git pull
         git commit -am "CI: autoformat"
         git push
+
+    -  name: Setup CodeQL
+       uses: github/codeql-action/init@v3
+       with:
+        languages: csharp
+        queries: security-and-quality
 
     - name: Security Scan
       uses: github/codeql-action/analyze@v3
