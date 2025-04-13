@@ -10,7 +10,17 @@ jobs:
   build-and-analyze:
     runs-on: ubuntu-latest
     permissions:
+      packages: read
+      actions: read
+      contents: read
       security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+        - language: csharp
+          build-mode: none
   
     steps:
     - uses: actions/checkout@v3
@@ -39,6 +49,8 @@ jobs:
 
     - name: Security Scan
       uses: github/codeql-action/analyze@v3
+      with:
+        category: "/language:csharp"
 
     - name: Test
       run: dotnet test --no-build --verbosity normal
