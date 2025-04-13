@@ -37,7 +37,7 @@ namespace Project.Infrastructure.Repositories {
         public async Task<Guid> GetIdByCodeAsync(string code) {
             var language = await _dbContext.Languages
                 .AsNoTracking()
-                .FirstOrDefaultAsync(l => string.Equals(l.Code, code, StringComparison.OrdinalIgnoreCase));
+               .FirstOrDefaultAsync(l => l.Code.ToUpper() == code.ToUpper());
 
             if (language == null) {
                 throw new NotFoundException("Language not found");

@@ -23,7 +23,7 @@ namespace Project.Infrastructure.Repositories {
         public async Task<Guid> GetIdByNameAsync(string name) {
             var role = await _dbContext.Roles
                 .AsNoTracking()
-                .FirstOrDefaultAsync(r => string.Equals(r.Name, name, StringComparison.OrdinalIgnoreCase));
+                .FirstOrDefaultAsync(r => r.Name.ToUpper() == name.ToUpper());
 
             if (role == null) {
                 throw new NotFoundException("Role not found");
