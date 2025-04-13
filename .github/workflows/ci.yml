@@ -8,10 +8,11 @@ on:
 
 jobs:
     autoformat:
-      name: "Autoformat"
-      uses: ./.github/workflows/format.yml
-      secrets:
-        GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        name: "Autoformat"
+        if: github.event_name != 'pull_request'
+        uses: ./.github/workflows/format.yml
+        secrets:
+            GH_TOKEN: ${{ secrets.GH_TOKEN }}
     build-and-test:
         runs-on: ubuntu-latest
         steps:
