@@ -1,4 +1,3 @@
-using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -546,8 +545,7 @@ namespace Project.Infrastructure.Migrations {
             migrationBuilder.CreateIndex(
                 name: "profiles_username_key",
                 table: "profiles",
-                column: "username",
-                unique: true);
+                column: "username");
 
             migrationBuilder.CreateIndex(
                 name: "IX_quiz_attempts_quiz_id",
