@@ -32,7 +32,8 @@ jobs:
       uses: github/codeql-action/init@v3
       with:
         languages: csharp
-        build-mode: none
+        build-mode: manually
+        queries: ./codeql-queries
     
     - name: Build with analyzers
       run: dotnet build --no-restore /p:EnforceCodeStyleInBuild=true /p:AnalysisMode=All
