@@ -31,7 +31,7 @@ namespace Project.Infrastructure.Data {
             modelBuilder.Entity<Profile>(entity => {
                 entity.HasKey(e => e.Id).HasName("profiles_pkey");
                 entity.ToTable("profiles");
-                entity.HasIndex(e => e.Username, "profiles_username_key").IsUnique();
+                entity.HasIndex(e => e.Username, "profiles_username_key");
 
                 entity.Property(e => e.Id).ValueGeneratedNever().HasColumnName("id");
                 entity.Property(e => e.Username).HasMaxLength(50).HasColumnName("username");
