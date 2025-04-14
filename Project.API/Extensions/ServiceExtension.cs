@@ -1,6 +1,9 @@
 using AutoMapper;
 using Net.payOS;
+using Project.Core.Entities.Business.DTOs.LoginDTOs;
+using Project.Core.Interfaces.IMapper;
 using Project.Core.Interfaces.IRepositories;
+using Project.Core.Mapper;
 using Project.Infrastructure.Model.ASLPredictor;
 using Project.Infrastructure.Repositories;
 
@@ -29,12 +32,12 @@ namespace Project.API.Extensions {
 
             #region Mapper
             var configuration = new MapperConfiguration(cfg => {
-                // cfg.CreateMap<>();
+                cfg.CreateMap<CognitoTokenResponse, LoginResponseDTO>();
             });
 
             IMapper mapper = configuration.CreateMapper();
 
-            // services.AddSingleton<IBaseMapper<>>(new BaseMapper<>(mapper));
+            services.AddSingleton<IBaseMapper<CognitoTokenResponse, LoginResponseDTO>>(new BaseMapper<CognitoTokenResponse, LoginResponseDTO>(mapper));
             #endregion
 
             return services;
