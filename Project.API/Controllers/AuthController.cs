@@ -79,7 +79,8 @@ namespace Project.API.Controllers {
                     PropertyNameCaseInsensitive = true
                 });
                 return tokenResponse ?? throw new Exception("Invalid Json");
-            } catch (Exception) {
+            }
+            catch (Exception) {
                 throw new Exception("Incorrect grant code");
             }
         }
@@ -96,7 +97,8 @@ namespace Project.API.Controllers {
 
                 if (loginResponse == null) {
                     return BadRequest(new APIResponse() { errorMessages = new List<string> { "Invalid Json" } });
-                } else {
+                }
+                else {
                     bool isProfileExist = await _profileRepository.IsExists("email", loginResponse.userEmail);
                     if (!isProfileExist) {
                         var langCode = loginGoogleRequest.languageCode != null ? loginGoogleRequest.languageCode.ToLower() : "en";
@@ -115,7 +117,8 @@ namespace Project.API.Controllers {
                         };
                         try {
                             await _profileRepository.Create(profile);
-                        } catch (Exception ex) {
+                        }
+                        catch (Exception ex) {
                             var deleteUserRequest = new AdminDeleteUserRequest {
                                 Username = loginResponse.userEmail,
                                 UserPoolId = _configuration["AWS:UserPoolId"]
@@ -127,7 +130,8 @@ namespace Project.API.Controllers {
                 }
                 return Ok(new APIResponse() { result = loginResponse });
 
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 List<string> errorMess = new List<string>();
                 switch (ex) {
                     case InvalidPasswordException:
@@ -171,10 +175,12 @@ namespace Project.API.Controllers {
                             UserPoolId = _configuration["AWS:UserPoolId"]
                         };
                         await _provider.AdminDeleteUserAsync(deleteUserRequest);
-                    } else {
+                    }
+                    else {
                         return BadRequest(new APIResponse() { errorMessages = new List<string> { "Email has been used" } });
                     }
-                } catch (UserNotFoundException) {
+                }
+                catch (UserNotFoundException) {
                     var listResp = await _provider.ListUsersAsync(new ListUsersRequest {
                         UserPoolId = _configuration["AWS:UserPoolId"],
                         Filter = $"email = \"{registerDTO.email}\"",
@@ -222,7 +228,8 @@ namespace Project.API.Controllers {
                     try {
                         var registerProfile = await _profileRepository.Create(profile);
                         return Ok(new APIResponse() { result = registerProfile });
-                    } catch (Exception ex) {
+                    }
+                    catch (Exception ex) {
                         var deleteUserRequest = new AdminDeleteUserRequest {
                             Username = registerDTO.email,
                             UserPoolId = _configuration["AWS:UserPoolId"]
@@ -232,11 +239,13 @@ namespace Project.API.Controllers {
                         return BadRequest(new APIResponse() { errorMessages = new List<string> { ex.Message } });
                     }
 
-                } else {
+                }
+                else {
                     return BadRequest(new APIResponse() { errorMessages = new List<string> { "Error Profile create" } });
                 }
                 #endregion
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 List<string> errorMess = new List<string>();
                 switch (ex) {
                     case InvalidPasswordException:
@@ -282,10 +291,12 @@ namespace Project.API.Controllers {
                         userEmail = loginRequestDTO.email
                     };
                     return Ok(new APIResponse() { result = loginResponse });
-                } else {
+                }
+                else {
                     return BadRequest(new APIResponse() { errorMessages = new List<string> { "Server error" } });
                 }
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 return BadRequest(new APIResponse() { errorMessages = new List<string> { ex.Message } });
             }
         }
@@ -295,10 +306,12 @@ namespace Project.API.Controllers {
             try {
                 if (confirmRegisterationRequest.isPasswordReset && !string.IsNullOrEmpty(confirmRegisterationRequest.newPassword)) {
                     return await HandlePasswordReset(confirmRegisterationRequest);
-                } else {
+                }
+                else {
                     return await HandleRegistrationConfirmation(confirmRegisterationRequest);
                 }
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 return BadRequest(ex.Message);
             }
         }
@@ -320,14 +333,17 @@ namespace Project.API.Controllers {
 
                 if (response.HttpStatusCode == System.Net.HttpStatusCode.OK) {
                     return Ok(response);
-                } else {
+                }
+                else {
                     return BadRequest();
 
                 }
-            } catch (InvalidPasswordException e) {
+            }
+            catch (InvalidPasswordException e) {
                 return BadRequest(e.Message);
 
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 return BadRequest(ex.Message);
             }
         }
@@ -348,13 +364,16 @@ namespace Project.API.Controllers {
 
                 if (response.HttpStatusCode == System.Net.HttpStatusCode.OK) {
                     return Ok(response);
-                } else {
+                }
+                else {
                     return BadRequest(new APIResponse() { errorMessages = new List<string> { "Error register confirmation" } });
                 }
-            } catch (CodeMismatchException ex) {
+            }
+            catch (CodeMismatchException ex) {
                 return BadRequest(new APIResponse() { errorMessages = new List<string> { ex.Message } });
 
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 return BadRequest(new APIResponse() { errorMessages = new List<string> { ex.Message } });
             }
         }
@@ -375,10 +394,12 @@ namespace Project.API.Controllers {
 
                 if (response.HttpStatusCode == System.Net.HttpStatusCode.OK) {
                     return Ok("Confirmation code has been resent.");
-                } else {
+                }
+                else {
                     return BadRequest("Failed to resend confirmation code.");
                 }
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 return BadRequest($"{ex.Message}");
             }
         }
@@ -399,16 +420,21 @@ namespace Project.API.Controllers {
 
                 if (response.HttpStatusCode == System.Net.HttpStatusCode.OK) {
                     return Ok(response);
-                } else {
+                }
+                else {
                     return BadRequest("reset new password failed");
                 }
-            } catch (InvalidPasswordException ex) {
+            }
+            catch (InvalidPasswordException ex) {
                 return BadRequest(new APIResponse() { errorMessages = new List<string> { ex.Message } });
-            } catch (NotAuthorizedException ex) {
+            }
+            catch (NotAuthorizedException ex) {
                 return BadRequest(new APIResponse() { errorMessages = new List<string> { ex.Message } });
-            } catch (LimitExceededException ex) {
+            }
+            catch (LimitExceededException ex) {
                 return BadRequest(new APIResponse() { errorMessages = new List<string> { ex.Message } });
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 return BadRequest(new APIResponse() { errorMessages = new List<string> { ex.Message } });
             }
 
