@@ -438,6 +438,44 @@ namespace Project.Infrastructure.Migrations {
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "user_messages",
+                columns: table => new {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    sender_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    receiver_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    message = table.Column<string>(type: "text", nullable: false),
+                    sent_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()")
+                },
+                constraints: table => {
+                    table.PrimaryKey("user_message_pkey", x => x.id);
+                    table.ForeignKey(
+                        name: "received_message_profile_fkey",
+                        column: x => x.receiver_id,
+                        principalTable: "profiles",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "sent_message_profile_fkey",
+                        column: x => x.sender_id,
+                        principalTable: "profiles",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                }
+            );
+
+            migrationBuilder.CreateIndex(
+                name: "IX_user_messages_receiver_id",
+                table: "user_messages",
+                column: "receiver_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_user_messages_sender_id",
+                table: "user_messages",
+                column: "sender_id");
+
+
             migrationBuilder.CreateIndex(
                 name: "course_categories_name_key",
                 table: "course_categories",
@@ -698,6 +736,9 @@ namespace Project.Infrastructure.Migrations {
 
             migrationBuilder.DropTable(
                 name: "roles");
+
+            migrationBuilder.DropTable(
+                name: "user_messages");
         }
     }
 }
