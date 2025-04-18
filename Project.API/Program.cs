@@ -43,7 +43,7 @@ app.UseAuthorization();
 app.MapHub<MessagingHub>("/hub");
 
 app.UseCors(x => x
-    .WithOrigins("http://localhost:3000")
+    .WithOrigins(builder.Configuration["CorsOrigin"])
         .AllowAnyHeader()
             .AllowAnyMethod()
                 .AllowCredentials());
