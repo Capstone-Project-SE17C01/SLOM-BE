@@ -15,7 +15,6 @@ namespace Project.API.Controllers {
             _messageRepository = messageRepository;
         }
 
-        //<List<UserMessage>>
         [HttpGet("GetUserMessage")]
         public async Task<List<MessageUserResponse>> GetUserMessage(Guid UserId) {
             return await _messageRepository.GetMessageUser(UserId);
