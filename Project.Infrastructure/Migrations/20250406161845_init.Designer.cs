@@ -9,15 +9,12 @@ using Project.Infrastructure.Data;
 
 #nullable disable
 
-namespace Project.Infrastructure.Migrations
-{
+namespace Project.Infrastructure.Migrations {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20250406161845_init")]
-    partial class init
-    {
+    partial class init {
         /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
-        {
+        protected override void BuildTargetModel(ModelBuilder modelBuilder) {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "9.0.3")
@@ -469,7 +466,7 @@ namespace Project.Infrastructure.Migrations
                     .HasColumnName("status")
                     .HasDefaultValueSql("'pending'::character varying");
 
-                    b.Property<Guid?>("SubscriptionId")
+                b.Property<Guid?>("SubscriptionId")
                     .HasColumnType("uuid")
                     .HasColumnName("subscription_id");
 
@@ -477,7 +474,7 @@ namespace Project.Infrastructure.Migrations
                     .HasColumnType("text")
                     .HasColumnName("transaction_id");
 
-                    b.Property<Guid?>("UserId")
+                b.Property<Guid?>("UserId")
                     .HasColumnType("uuid")
                     .HasColumnName("user_id");
 
@@ -798,44 +795,6 @@ namespace Project.Infrastructure.Migrations
                 b.ToTable("user_course_progress", (string)null);
             });
 
-            modelBuilder.Entity("Project.Core.Entities.General.UserMessage", b =>
-            {
-                b.Property<int>("MessageId")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("integer")
-                    .HasColumnName("id");
-
-                NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("MessageId"));
-
-                b.Property<DateTime>("DateTime")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("timestamp with time zone")
-                    .HasColumnName("sent_date")
-                    .HasDefaultValueSql("now()");
-
-                b.Property<string>("Message")
-                    .IsRequired()
-                    .HasColumnType("text")
-                    .HasColumnName("message");
-
-                b.Property<Guid>("ReceiverId")
-                    .HasColumnType("uuid")
-                    .HasColumnName("receiver_id");
-
-                b.Property<Guid>("SenderId")
-                    .HasColumnType("uuid")
-                    .HasColumnName("sender_id");
-
-                b.HasKey("MessageId")
-                    .HasName("user_message_pkey");
-
-                b.HasIndex("ReceiverId");
-
-                b.HasIndex("SenderId");
-
-                b.ToTable("user_messages", (string)null);
-            });
-
             modelBuilder.Entity("Project.Core.Entities.General.UserSubscription", b =>
             {
                 b.Property<Guid>("Id")
@@ -1130,27 +1089,6 @@ namespace Project.Infrastructure.Migrations
                 b.Navigation("User");
             });
 
-            modelBuilder.Entity("Project.Core.Entities.General.UserMessage", b =>
-            {
-                b.HasOne("Project.Core.Entities.General.Profile", "Receiver")
-                    .WithMany("ReceivedMessages")
-                    .HasForeignKey("ReceiverId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired()
-                    .HasConstraintName("received_message_profile_fkey");
-
-                b.HasOne("Project.Core.Entities.General.Profile", "Sender")
-                    .WithMany("SentMessages")
-                    .HasForeignKey("SenderId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired()
-                    .HasConstraintName("sent_message_profile_fkey");
-
-                b.Navigation("Receiver");
-
-                b.Navigation("Sender");
-            });
-
             modelBuilder.Entity("Project.Core.Entities.General.UserSubscription", b =>
             {
                 b.HasOne("Project.Core.Entities.General.SubscriptionPlan", "Plan")
@@ -1233,10 +1171,6 @@ namespace Project.Infrastructure.Migrations
                 b.Navigation("Payments");
 
                 b.Navigation("QuizAttempts");
-
-                b.Navigation("ReceivedMessages");
-
-                b.Navigation("SentMessages");
 
                 b.Navigation("Translations");
 
