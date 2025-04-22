@@ -408,6 +408,27 @@ namespace Project.Infrastructure.Data {
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("course_reviews_user_id_fkey");
             });
+
+            modelBuilder.Entity<UserMessage>(entity => {
+                entity.HasKey(e => e.MessageId).HasName("user_message_pkey");
+                entity.ToTable("user_messages");
+
+                entity.Property(e => e.MessageId).ValueGeneratedOnAdd().HasColumnName("id");
+                entity.Property(e => e.SenderId).HasColumnName("sender_id");
+                entity.Property(e => e.ReceiverId).HasColumnName("receiver_id");
+                entity.Property(e => e.Message).HasColumnName("message");
+                entity.Property(e => e.DateTime).HasDefaultValueSql("now()").HasColumnName("sent_date");
+
+                entity.HasOne(e => e.Sender)
+                    .WithMany(e => e.SentMessages)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("sent_message_profile_fkey");
+
+                entity.HasOne(e => e.Receiver)
+                    .WithMany(e => e.ReceivedMessages)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("received_message_profile_fkey");
+            });
         }
 
         public static void SeedData(ModelBuilder modelBuilder) {

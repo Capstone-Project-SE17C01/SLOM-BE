@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Project.Core.Entities.Business.DTOs;
+using Project.Core.Entities.Business.DTOs.ProfileDTOs;
 using Project.Core.Interfaces.IRepositories;
 
 namespace Project.API.Controllers {
@@ -19,6 +20,12 @@ namespace Project.API.Controllers {
             return Ok(new APIResponse {
                 result = profile,
             });
+        }
+
+
+        [HttpGet("GetProfileByName")]
+        public async Task<List<ProfileByNameResponse?>> GetProfilesByName(string input, string currentUserEmail) {
+            return await _profileRepository.GetProfileByName(input, currentUserEmail);
         }
     }
 }

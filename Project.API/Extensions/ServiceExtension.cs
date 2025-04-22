@@ -1,5 +1,6 @@
 using AutoMapper;
 using Net.payOS;
+using Project.API.SignalR.Service;
 using Project.Core.Entities.Business.DTOs.LoginDTOs;
 using Project.Core.Interfaces.IMapper;
 using Project.Core.Interfaces.IRepositories;
@@ -27,6 +28,8 @@ namespace Project.API.Extensions {
 
             #region Repositories
             services.AddTransient<IProfileRepository, ProfileRepository>();
+            services.AddScoped<IMessageRepository, MessageRepository>();
+            services.AddScoped<IMessageService, MessageService>();
             // services.AddTransient<>();
             #endregion
 

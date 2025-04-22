@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.OData;
 using Microsoft.EntityFrameworkCore;
 using Project.API.Extensions;
 using Project.API.Middlewares;
+using Project.API.SignalR.Hubs;
 using Project.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,6 +21,8 @@ builder.Services.AddControllers().AddOData(option => option.Select().Filter()
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSignalR();
+
 
 var app = builder.Build();
 
@@ -33,10 +36,13 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
+app.MapHub<MessagingHub>("/hub");
+
 app.UseCors(x => x
-    .AllowAnyOrigin()
-       .AllowAnyMethod()
-          .AllowAnyHeader());
+    .WithOrigins(builder.Configuration["CorsOrigin"])
+        .AllowAnyHeader()
+            .AllowAnyMethod()
+                .AllowCredentials());
 
 app.MapControllers();
 
