@@ -18,10 +18,8 @@ namespace Project.Infrastructure.Repositories {
             return profile;
         }
 
-        public async Task<List<ProfileByNameResponse>> GetProfileByName(string name, string currentUserEmail)
-        {
-            if (string.IsNullOrEmpty(name))
-            {
+        public async Task<List<ProfileByNameResponse>> GetProfileByName(string name, string currentUserEmail) {
+            if (string.IsNullOrEmpty(name)) {
                 return new List<ProfileByNameResponse>();
             }
             return await _dbContext.Profiles
