@@ -7,9 +7,11 @@ using Amazon.CognitoIdentityProvider.Model;
 using Amazon.Extensions.CognitoAuthentication;
 using Microsoft.AspNetCore.Mvc;
 using Project.Core.Entities.Business.DTOs;
+using Project.Core.Entities.Business.DTOs.ChangePasswordDTOs;
 using Project.Core.Entities.Business.DTOs.ForgotPasswordDTOs;
 using Project.Core.Entities.Business.DTOs.LoginDTOs;
 using Project.Core.Entities.Business.DTOs.RegisterDTOs;
+using Project.Core.Exceptions;
 using Project.Core.Interfaces.IMapper;
 using Project.Core.Interfaces.IRepositories;
 using Project.Infrastructure.Data;
@@ -78,10 +80,9 @@ namespace Project.API.Controllers {
                 var tokenResponse = JsonSerializer.Deserialize<CognitoTokenResponse>(json, new JsonSerializerOptions {
                     PropertyNameCaseInsensitive = true
                 });
-                return tokenResponse ?? throw new Exception("Invalid Json");
-            }
-            catch (Exception) {
-                throw new Exception("Incorrect grant code");
+                return tokenResponse ?? throw new Exception("invalidJson");
+            } catch (Exception) {
+                throw new Exception("invalidGrantCode");
             }
         }
 
@@ -96,9 +97,8 @@ namespace Project.API.Controllers {
                 loginResponse.userEmail = jwtToken.Claims.First(c => c.Type == "email").Value;
 
                 if (loginResponse == null) {
-                    return BadRequest(new APIResponse() { errorMessages = new List<string> { "Invalid Json" } });
-                }
-                else {
+                    return BadRequest(new APIResponse() { errorMessages = new List<string> { "invalidJson" } });
+                } else {
                     bool isProfileExist = await _profileRepository.IsExists("email", loginResponse.userEmail);
                     if (!isProfileExist) {
                         var langCode = loginGoogleRequest.languageCode != null ? loginGoogleRequest.languageCode.ToLower() : "en";
@@ -117,44 +117,20 @@ namespace Project.API.Controllers {
                         };
                         try {
                             await _profileRepository.Create(profile);
-                        }
-                        catch (Exception ex) {
+                        } catch (Exception) {
                             var deleteUserRequest = new AdminDeleteUserRequest {
                                 Username = loginResponse.userEmail,
                                 UserPoolId = _configuration["AWS:UserPoolId"]
                             };
                             await _provider.AdminDeleteUserAsync(deleteUserRequest);
-                            return BadRequest(new APIResponse() { errorMessages = new List<string> { ex.Message } });
+                            return BadRequest(new APIResponse() { errorMessages = new List<string> { "errorProfileCreate" } });
                         }
                     }
                 }
                 return Ok(new APIResponse() { result = loginResponse });
 
-            }
-            catch (Exception ex) {
-                List<string> errorMess = new List<string>();
-                switch (ex) {
-                    case InvalidPasswordException:
-                        errorMess.Add(ex.Message.Split(":")[1]);
-                        break;
-                    case TooManyFailedAttemptsException:
-                        errorMess.Add("Too many failed attempts");
-                        break;
-                    case UserNotFoundException:
-                        errorMess.Add("User not found");
-                        break;
-                    case UsernameExistsException:
-                        errorMess.Add("Username already exists");
-                        break;
-                    case NotAuthorizedException:
-                        errorMess.Add("Not authorized");
-                        break;
-
-                    default:
-                        errorMess.Add(ex.Message);
-                        break;
-                }
-                return BadRequest(new APIResponse() { errorMessages = errorMess });
+            } catch (Exception ex) {
+                return AuthException.Resolve(ex);
             }
 
         }
@@ -175,12 +151,10 @@ namespace Project.API.Controllers {
                             UserPoolId = _configuration["AWS:UserPoolId"]
                         };
                         await _provider.AdminDeleteUserAsync(deleteUserRequest);
+                    } else {
+                        return BadRequest(new APIResponse() { errorMessages = new List<string> { "emailUsed" } });
                     }
-                    else {
-                        return BadRequest(new APIResponse() { errorMessages = new List<string> { "Email has been used" } });
-                    }
-                }
-                catch (UserNotFoundException) {
+                } catch (UserNotFoundException) {
                     var listResp = await _provider.ListUsersAsync(new ListUsersRequest {
                         UserPoolId = _configuration["AWS:UserPoolId"],
                         Filter = $"email = \"{registerDTO.email}\"",
@@ -188,7 +162,7 @@ namespace Project.API.Controllers {
                     });
                     var existing = listResp.Users[0];
                     if (listResp.Users.Count > 0 && existing.UserStatus == UserStatusType.EXTERNAL_PROVIDER) {
-                        return BadRequest(new APIResponse() { errorMessages = new List<string> { "Email has been registered with google" } });
+                        return BadRequest(new APIResponse() { errorMessages = new List<string> { "emailRegisteredWithGoogle" } });
                     }
                 }
 
@@ -228,8 +202,7 @@ namespace Project.API.Controllers {
                     try {
                         var registerProfile = await _profileRepository.Create(profile);
                         return Ok(new APIResponse() { result = registerProfile });
-                    }
-                    catch (Exception ex) {
+                    } catch (Exception ex) {
                         var deleteUserRequest = new AdminDeleteUserRequest {
                             Username = registerDTO.email,
                             UserPoolId = _configuration["AWS:UserPoolId"]
@@ -239,36 +212,12 @@ namespace Project.API.Controllers {
                         return BadRequest(new APIResponse() { errorMessages = new List<string> { ex.Message } });
                     }
 
-                }
-                else {
-                    return BadRequest(new APIResponse() { errorMessages = new List<string> { "Error Profile create" } });
+                } else {
+                    return BadRequest(new APIResponse() { errorMessages = new List<string> { "errorProfileCreate" } });
                 }
                 #endregion
-            }
-            catch (Exception ex) {
-                List<string> errorMess = new List<string>();
-                switch (ex) {
-                    case InvalidPasswordException:
-                        errorMess.Add(ex.Message.Split(":")[1]);
-                        break;
-                    case TooManyFailedAttemptsException:
-                        errorMess.Add("Too many failed attempts");
-                        break;
-                    case UserNotFoundException:
-                        errorMess.Add("User not found");
-                        break;
-                    case UsernameExistsException:
-                        errorMess.Add("Username already exists");
-                        break;
-                    case NotAuthorizedException:
-                        errorMess.Add("Not authorized");
-                        break;
-
-                    default:
-                        errorMess.Add("An unknown error occurred");
-                        break;
-                }
-                return BadRequest(new APIResponse() { errorMessages = errorMess });
+            } catch (Exception ex) {
+                return AuthException.Resolve(ex);
             }
 
         }
@@ -291,13 +240,11 @@ namespace Project.API.Controllers {
                         userEmail = loginRequestDTO.email
                     };
                     return Ok(new APIResponse() { result = loginResponse });
+                } else {
+                    return BadRequest(new APIResponse() { errorMessages = new List<string> { "unknownError" } });
                 }
-                else {
-                    return BadRequest(new APIResponse() { errorMessages = new List<string> { "Server error" } });
-                }
-            }
-            catch (Exception ex) {
-                return BadRequest(new APIResponse() { errorMessages = new List<string> { ex.Message } });
+            } catch (Exception ex) {
+                return AuthException.Resolve(ex);
             }
         }
 
@@ -306,19 +253,18 @@ namespace Project.API.Controllers {
             try {
                 if (confirmRegisterationRequest.isPasswordReset && !string.IsNullOrEmpty(confirmRegisterationRequest.newPassword)) {
                     return await HandlePasswordReset(confirmRegisterationRequest);
-                }
-                else {
+                } else {
                     return await HandleRegistrationConfirmation(confirmRegisterationRequest);
                 }
-            }
-            catch (Exception ex) {
-                return BadRequest(ex.Message);
+            } catch (Exception ex) {
+                return AuthException.Resolve(ex);
             }
         }
 
         private async Task<IActionResult> HandlePasswordReset(ConfirmRegisterationRequestDTO confirmRegisterationRequest) {
             if (string.IsNullOrEmpty(confirmRegisterationRequest.newPassword)) {
-                return BadRequest();
+                return BadRequest(new APIResponse() { errorMessages = new List<string> { "emptynewPassword" } });
+
             }
 
             var confirmForgotPasswordRequest = new ConfirmForgotPasswordRequest {
@@ -330,27 +276,15 @@ namespace Project.API.Controllers {
 
             try {
                 var response = await _provider.ConfirmForgotPasswordAsync(confirmForgotPasswordRequest);
-
-                if (response.HttpStatusCode == System.Net.HttpStatusCode.OK) {
-                    return Ok(response);
-                }
-                else {
-                    return BadRequest();
-
-                }
-            }
-            catch (InvalidPasswordException e) {
-                return BadRequest(e.Message);
-
-            }
-            catch (Exception ex) {
-                return BadRequest(ex.Message);
+                return Ok(response);
+            } catch (Exception ex) {
+                return AuthException.Resolve(ex);
             }
         }
 
         private async Task<IActionResult> HandleRegistrationConfirmation(ConfirmRegisterationRequestDTO confirmRegisterationRequest) {
             if (string.IsNullOrEmpty(confirmRegisterationRequest.username)) {
-                return BadRequest(new APIResponse() { errorMessages = new List<string> { "Username is required for registration confirmation." } });
+                return BadRequest(new APIResponse() { errorMessages = new List<string> { "emptyUsername" } });
             }
 
             var confirmSignUpRequest = new ConfirmSignUpRequest {
@@ -364,17 +298,11 @@ namespace Project.API.Controllers {
 
                 if (response.HttpStatusCode == System.Net.HttpStatusCode.OK) {
                     return Ok(response);
+                } else {
+                    return BadRequest(new APIResponse() { errorMessages = new List<string> { "errorRegisterConfirmation" } });
                 }
-                else {
-                    return BadRequest(new APIResponse() { errorMessages = new List<string> { "Error register confirmation" } });
-                }
-            }
-            catch (CodeMismatchException ex) {
-                return BadRequest(new APIResponse() { errorMessages = new List<string> { ex.Message } });
-
-            }
-            catch (Exception ex) {
-                return BadRequest(new APIResponse() { errorMessages = new List<string> { ex.Message } });
+            } catch (Exception ex) {
+                return AuthException.Resolve(ex);
             }
         }
 
@@ -382,7 +310,7 @@ namespace Project.API.Controllers {
         public async Task<IActionResult> ResendConfirmationCode([FromBody] ResendConfirmationCode resendRequest) {
             try {
                 if (string.IsNullOrEmpty(resendRequest.email)) {
-                    return BadRequest("Email is required.");
+                    return BadRequest(new APIResponse() { errorMessages = new List<string> { "emptyEmail" } });
                 }
 
                 var resendConfirmationRequest = new ResendConfirmationCodeRequest {
@@ -393,14 +321,12 @@ namespace Project.API.Controllers {
                 var response = await _provider.ResendConfirmationCodeAsync(resendConfirmationRequest);
 
                 if (response.HttpStatusCode == System.Net.HttpStatusCode.OK) {
-                    return Ok("Confirmation code has been resent.");
+                    return Ok("successResendConfirmationCode");
+                } else {
+                    return BadRequest(new APIResponse() { errorMessages = new List<string> { "errorResendConfirmationCode" } });
                 }
-                else {
-                    return BadRequest("Failed to resend confirmation code.");
-                }
-            }
-            catch (Exception ex) {
-                return BadRequest($"{ex.Message}");
+            } catch (Exception) {
+                return BadRequest(new APIResponse() { errorMessages = new List<string> { "unknownError" } });
             }
         }
 
@@ -408,7 +334,7 @@ namespace Project.API.Controllers {
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequestDTO forgotPasswordRequestDto) {
 
             if (string.IsNullOrEmpty(forgotPasswordRequestDto.email)) {
-                return BadRequest("User not found.");
+                return BadRequest(new APIResponse() { errorMessages = new List<string> { "userNotFound" } });
             }
 
             var forgotPasswordRequest = new ForgotPasswordRequest {
@@ -420,24 +346,31 @@ namespace Project.API.Controllers {
 
                 if (response.HttpStatusCode == System.Net.HttpStatusCode.OK) {
                     return Ok(response);
+                } else {
+                    return BadRequest(new APIResponse() { errorMessages = new List<string> { "errorResetPassword" } });
                 }
-                else {
-                    return BadRequest("reset new password failed");
-                }
-            }
-            catch (InvalidPasswordException ex) {
-                return BadRequest(new APIResponse() { errorMessages = new List<string> { ex.Message } });
-            }
-            catch (NotAuthorizedException ex) {
-                return BadRequest(new APIResponse() { errorMessages = new List<string> { ex.Message } });
-            }
-            catch (LimitExceededException ex) {
-                return BadRequest(new APIResponse() { errorMessages = new List<string> { ex.Message } });
-            }
-            catch (Exception ex) {
-                return BadRequest(new APIResponse() { errorMessages = new List<string> { ex.Message } });
+            } catch (Exception ex) {
+                return AuthException.Resolve(ex);
             }
 
         }
+
+        [HttpPost("UpdatePassword")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequestDTO model) {
+            try {
+                var request = new ChangePasswordRequest {
+                    AccessToken = model.accessToken,
+                    PreviousPassword = model.oldPassword,
+                    ProposedPassword = model.newPassword
+                };
+
+                var response = await _provider.ChangePasswordAsync(request);
+
+                return Ok(new APIResponse() { result = "passwordUpdated" });
+            } catch (Exception ex) {
+                return AuthException.Resolve(ex);
+            }
+        }
+
     }
 }
