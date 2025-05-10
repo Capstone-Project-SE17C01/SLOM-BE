@@ -678,6 +678,31 @@ namespace Project.Infrastructure.Migrations {
                 oldClrType: typeof(Guid),
                 oldType: "uuid",
                 oldNullable: true);
+
+            migrationBuilder.AlterColumn<DateTime>(
+               name: "completed_at",
+               table: "user_course_progress",
+               type: "timestamp with time zone",
+               nullable: true,
+               defaultValueSql: "now()",
+               oldClrType: typeof(DateTime),
+               oldType: "timestamp with time zone",
+               oldDefaultValueSql: "now()");
+
+            migrationBuilder.AlterColumn<int>(
+                name: "max_score",
+                table: "quizzes",
+                type: "integer",
+                nullable: true,
+                defaultValue: 10,
+                oldClrType: typeof(int),
+                oldType: "integer",
+                oldDefaultValue: 10);
+
+            migrationBuilder.CreateIndex(
+                name: "profiles_username_key",
+                table: "profiles",
+                column: "username");
         }
 
         /// <inheritdoc />

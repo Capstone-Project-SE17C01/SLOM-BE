@@ -12,7 +12,7 @@ namespace Project.Core.Entities.General {
 
         public string? Explanation { get; set; }
 
-        public int MaxScore { get; set; } = 10;
+        public int? MaxScore { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 

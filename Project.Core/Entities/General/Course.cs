@@ -16,7 +16,7 @@ namespace Project.Core.Entities.General {
 
         public Guid? CreatorId { get; set; }
 
-        public bool IsPublished { get; set; } = false;
+        public bool IsPublished { get; set; } = true;
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 

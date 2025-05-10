@@ -11,6 +11,7 @@ using Project.Core.Entities.Business.DTOs.ChangePasswordDTOs;
 using Project.Core.Entities.Business.DTOs.ForgotPasswordDTOs;
 using Project.Core.Entities.Business.DTOs.LoginDTOs;
 using Project.Core.Entities.Business.DTOs.RegisterDTOs;
+using Project.Core.Exceptions;
 using Project.Core.Interfaces.IMapper;
 using Project.Core.Interfaces.IRepositories;
 using Project.Infrastructure.Data;
@@ -129,29 +130,7 @@ namespace Project.API.Controllers {
                 return Ok(new APIResponse() { result = loginResponse });
 
             } catch (Exception ex) {
-                List<string> errorMess = new List<string>();
-                switch (ex) {
-                    case InvalidPasswordException:
-                        errorMess.Add(ex.Message.Split(":")[1]);
-                        break;
-                    case TooManyFailedAttemptsException:
-                        errorMess.Add("Too many failed attempts");
-                        break;
-                    case UserNotFoundException:
-                        errorMess.Add("User not found");
-                        break;
-                    case UsernameExistsException:
-                        errorMess.Add("Username already exists");
-                        break;
-                    case NotAuthorizedException:
-                        errorMess.Add("Not authorized");
-                        break;
-
-                    default:
-                        errorMess.Add(ex.Message);
-                        break;
-                }
-                return BadRequest(new APIResponse() { errorMessages = errorMess });
+                return AuthException.Resolve(ex);
             }
 
         }
@@ -238,28 +217,7 @@ namespace Project.API.Controllers {
                 }
                 #endregion
             } catch (Exception ex) {
-                List<string> errorMess = new List<string>();
-                switch (ex) {
-                    case InvalidPasswordException:
-                        errorMess.Add(ex.Message.Split(":")[1]);
-                        break;
-                    case TooManyFailedAttemptsException:
-                        errorMess.Add("limitExceededException");
-                        break;
-                    case UserNotFoundException:
-                        errorMess.Add("userNotFound");
-                        break;
-                    case UsernameExistsException:
-                        errorMess.Add("usernameExisted");
-                        break;
-                    case NotAuthorizedException:
-                        errorMess.Add("notAuthorizedException");
-                        break;
-                    default:
-                        errorMess.Add("unknownError");
-                        break;
-                }
-                return BadRequest(new APIResponse() { errorMessages = errorMess });
+                return AuthException.Resolve(ex);
             }
 
         }
@@ -285,14 +243,8 @@ namespace Project.API.Controllers {
                 } else {
                     return BadRequest(new APIResponse() { errorMessages = new List<string> { "unknownError" } });
                 }
-            } catch (InvalidPasswordException) {
-                return BadRequest(new APIResponse() { errorMessages = new List<string> { "invalidPasswordException" } });
-            } catch (NotAuthorizedException) {
-                return BadRequest(new APIResponse() { errorMessages = new List<string> { "incorrectUserNamePassword" } });
-            } catch (LimitExceededException) {
-                return BadRequest(new APIResponse() { errorMessages = new List<string> { "limitExceededException" } });
-            } catch (Exception) {
-                return BadRequest(new APIResponse() { errorMessages = new List<string> { "unknownError" } });
+            } catch (Exception ex) {
+                return AuthException.Resolve(ex);
             }
         }
 
@@ -304,8 +256,8 @@ namespace Project.API.Controllers {
                 } else {
                     return await HandleRegistrationConfirmation(confirmRegisterationRequest);
                 }
-            } catch (Exception) {
-                return BadRequest(new APIResponse() { errorMessages = new List<string> { "unknownError" } });
+            } catch (Exception ex) {
+                return AuthException.Resolve(ex);
             }
         }
 
@@ -325,18 +277,8 @@ namespace Project.API.Controllers {
             try {
                 var response = await _provider.ConfirmForgotPasswordAsync(confirmForgotPasswordRequest);
                 return Ok(response);
-            } catch (InvalidPasswordException) {
-                return BadRequest(new APIResponse() { errorMessages = new List<string> { "invalidPasswordException" } });
-            } catch (ExpiredCodeException) {
-                return BadRequest(new APIResponse() { errorMessages = new List<string> { "invalidCodeProvided" } });
-            } catch (LimitExceededException) {
-                return BadRequest(new APIResponse() { errorMessages = new List<string> { "limitExceededException" } });
-            } catch (CodeMismatchException) {
-                return BadRequest(new APIResponse() { errorMessages = new List<string> { "codeMismatchException" } });
-            } catch (InvalidParameterException) {
-                return BadRequest(new APIResponse() { errorMessages = new List<string> { "invalidCodepattern" } });
-            } catch (Exception) {
-                return BadRequest(new APIResponse() { errorMessages = new List<string> { "unknownError" } });
+            } catch (Exception ex) {
+                return AuthException.Resolve(ex);
             }
         }
 
@@ -359,14 +301,8 @@ namespace Project.API.Controllers {
                 } else {
                     return BadRequest(new APIResponse() { errorMessages = new List<string> { "errorRegisterConfirmation" } });
                 }
-            } catch (CodeMismatchException) {
-                return BadRequest(new APIResponse() { errorMessages = new List<string> { "codeMismatchException" } });
-            } catch (ExpiredCodeException) {
-                return BadRequest(new APIResponse() { errorMessages = new List<string> { "invalidCodeProvided" } });
-            } catch (InvalidParameterException) {
-                return BadRequest(new APIResponse() { errorMessages = new List<string> { "invalidCodepattern" } });
-            } catch (Exception) {
-                return BadRequest(new APIResponse() { errorMessages = new List<string> { "unknownError" } });
+            } catch (Exception ex) {
+                return AuthException.Resolve(ex);
             }
         }
 
@@ -413,14 +349,8 @@ namespace Project.API.Controllers {
                 } else {
                     return BadRequest(new APIResponse() { errorMessages = new List<string> { "errorResetPassword" } });
                 }
-            } catch (InvalidPasswordException) {
-                return BadRequest(new APIResponse() { errorMessages = new List<string> { "invalidPasswordException" } });
-            } catch (NotAuthorizedException) {
-                return BadRequest(new APIResponse() { errorMessages = new List<string> { "notAuthorizedException" } });
-            } catch (LimitExceededException) {
-                return BadRequest(new APIResponse() { errorMessages = new List<string> { "limitExceededException" } });
-            } catch (Exception) {
-                return BadRequest(new APIResponse() { errorMessages = new List<string> { "unknownError" } });
+            } catch (Exception ex) {
+                return AuthException.Resolve(ex);
             }
 
         }
@@ -437,21 +367,8 @@ namespace Project.API.Controllers {
                 var response = await _provider.ChangePasswordAsync(request);
 
                 return Ok(new APIResponse() { result = "passwordUpdated" });
-            } catch (InvalidPasswordException) {
-                return BadRequest(new APIResponse() { errorMessages = new List<string> { "invalidPasswordException" } });
-            } catch (NotAuthorizedException) {
-                return BadRequest(new APIResponse() { errorMessages = new List<string> { "notAuthorizedException" } });
-            } catch (LimitExceededException) {
-                return BadRequest(new APIResponse() { errorMessages = new List<string> { "limitExceededException" } });
-            } catch (InvalidParameterException) {
-                return BadRequest(new APIResponse() { errorMessages = new List<string> { "invalidParameterException" } });
-            } catch (PasswordHistoryPolicyViolationException) {
-                return BadRequest(new APIResponse() { errorMessages = new List<string> { "passwordHistoryPolicyViolationException" } });
-            } catch (TooManyRequestsException) {
-                return BadRequest(new APIResponse() { errorMessages = new List<string> { "tooManyRequestsException" } });
             } catch (Exception ex) {
-                return BadRequest(new APIResponse() { errorMessages = new List<string> { "unknownError" } });
-
+                return AuthException.Resolve(ex);
             }
         }
 
