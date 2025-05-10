@@ -81,7 +81,8 @@ namespace Project.API.Controllers {
                     PropertyNameCaseInsensitive = true
                 });
                 return tokenResponse ?? throw new Exception("invalidJson");
-            } catch (Exception) {
+            }
+            catch (Exception) {
                 throw new Exception("invalidGrantCode");
             }
         }
@@ -98,7 +99,8 @@ namespace Project.API.Controllers {
 
                 if (loginResponse == null) {
                     return BadRequest(new APIResponse() { errorMessages = new List<string> { "invalidJson" } });
-                } else {
+                }
+                else {
                     bool isProfileExist = await _profileRepository.IsExists("email", loginResponse.userEmail);
                     if (!isProfileExist) {
                         var langCode = loginGoogleRequest.languageCode != null ? loginGoogleRequest.languageCode.ToLower() : "en";
@@ -117,7 +119,8 @@ namespace Project.API.Controllers {
                         };
                         try {
                             await _profileRepository.Create(profile);
-                        } catch (Exception) {
+                        }
+                        catch (Exception) {
                             var deleteUserRequest = new AdminDeleteUserRequest {
                                 Username = loginResponse.userEmail,
                                 UserPoolId = _configuration["AWS:UserPoolId"]
@@ -129,7 +132,8 @@ namespace Project.API.Controllers {
                 }
                 return Ok(new APIResponse() { result = loginResponse });
 
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 return AuthException.Resolve(ex);
             }
 
@@ -151,10 +155,12 @@ namespace Project.API.Controllers {
                             UserPoolId = _configuration["AWS:UserPoolId"]
                         };
                         await _provider.AdminDeleteUserAsync(deleteUserRequest);
-                    } else {
+                    }
+                    else {
                         return BadRequest(new APIResponse() { errorMessages = new List<string> { "emailUsed" } });
                     }
-                } catch (UserNotFoundException) {
+                }
+                catch (UserNotFoundException) {
                     var listResp = await _provider.ListUsersAsync(new ListUsersRequest {
                         UserPoolId = _configuration["AWS:UserPoolId"],
                         Filter = $"email = \"{registerDTO.email}\"",
@@ -202,7 +208,8 @@ namespace Project.API.Controllers {
                     try {
                         var registerProfile = await _profileRepository.Create(profile);
                         return Ok(new APIResponse() { result = registerProfile });
-                    } catch (Exception ex) {
+                    }
+                    catch (Exception ex) {
                         var deleteUserRequest = new AdminDeleteUserRequest {
                             Username = registerDTO.email,
                             UserPoolId = _configuration["AWS:UserPoolId"]
@@ -212,11 +219,13 @@ namespace Project.API.Controllers {
                         return BadRequest(new APIResponse() { errorMessages = new List<string> { ex.Message } });
                     }
 
-                } else {
+                }
+                else {
                     return BadRequest(new APIResponse() { errorMessages = new List<string> { "errorProfileCreate" } });
                 }
                 #endregion
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 return AuthException.Resolve(ex);
             }
 
@@ -240,10 +249,12 @@ namespace Project.API.Controllers {
                         userEmail = loginRequestDTO.email
                     };
                     return Ok(new APIResponse() { result = loginResponse });
-                } else {
+                }
+                else {
                     return BadRequest(new APIResponse() { errorMessages = new List<string> { "unknownError" } });
                 }
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 return AuthException.Resolve(ex);
             }
         }
@@ -253,10 +264,12 @@ namespace Project.API.Controllers {
             try {
                 if (confirmRegisterationRequest.isPasswordReset && !string.IsNullOrEmpty(confirmRegisterationRequest.newPassword)) {
                     return await HandlePasswordReset(confirmRegisterationRequest);
-                } else {
+                }
+                else {
                     return await HandleRegistrationConfirmation(confirmRegisterationRequest);
                 }
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 return AuthException.Resolve(ex);
             }
         }
@@ -277,7 +290,8 @@ namespace Project.API.Controllers {
             try {
                 var response = await _provider.ConfirmForgotPasswordAsync(confirmForgotPasswordRequest);
                 return Ok(response);
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 return AuthException.Resolve(ex);
             }
         }
@@ -298,10 +312,12 @@ namespace Project.API.Controllers {
 
                 if (response.HttpStatusCode == System.Net.HttpStatusCode.OK) {
                     return Ok(response);
-                } else {
+                }
+                else {
                     return BadRequest(new APIResponse() { errorMessages = new List<string> { "errorRegisterConfirmation" } });
                 }
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 return AuthException.Resolve(ex);
             }
         }
@@ -322,10 +338,12 @@ namespace Project.API.Controllers {
 
                 if (response.HttpStatusCode == System.Net.HttpStatusCode.OK) {
                     return Ok("successResendConfirmationCode");
-                } else {
+                }
+                else {
                     return BadRequest(new APIResponse() { errorMessages = new List<string> { "errorResendConfirmationCode" } });
                 }
-            } catch (Exception) {
+            }
+            catch (Exception) {
                 return BadRequest(new APIResponse() { errorMessages = new List<string> { "unknownError" } });
             }
         }
@@ -346,10 +364,12 @@ namespace Project.API.Controllers {
 
                 if (response.HttpStatusCode == System.Net.HttpStatusCode.OK) {
                     return Ok(response);
-                } else {
+                }
+                else {
                     return BadRequest(new APIResponse() { errorMessages = new List<string> { "errorResetPassword" } });
                 }
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 return AuthException.Resolve(ex);
             }
 
@@ -367,7 +387,8 @@ namespace Project.API.Controllers {
                 var response = await _provider.ChangePasswordAsync(request);
 
                 return Ok(new APIResponse() { result = "passwordUpdated" });
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 return AuthException.Resolve(ex);
             }
         }
