@@ -9,12 +9,17 @@
 	<ItemGroup>
 		<PackageReference Include="Amazon.AspNetCore.Identity.Cognito" Version="3.0.2" />
 		<PackageReference Include="AWSSDK.CognitoIdentityProvider" Version="3.7.403.2" />
+		<PackageReference Include="Azure.Extensions.AspNetCore.Configuration.Secrets" Version="1.4.0" />
+		<PackageReference Include="Azure.Identity" Version="1.13.2" />
+		<PackageReference Include="Azure.Security.KeyVault.Secrets" Version="4.7.0" />
 		<PackageReference Include="Microsoft.AspNetCore.OData" Version="9.2.1" />
 
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.3">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+
+		<PackageReference Include="Microsoft.Extensions.Configuration.AzureKeyVault" Version="3.1.24" />
 		<PackageReference Include="payOS" Version="1.0.9" />
 		<PackageReference Include="Serilog" Version="4.2.0" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
