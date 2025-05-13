@@ -1,22 +1,19 @@
+using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
 using Microsoft.AspNetCore.OData;
 using Microsoft.EntityFrameworkCore;
 using Project.API.Extensions;
 using Project.API.Middlewares;
 using Project.API.SignalR.Hubs;
 using Project.Infrastructure.Data;
-using Azure.Security.KeyVault.Secrets;
-using Azure.Extensions.AspNetCore.Configuration.Secrets;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var keyVaultEndpoint = builder.Configuration["KeyVault:KeyVaultURL"];
-if (!string.IsNullOrEmpty(keyVaultEndpoint))
-{
-    try
-    {
-        var credential = new DefaultAzureCredential(new DefaultAzureCredentialOptions
-        {
+if (!string.IsNullOrEmpty(keyVaultEndpoint)) {
+    try {
+        var credential = new DefaultAzureCredential(new DefaultAzureCredentialOptions {
             ExcludeEnvironmentCredential = false,
             ExcludeAzureCliCredential = false,
             ExcludeManagedIdentityCredential = false,
@@ -29,8 +26,7 @@ if (!string.IsNullOrEmpty(keyVaultEndpoint))
         var client = new SecretClient(new Uri(keyVaultEndpoint), credential);
         builder.Configuration.AddAzureKeyVault(client, new KeyVaultSecretManager());
     }
-    catch (Exception ex)
-    {
+    catch (Exception ex) {
         Console.WriteLine($"Error configuring Key Vault: {ex.Message}");
     }
 }
