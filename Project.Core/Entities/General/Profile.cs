@@ -25,6 +25,8 @@ namespace Project.Core.Entities.General {
         public ICollection<Course> CreatedCourses { get; set; } = new List<Course>();
         public ICollection<QuizAttempt> QuizAttempts { get; set; } = new List<QuizAttempt>();
         public ICollection<UserCourseProgress> CourseProgresses { get; set; } = new List<UserCourseProgress>();
+        public ICollection<UserLessonProgress> LessonProgresses { get; set; } = new List<UserLessonProgress>();
+        public ICollection<UserModuleProgress> ModuleProgresses { get; set; } = new List<UserModuleProgress>();
         public ICollection<CourseReview> CourseReviews { get; set; } = new List<CourseReview>();
         public ICollection<UserMessage> SentMessages { get; set; } = new List<UserMessage>();
         public ICollection<UserMessage> ReceivedMessages { get; set; } = new List<UserMessage>();

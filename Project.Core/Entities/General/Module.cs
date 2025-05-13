@@ -12,7 +12,8 @@ namespace Project.Core.Entities.General {
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        public Course Course { get; set; } = null!;
+        public Course? Course { get; set; }
         public ICollection<Lesson> Lessons { get; set; } = new List<Lesson>();
+        public ICollection<UserModuleProgress> UserModuleProgress { get; set; } = new List<UserModuleProgress>();
     }
 }

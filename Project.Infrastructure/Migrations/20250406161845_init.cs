@@ -703,6 +703,353 @@ namespace Project.Infrastructure.Migrations {
                 name: "profiles_username_key",
                 table: "profiles",
                 column: "username");
+
+
+            migrationBuilder.DropForeignKey(
+                name: "user_course_progress_lesson_id_fkey",
+                table: "user_course_progress");
+
+            migrationBuilder.DropColumn(
+                name: "options",
+                table: "quizzes");
+
+            migrationBuilder.AddColumn<bool>(
+                name: "IsActive",
+                table: "user_course_progress",
+                type: "boolean",
+                nullable: false,
+                defaultValue: false);
+
+            migrationBuilder.CreateTable(
+                name: "QuizOption",
+                columns: table => new {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Text = table.Column<string>(type: "text", nullable: true),
+                    QuizId = table.Column<Guid>(type: "uuid", nullable: true),
+                    IsCorrect = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table => {
+                    table.PrimaryKey("PK_QuizOption", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_QuizOption_quizzes_QuizId",
+                        column: x => x.QuizId,
+                        principalTable: "quizzes",
+                        principalColumn: "id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "user_lesson_progress",
+                columns: table => new {
+                    user_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    lesson_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    completed_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true, defaultValueSql: "now()"),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table => {
+                    table.PrimaryKey("user_lesson_progress_pkey", x => new { x.user_id, x.lesson_id });
+                    table.ForeignKey(
+                        name: "user_lesson_progress_lesson_id_fkey",
+                        column: x => x.lesson_id,
+                        principalTable: "lessons",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "user_lesson_progress_user_id_fkey",
+                        column: x => x.user_id,
+                        principalTable: "profiles",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "user_module_progress",
+                columns: table => new {
+                    user_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    module_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    completed_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true, defaultValueSql: "now()"),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table => {
+                    table.PrimaryKey("user_module_progress_pkey", x => new { x.user_id, x.module_id });
+                    table.ForeignKey(
+                        name: "user_module_progress_module_id_fkey",
+                        column: x => x.module_id,
+                        principalTable: "modules",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "user_module_progress_user_id_fkey",
+                        column: x => x.user_id,
+                        principalTable: "profiles",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Word",
+                columns: table => new {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Text = table.Column<string>(type: "text", nullable: true),
+                    VideoSrc = table.Column<string>(type: "text", nullable: true),
+                    LessonId = table.Column<Guid>(type: "uuid", nullable: true)
+                },
+                constraints: table => {
+                    table.PrimaryKey("PK_Word", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Word_lessons_LessonId",
+                        column: x => x.LessonId,
+                        principalTable: "lessons",
+                        principalColumn: "id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "WordQuiz",
+                columns: table => new {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Text = table.Column<string>(type: "text", nullable: true),
+                    VideoSrc = table.Column<string>(type: "text", nullable: true),
+                    LessonId = table.Column<Guid>(type: "uuid", nullable: true),
+                    WordId = table.Column<Guid>(type: "uuid", nullable: true),
+                    QuizId = table.Column<Guid>(type: "uuid", nullable: true)
+                },
+                constraints: table => {
+                    table.PrimaryKey("PK_WordQuiz", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_WordQuiz_Word_WordId",
+                        column: x => x.WordId,
+                        principalTable: "Word",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_WordQuiz_quizzes_QuizId",
+                        column: x => x.QuizId,
+                        principalTable: "quizzes",
+                        principalColumn: "id");
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_QuizOption_QuizId",
+                table: "QuizOption",
+                column: "QuizId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_user_lesson_progress_lesson_id",
+                table: "user_lesson_progress",
+                column: "lesson_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_user_module_progress_module_id",
+                table: "user_module_progress",
+                column: "module_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Word_LessonId",
+                table: "Word",
+                column: "LessonId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WordQuiz_QuizId",
+                table: "WordQuiz",
+                column: "QuizId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WordQuiz_WordId",
+                table: "WordQuiz",
+                column: "WordId");
+
+            migrationBuilder.AddForeignKey(
+                name: "user_course_progress_lesson_id_fkey",
+                table: "user_course_progress",
+                column: "lesson_id",
+                principalTable: "courses",
+                principalColumn: "id",
+                onDelete: ReferentialAction.Cascade);
+
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_QuizOption_quizzes_QuizId",
+                table: "QuizOption");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Word_lessons_LessonId",
+                table: "Word");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_WordQuiz_Word_WordId",
+                table: "WordQuiz");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_WordQuiz_quizzes_QuizId",
+                table: "WordQuiz");
+
+            migrationBuilder.DropPrimaryKey(
+                name: "PK_WordQuiz",
+                table: "WordQuiz");
+
+            migrationBuilder.DropPrimaryKey(
+                name: "PK_Word",
+                table: "Word");
+
+            migrationBuilder.DropPrimaryKey(
+                name: "PK_QuizOption",
+                table: "QuizOption");
+
+            migrationBuilder.RenameTable(
+                name: "WordQuiz",
+                newName: "word_quizzes");
+
+            migrationBuilder.RenameTable(
+                name: "Word",
+                newName: "words");
+
+            migrationBuilder.RenameTable(
+                name: "QuizOption",
+                newName: "quiz_options");
+
+            migrationBuilder.RenameColumn(
+                name: "Text",
+                table: "word_quizzes",
+                newName: "text");
+
+            migrationBuilder.RenameColumn(
+                name: "Id",
+                table: "word_quizzes",
+                newName: "id");
+
+            migrationBuilder.RenameColumn(
+                name: "WordId",
+                table: "word_quizzes",
+                newName: "word_id");
+
+            migrationBuilder.RenameColumn(
+                name: "VideoSrc",
+                table: "word_quizzes",
+                newName: "video_src");
+
+            migrationBuilder.RenameColumn(
+                name: "QuizId",
+                table: "word_quizzes",
+                newName: "quiz_id");
+
+            migrationBuilder.RenameColumn(
+                name: "LessonId",
+                table: "word_quizzes",
+                newName: "lesson_id");
+
+            migrationBuilder.RenameIndex(
+                name: "IX_WordQuiz_WordId",
+                table: "word_quizzes",
+                newName: "IX_word_quizzes_word_id");
+
+            migrationBuilder.RenameIndex(
+                name: "IX_WordQuiz_QuizId",
+                table: "word_quizzes",
+                newName: "IX_word_quizzes_quiz_id");
+
+            migrationBuilder.RenameColumn(
+                name: "Text",
+                table: "words",
+                newName: "text");
+
+            migrationBuilder.RenameColumn(
+                name: "Id",
+                table: "words",
+                newName: "id");
+
+            migrationBuilder.RenameColumn(
+                name: "VideoSrc",
+                table: "words",
+                newName: "video_src");
+
+            migrationBuilder.RenameColumn(
+                name: "LessonId",
+                table: "words",
+                newName: "lesson_id");
+
+            migrationBuilder.RenameIndex(
+                name: "IX_Word_LessonId",
+                table: "words",
+                newName: "IX_words_lesson_id");
+
+            migrationBuilder.RenameColumn(
+                name: "Text",
+                table: "quiz_options",
+                newName: "text");
+
+            migrationBuilder.RenameColumn(
+                name: "Id",
+                table: "quiz_options",
+                newName: "id");
+
+            migrationBuilder.RenameColumn(
+                name: "QuizId",
+                table: "quiz_options",
+                newName: "quiz_id");
+
+            migrationBuilder.RenameColumn(
+                name: "IsCorrect",
+                table: "quiz_options",
+                newName: "is_correct");
+
+            migrationBuilder.RenameIndex(
+                name: "IX_QuizOption_QuizId",
+                table: "quiz_options",
+                newName: "IX_quiz_options_quiz_id");
+
+            migrationBuilder.AlterColumn<bool>(
+                name: "is_correct",
+                table: "quiz_options",
+                type: "boolean",
+                nullable: false,
+                defaultValue: false,
+                oldClrType: typeof(bool),
+                oldType: "boolean");
+
+            migrationBuilder.AddPrimaryKey(
+                name: "wordquizzes_pkey",
+                table: "word_quizzes",
+                column: "id");
+
+            migrationBuilder.AddPrimaryKey(
+                name: "words_pkey",
+                table: "words",
+                column: "id");
+
+            migrationBuilder.AddPrimaryKey(
+                name: "quizoptions_pkey",
+                table: "quiz_options",
+                column: "id");
+
+            migrationBuilder.AddForeignKey(
+                name: "quizoptions_quiz_id_fkey",
+                table: "quiz_options",
+                column: "quiz_id",
+                principalTable: "quizzes",
+                principalColumn: "id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "wordquizzes_quiz_id_fkey",
+                table: "word_quizzes",
+                column: "quiz_id",
+                principalTable: "quizzes",
+                principalColumn: "id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "wordquizzes_word_id_fkey",
+                table: "word_quizzes",
+                column: "word_id",
+                principalTable: "words",
+                principalColumn: "id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "words_lesson_id_fkey",
+                table: "words",
+                column: "lesson_id",
+                principalTable: "lessons",
+                principalColumn: "id",
+                onDelete: ReferentialAction.SetNull);
         }
 
         /// <inheritdoc />
