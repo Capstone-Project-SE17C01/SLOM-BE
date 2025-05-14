@@ -11,7 +11,6 @@ var builder = WebApplication.CreateBuilder(args);
 var keyVaultEndpoint = builder.Configuration["KeyVault:KeyVaultURL"];
 builder.Configuration.AddAzureKeyVault(
     new Uri(keyVaultEndpoint),
-    new Uri(keyVaultEndpoint),
     new DefaultAzureCredential());
     
 var connection = builder.Configuration
