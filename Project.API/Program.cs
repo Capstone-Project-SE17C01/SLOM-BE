@@ -13,7 +13,7 @@ builder.Configuration.AddAzureKeyVault(
     new Uri(keyVaultEndpoint),
     new Uri(keyVaultEndpoint),
     new DefaultAzureCredential());
-    
+
 var connection = builder.Configuration
                 .GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
