@@ -9,22 +9,46 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     
+    # Add environment variables
+    env:
+      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+      DOTNET_CLI_TELEMETRY_OPTOUT: 1
+      
     steps:
     - uses: actions/checkout@v3
-    
+      with:
+        fetch-depth: 0 # Fetch all history to improve caching
     - name: Set up .NET
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: '8.0.x'
+    
+    # Cache NuGet packages to speed up build
+    - name: Cache NuGet packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/Project.*.csproj') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget-
     
     - name: Restore dependencies
       run: dotnet restore
     
     - name: Build
       run: dotnet build --configuration Release --no-restore
-    
     - name: Publish
       run: dotnet publish Project.API/Project.API.csproj --configuration Release --no-build --output ./publish
+    
+    # Clean up unnecessary files to reduce package size
+    - name: Clean up publish directory
+      run: |
+        # Remove PDBs (debug files)
+        find ./publish -name "*.pdb" -type f -delete
+        # Remove any test dlls if they got included
+        find ./publish -name "*[Tt]est*.dll" -type f -delete
+        # Display package size for debugging
+        du -sh ./publish
     
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v2
