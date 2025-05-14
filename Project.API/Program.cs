@@ -11,29 +11,10 @@ using Azure.Extensions.AspNetCore.Configuration.Secrets;
 var builder = WebApplication.CreateBuilder(args);
 
 var keyVaultEndpoint = builder.Configuration["KeyVault:KeyVaultURL"];
-if (!string.IsNullOrEmpty(keyVaultEndpoint))
-{
-    try
-    {
-        var credential = new DefaultAzureCredential(new DefaultAzureCredentialOptions
-        {
-            ExcludeEnvironmentCredential = false,
-            ExcludeAzureCliCredential = false,
-            ExcludeManagedIdentityCredential = false,
-            ExcludeSharedTokenCacheCredential = true,
-            ExcludeVisualStudioCodeCredential = true,
-            ExcludeVisualStudioCredential = true,
-            ExcludeInteractiveBrowserCredential = true
-        });
-
-        var client = new SecretClient(new Uri(keyVaultEndpoint), credential);
-        builder.Configuration.AddAzureKeyVault(client, new KeyVaultSecretManager());
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Error configuring Key Vault: {ex.Message}");
-    }
-}
+builder.Configuration.AddAzureKeyVault(
+    new Uri(keyVaultUri),
+    new DefaultAzureCredential());
+    
 var connection = builder.Configuration
                 .GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
