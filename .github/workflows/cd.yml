@@ -23,7 +23,9 @@ jobs:
           dotnet publish -c Release -o ./publish --no-restore --no-build /p:UseAppHost=false
 
       - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v2
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v3
         with:
           app-name: 'SLOM'
-          package: './publish'
+          slot-name: 'Production'
+          package: .
