@@ -68,3 +68,4 @@ jobs:
           dotnet ef database update --project Project.Infrastructure --startup-project Project.API
       env:
         ConnectionStrings__DefaultConnection: ${{ secrets.DATABASE_CONNECTION_STRING }}
+        
