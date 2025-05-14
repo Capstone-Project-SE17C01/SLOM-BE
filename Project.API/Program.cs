@@ -5,14 +5,12 @@ using Project.API.Extensions;
 using Project.API.Middlewares;
 using Project.API.SignalR.Hubs;
 using Project.Infrastructure.Data;
-using Azure.Security.KeyVault.Secrets;
-using Azure.Extensions.AspNetCore.Configuration.Secrets;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var keyVaultEndpoint = builder.Configuration["KeyVault:KeyVaultURL"];
 builder.Configuration.AddAzureKeyVault(
-    new Uri(keyVaultUri),
+    new Uri(keyVaultEndpoint),
     new DefaultAzureCredential());
     
 var connection = builder.Configuration
