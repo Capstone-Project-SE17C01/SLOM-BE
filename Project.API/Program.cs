@@ -8,11 +8,6 @@ using Project.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var keyVaultEndpoint = builder.Configuration["KeyVault:KeyVaultURL"];
-builder.Configuration.AddAzureKeyVault(
-    new Uri(keyVaultEndpoint),
-    new DefaultAzureCredential());
-
 var connection = builder.Configuration
                 .GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
