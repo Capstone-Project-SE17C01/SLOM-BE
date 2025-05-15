@@ -10,7 +10,6 @@ env:
   AZURE_WEBAPP_NAME: 'slom'
   AZURE_WEBAPP_PACKAGE_PATH: './publish'
   SOLUTION_PATH: 'SLUM-BE.sln'
-  API_PROJECT_PATH: 'Project.API'
   PUBLISH_DIR: './publish'
 
 jobs:
@@ -32,11 +31,11 @@ jobs:
       - name: Restore
         run: dotnet restore ${{ env.SOLUTION_PATH }}
       - name: Build
-        run: dotnet build ${{ env.SOLUTION_PATH }} --configuration Release --no-restore
+        run: dotnet build --configuration Release --no-restore
       - name: Test
-        run: dotnet test ${{ env.SOLUTION_PATH }} --configuration Release --no-restore --no-build --verbosity normal
+        run: dotnet test --configuration Release --no-restore --no-build --verbosity normal
       - name: Publish
-        run: dotnet publish ${{ env.API_PROJECT_PATH }} --configuration Release --no-restore --no-build --property:PublishDir=${{ env.PUBLISH_DIR }}
+        run: dotnet publish --configuration Release --no-restore --no-build --output ${{ env.PUBLISH_DIR }}
       - name: Publish Artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -53,6 +52,16 @@ jobs:
         with:
           name: webapp
           path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+
+      - name: Clean up publish directory
+        run: |
+          # Remove PDBs (debug files)
+          find ./publish -name "*.pdb" -type f -delete
+          # Remove any test dlls if they got included
+          find ./publish -name "*[Tt]est*.dll" -type f -delete
+          # Display package size for debugging
+          du -sh ./publish
+
       - name: Deploy to Azure
         uses: azure/webapps-deploy@v2
         with:
