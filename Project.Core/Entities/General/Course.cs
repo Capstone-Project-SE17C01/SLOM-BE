@@ -24,8 +24,9 @@ namespace Project.Core.Entities.General {
 
         public Language? Language { get; set; }
         public CourseCategory? Category { get; set; }
-        public Profile Creator { get; set; } = null!;
+        public Profile? Creator { get; set; }
         public ICollection<Module> Modules { get; set; } = new List<Module>();
         public ICollection<CourseReview> Reviews { get; set; } = new List<CourseReview>();
+        public ICollection<UserCourseProgress> UserCourseProgress { get; set; } = new List<UserCourseProgress>();
     }
 }

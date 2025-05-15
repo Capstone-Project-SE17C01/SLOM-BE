@@ -322,23 +322,155 @@ namespace Project.Infrastructure.Data {
 
             modelBuilder.Entity<Quiz>(entity => {
                 entity.HasKey(e => e.Id).HasName("quizzes_pkey");
+
                 entity.ToTable("quizzes");
 
-                entity.Property(e => e.Id).ValueGeneratedNever().HasColumnName("id");
-                entity.Property(e => e.LessonId).HasColumnName("lesson_id");
-                entity.Property(e => e.Question).HasColumnName("question");
-                entity.Property(e => e.Options).HasColumnType("jsonb").HasColumnName("options");
-                entity.Property(e => e.CorrectAnswer).HasColumnName("correct_answer");
-                entity.Property(e => e.Explanation).HasColumnName("explanation");
-                entity.Property(e => e.MaxScore).HasDefaultValue(10).HasColumnName("max_score");
-                entity.Property(e => e.CreatedAt).HasDefaultValueSql("now()").HasColumnName("created_at");
+                entity.Property(e => e.Id)
+                    .ValueGeneratedNever()
+                    .HasColumnName("id");
+
+                entity.Property(e => e.LessonId)
+                    .HasColumnName("lesson_id");
+
+                entity.Property(e => e.Question)
+                    .IsRequired()
+                    .HasColumnName("question");
+
+                entity.Property(e => e.CorrectAnswer)
+                    .IsRequired()
+                    .HasColumnName("correct_answer");
+
+                entity.Property(e => e.Explanation)
+                    .HasColumnName("explanation");
+
+                entity.Property(e => e.MaxScore)
+                    .HasDefaultValue(10)
+                    .HasColumnName("max_score");
+
+                entity.Property(e => e.CreatedAt)
+                    .HasDefaultValueSql("now()")
+                    .HasColumnName("created_at");
 
                 entity.HasOne(d => d.Lesson)
                     .WithMany(p => p.Quizzes)
                     .HasForeignKey(d => d.LessonId)
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("quizzes_lesson_id_fkey");
+
+                entity.HasMany(e => e.Attempts)
+                    .WithOne(a => a.Quiz)
+                    .HasForeignKey(a => a.QuizId)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("quizattempts_quiz_id_fkey");
+
+                entity.HasMany(e => e.QuizOptions)
+                    .WithOne(o => o.Quiz)
+                    .HasForeignKey(o => o.QuizId)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("quizoptions_quiz_id_fkey");
+
+                entity.HasMany(e => e.WordQuizzes)
+                    .WithOne(wq => wq.Quiz)
+                    .HasForeignKey(wq => wq.QuizId)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("wordquizzes_quiz_id_fkey");
             });
+
+
+            modelBuilder.Entity<QuizOption>(entity => {
+                entity.HasKey(e => e.Id).HasName("quizoptions_pkey");
+
+                entity.ToTable("quiz_options");
+
+                entity.Property(e => e.Id)
+                    .ValueGeneratedNever()
+                    .HasColumnName("id");
+
+                entity.Property(e => e.Text)
+                    .HasColumnName("text");
+
+                entity.Property(e => e.QuizId)
+                    .HasColumnName("quiz_id");
+
+                entity.Property(e => e.IsCorrect)
+                    .HasDefaultValue(false)
+                    .HasColumnName("is_correct");
+
+                entity.HasOne(d => d.Quiz)
+                    .WithMany(p => p.QuizOptions)
+                    .HasForeignKey(d => d.QuizId)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("quizoptions_quiz_id_fkey");
+            });
+
+            modelBuilder.Entity<WordQuiz>(entity => {
+                entity.HasKey(e => e.Id).HasName("wordquizzes_pkey");
+
+                entity.ToTable("word_quizzes");
+
+                entity.Property(e => e.Id)
+                    .ValueGeneratedNever()
+                    .HasColumnName("id");
+
+                entity.Property(e => e.Text)
+                    .HasColumnName("text");
+
+                entity.Property(e => e.VideoSrc)
+                    .HasColumnName("video_src");
+
+                entity.Property(e => e.LessonId)
+                    .HasColumnName("lesson_id");
+
+                entity.Property(e => e.WordId)
+                    .HasColumnName("word_id");
+
+                entity.Property(e => e.QuizId)
+                    .HasColumnName("quiz_id");
+
+                entity.HasOne(e => e.Quiz)
+                    .WithMany(q => q.WordQuizzes)
+                    .HasForeignKey(e => e.QuizId)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("wordquizzes_quiz_id_fkey");
+
+                entity.HasOne(e => e.Word)
+                    .WithMany()
+                    .HasForeignKey(e => e.WordId)
+                    .OnDelete(DeleteBehavior.SetNull)
+                    .HasConstraintName("wordquizzes_word_id_fkey");
+            });
+
+            modelBuilder.Entity<Word>(entity => {
+                entity.HasKey(e => e.Id).HasName("words_pkey");
+
+                entity.ToTable("words");
+
+                entity.Property(e => e.Id)
+                    .ValueGeneratedNever()
+                    .HasColumnName("id");
+
+                entity.Property(e => e.Text)
+                    .HasColumnName("text");
+
+                entity.Property(e => e.VideoSrc)
+                    .HasColumnName("video_src");
+
+                entity.Property(e => e.LessonId)
+                    .HasColumnName("lesson_id");
+
+                entity.HasOne(e => e.Lesson)
+                    .WithMany(l => l.Words)
+                    .HasForeignKey(e => e.LessonId)
+                    .OnDelete(DeleteBehavior.SetNull)
+                    .HasConstraintName("words_lesson_id_fkey");
+
+                entity.HasMany(e => e.WordQuizzes)
+                    .WithOne(wq => wq.Word)
+                    .HasForeignKey(wq => wq.WordId)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("wordquizzes_word_id_fkey");
+            });
+
 
             modelBuilder.Entity<QuizAttempt>(entity => {
                 entity.HasKey(e => e.Id).HasName("quiz_attempts_pkey");
@@ -365,11 +497,11 @@ namespace Project.Infrastructure.Data {
             });
 
             modelBuilder.Entity<UserCourseProgress>(entity => {
-                entity.HasKey(e => new { e.UserId, e.LessonId }).HasName("user_course_progress_pkey");
+                entity.HasKey(e => new { e.UserId, e.CourseId }).HasName("user_course_progress_pkey");
                 entity.ToTable("user_course_progress");
 
                 entity.Property(e => e.UserId).HasColumnName("user_id");
-                entity.Property(e => e.LessonId).HasColumnName("lesson_id");
+                entity.Property(e => e.CourseId).HasColumnName("lesson_id");
                 entity.Property(e => e.CompletedAt).HasDefaultValueSql("now()").HasColumnName("completed_at");
 
                 entity.HasOne(d => d.User)
@@ -378,12 +510,57 @@ namespace Project.Infrastructure.Data {
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("user_course_progress_user_id_fkey");
 
-                entity.HasOne(d => d.Lesson)
-                    .WithMany(p => p.UserProgresses)
-                    .HasForeignKey(d => d.LessonId)
+                entity.HasOne(d => d.Course)
+                    .WithMany(p => p.UserCourseProgress)
+                    .HasForeignKey(d => d.CourseId)
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("user_course_progress_lesson_id_fkey");
             });
+
+            modelBuilder.Entity<UserLessonProgress>(entity => {
+                entity.HasKey(e => new { e.UserId, e.LessonId }).HasName("user_lesson_progress_pkey");
+                entity.ToTable("user_lesson_progress");
+
+                entity.Property(e => e.UserId).HasColumnName("user_id");
+                entity.Property(e => e.LessonId).HasColumnName("lesson_id");
+                entity.Property(e => e.CompletedAt).HasDefaultValueSql("now()").HasColumnName("completed_at");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.LessonProgresses)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("user_lesson_progress_user_id_fkey");
+
+                entity.HasOne(d => d.Lesson)
+                    .WithMany(p => p.UserLessonProgress)
+                    .HasForeignKey(d => d.LessonId)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("user_lesson_progress_lesson_id_fkey");
+            });
+
+            modelBuilder.Entity<UserModuleProgress>(entity => {
+                entity.HasKey(e => new { e.UserId, e.ModuleId }).HasName("user_module_progress_pkey");
+                entity.ToTable("user_module_progress");
+
+                entity.Property(e => e.UserId).HasColumnName("user_id");
+                entity.Property(e => e.ModuleId).HasColumnName("module_id");
+                entity.Property(e => e.CompletedAt).HasDefaultValueSql("now()").HasColumnName("completed_at");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.ModuleProgresses)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("user_module_progress_user_id_fkey");
+
+                entity.HasOne(d => d.Module)
+                    .WithMany(p => p.UserModuleProgress)
+                    .HasForeignKey(d => d.ModuleId)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("user_module_progress_module_id_fkey");
+            });
+
+
+
 
             modelBuilder.Entity<CourseReview>(entity => {
                 entity.HasKey(e => e.Id).HasName("course_reviews_pkey");

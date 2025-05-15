@@ -6,8 +6,6 @@ namespace Project.Core.Entities.General {
 
         public string Question { get; set; } = null!;
 
-        public string? Options { get; set; }
-
         public string CorrectAnswer { get; set; } = null!;
 
         public string? Explanation { get; set; }
@@ -16,8 +14,10 @@ namespace Project.Core.Entities.General {
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        public Lesson Lesson { get; set; } = null!;
+        public Lesson? Lesson { get; set; }
 
         public ICollection<QuizAttempt> Attempts { get; set; } = new List<QuizAttempt>();
+        public ICollection<WordQuiz> WordQuizzes { get; set; } = new List<WordQuiz>();
+        public ICollection<QuizOption> QuizOptions { get; set; } = new List<QuizOption>();
     }
 }

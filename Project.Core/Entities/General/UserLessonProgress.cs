@@ -1,14 +1,14 @@
 namespace Project.Core.Entities.General {
-    public class UserCourseProgress {
+    public class UserLessonProgress {
         public Guid UserId { get; set; }
 
-        public Guid CourseId { get; set; }
+        public Guid LessonId { get; set; }
 
         public DateTime? CompletedAt { get; set; }
 
         public Profile? User { get; set; }
 
-        public Course? Course { get; set; }
+        public Lesson? Lesson { get; set; }
 
         public bool IsCompleted {
             get {
@@ -17,6 +17,5 @@ namespace Project.Core.Entities.General {
         }
 
         public bool IsActive { get; set; }
-
     }
 }

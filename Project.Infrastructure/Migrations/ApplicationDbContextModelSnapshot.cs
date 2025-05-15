@@ -577,10 +577,6 @@ namespace Project.Infrastructure.Migrations
                         .HasDefaultValue(10)
                         .HasColumnName("max_score");
 
-                    b.Property<string>("Options")
-                        .HasColumnType("jsonb")
-                        .HasColumnName("options");
-
                     b.Property<string>("Question")
                         .IsRequired()
                         .HasColumnType("text")
@@ -630,6 +626,34 @@ namespace Project.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("quiz_attempts", (string)null);
+                });
+
+            modelBuilder.Entity("Project.Core.Entities.General.QuizOption", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<bool>("IsCorrect")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("is_correct");
+
+                    b.Property<Guid?>("QuizId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("quiz_id");
+
+                    b.Property<string>("Text")
+                        .HasColumnType("text")
+                        .HasColumnName("text");
+
+                    b.HasKey("Id")
+                        .HasName("quizoptions_pkey");
+
+                    b.HasIndex("QuizId");
+
+                    b.ToTable("quiz_options", (string)null);
                 });
 
             modelBuilder.Entity("Project.Core.Entities.General.Role", b =>
@@ -782,6 +806,33 @@ namespace Project.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("user_id");
 
+                    b.Property<Guid>("CourseId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("lesson_id");
+
+                    b.Property<DateTime?>("CompletedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("completed_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("UserId", "CourseId")
+                        .HasName("user_course_progress_pkey");
+
+                    b.HasIndex("CourseId");
+
+                    b.ToTable("user_course_progress", (string)null);
+                });
+
+            modelBuilder.Entity("Project.Core.Entities.General.UserLessonProgress", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
                     b.Property<Guid>("LessonId")
                         .HasColumnType("uuid")
                         .HasColumnName("lesson_id");
@@ -792,12 +843,15 @@ namespace Project.Infrastructure.Migrations
                         .HasColumnName("completed_at")
                         .HasDefaultValueSql("now()");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
                     b.HasKey("UserId", "LessonId")
-                        .HasName("user_course_progress_pkey");
+                        .HasName("user_lesson_progress_pkey");
 
                     b.HasIndex("LessonId");
 
-                    b.ToTable("user_course_progress", (string)null);
+                    b.ToTable("user_lesson_progress", (string)null);
                 });
 
             modelBuilder.Entity("Project.Core.Entities.General.UserMessage", b =>
@@ -836,6 +890,33 @@ namespace Project.Infrastructure.Migrations
                     b.HasIndex("SenderId");
 
                     b.ToTable("user_messages", (string)null);
+                });
+
+            modelBuilder.Entity("Project.Core.Entities.General.UserModuleProgress", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.Property<Guid>("ModuleId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("module_id");
+
+                    b.Property<DateTime?>("CompletedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("completed_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("UserId", "ModuleId")
+                        .HasName("user_module_progress_pkey");
+
+                    b.HasIndex("ModuleId");
+
+                    b.ToTable("user_module_progress", (string)null);
                 });
 
             modelBuilder.Entity("Project.Core.Entities.General.UserSubscription", b =>
@@ -879,6 +960,68 @@ namespace Project.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("user_subscriptions", (string)null);
+                });
+
+            modelBuilder.Entity("Project.Core.Entities.General.Word", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid?>("LessonId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("lesson_id");
+
+                    b.Property<string>("Text")
+                        .HasColumnType("text")
+                        .HasColumnName("text");
+
+                    b.Property<string>("VideoSrc")
+                        .HasColumnType("text")
+                        .HasColumnName("video_src");
+
+                    b.HasKey("Id")
+                        .HasName("words_pkey");
+
+                    b.HasIndex("LessonId");
+
+                    b.ToTable("words", (string)null);
+                });
+
+            modelBuilder.Entity("Project.Core.Entities.General.WordQuiz", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid?>("LessonId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("lesson_id");
+
+                    b.Property<Guid?>("QuizId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("quiz_id");
+
+                    b.Property<string>("Text")
+                        .HasColumnType("text")
+                        .HasColumnName("text");
+
+                    b.Property<string>("VideoSrc")
+                        .HasColumnType("text")
+                        .HasColumnName("video_src");
+
+                    b.Property<Guid?>("WordId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("word_id");
+
+                    b.HasKey("Id")
+                        .HasName("wordquizzes_pkey");
+
+                    b.HasIndex("QuizId");
+
+                    b.HasIndex("WordId");
+
+                    b.ToTable("word_quizzes", (string)null);
                 });
 
             modelBuilder.Entity("Project.Core.Entities.General.Course", b =>
@@ -1080,6 +1223,17 @@ namespace Project.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Project.Core.Entities.General.QuizOption", b =>
+                {
+                    b.HasOne("Project.Core.Entities.General.Quiz", "Quiz")
+                        .WithMany("QuizOptions")
+                        .HasForeignKey("QuizId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("quizoptions_quiz_id_fkey");
+
+                    b.Navigation("Quiz");
+                });
+
             modelBuilder.Entity("Project.Core.Entities.General.Translation", b =>
                 {
                     b.HasOne("Project.Core.Entities.General.Meeting", "Meeting")
@@ -1115,9 +1269,9 @@ namespace Project.Infrastructure.Migrations
 
             modelBuilder.Entity("Project.Core.Entities.General.UserCourseProgress", b =>
                 {
-                    b.HasOne("Project.Core.Entities.General.Lesson", "Lesson")
-                        .WithMany("UserProgresses")
-                        .HasForeignKey("LessonId")
+                    b.HasOne("Project.Core.Entities.General.Course", "Course")
+                        .WithMany("UserCourseProgress")
+                        .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("user_course_progress_lesson_id_fkey");
@@ -1128,6 +1282,27 @@ namespace Project.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("user_course_progress_user_id_fkey");
+
+                    b.Navigation("Course");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Project.Core.Entities.General.UserLessonProgress", b =>
+                {
+                    b.HasOne("Project.Core.Entities.General.Lesson", "Lesson")
+                        .WithMany("UserLessonProgress")
+                        .HasForeignKey("LessonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("user_lesson_progress_lesson_id_fkey");
+
+                    b.HasOne("Project.Core.Entities.General.Profile", "User")
+                        .WithMany("LessonProgresses")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("user_lesson_progress_user_id_fkey");
 
                     b.Navigation("Lesson");
 
@@ -1155,6 +1330,27 @@ namespace Project.Infrastructure.Migrations
                     b.Navigation("Sender");
                 });
 
+            modelBuilder.Entity("Project.Core.Entities.General.UserModuleProgress", b =>
+                {
+                    b.HasOne("Project.Core.Entities.General.Module", "Module")
+                        .WithMany("UserModuleProgress")
+                        .HasForeignKey("ModuleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("user_module_progress_module_id_fkey");
+
+                    b.HasOne("Project.Core.Entities.General.Profile", "User")
+                        .WithMany("ModuleProgresses")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("user_module_progress_user_id_fkey");
+
+                    b.Navigation("Module");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Project.Core.Entities.General.UserSubscription", b =>
                 {
                     b.HasOne("Project.Core.Entities.General.SubscriptionPlan", "Plan")
@@ -1176,11 +1372,43 @@ namespace Project.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Project.Core.Entities.General.Word", b =>
+                {
+                    b.HasOne("Project.Core.Entities.General.Lesson", "Lesson")
+                        .WithMany("Words")
+                        .HasForeignKey("LessonId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("words_lesson_id_fkey");
+
+                    b.Navigation("Lesson");
+                });
+
+            modelBuilder.Entity("Project.Core.Entities.General.WordQuiz", b =>
+                {
+                    b.HasOne("Project.Core.Entities.General.Quiz", "Quiz")
+                        .WithMany("WordQuizzes")
+                        .HasForeignKey("QuizId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("wordquizzes_quiz_id_fkey");
+
+                    b.HasOne("Project.Core.Entities.General.Word", "Word")
+                        .WithMany("WordQuizzes")
+                        .HasForeignKey("WordId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("wordquizzes_word_id_fkey");
+
+                    b.Navigation("Quiz");
+
+                    b.Navigation("Word");
+                });
+
             modelBuilder.Entity("Project.Core.Entities.General.Course", b =>
                 {
                     b.Navigation("Modules");
 
                     b.Navigation("Reviews");
+
+                    b.Navigation("UserCourseProgress");
                 });
 
             modelBuilder.Entity("Project.Core.Entities.General.CourseCategory", b =>
@@ -1205,7 +1433,9 @@ namespace Project.Infrastructure.Migrations
                 {
                     b.Navigation("Quizzes");
 
-                    b.Navigation("UserProgresses");
+                    b.Navigation("UserLessonProgress");
+
+                    b.Navigation("Words");
                 });
 
             modelBuilder.Entity("Project.Core.Entities.General.Meeting", b =>
@@ -1220,6 +1450,8 @@ namespace Project.Infrastructure.Migrations
             modelBuilder.Entity("Project.Core.Entities.General.Module", b =>
                 {
                     b.Navigation("Lessons");
+
+                    b.Navigation("UserModuleProgress");
                 });
 
             modelBuilder.Entity("Project.Core.Entities.General.Profile", b =>
@@ -1232,7 +1464,11 @@ namespace Project.Infrastructure.Migrations
 
                     b.Navigation("HostedMeetings");
 
+                    b.Navigation("LessonProgresses");
+
                     b.Navigation("MeetingParticipations");
+
+                    b.Navigation("ModuleProgresses");
 
                     b.Navigation("Payments");
 
@@ -1250,6 +1486,10 @@ namespace Project.Infrastructure.Migrations
             modelBuilder.Entity("Project.Core.Entities.General.Quiz", b =>
                 {
                     b.Navigation("Attempts");
+
+                    b.Navigation("QuizOptions");
+
+                    b.Navigation("WordQuizzes");
                 });
 
             modelBuilder.Entity("Project.Core.Entities.General.Role", b =>
@@ -1265,6 +1505,11 @@ namespace Project.Infrastructure.Migrations
             modelBuilder.Entity("Project.Core.Entities.General.UserSubscription", b =>
                 {
                     b.Navigation("Payments");
+                });
+
+            modelBuilder.Entity("Project.Core.Entities.General.Word", b =>
+                {
+                    b.Navigation("WordQuizzes");
                 });
 #pragma warning restore 612, 618
         }
