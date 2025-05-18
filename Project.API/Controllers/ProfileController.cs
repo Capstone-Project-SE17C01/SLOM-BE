@@ -60,7 +60,8 @@ namespace Project.API.Controllers {
                         LanguageCode = request.newLanguageCode,
                     }
                 });
-            } catch (Exception) {
+            }
+            catch (Exception) {
                 return NotFound(new APIResponse {
                     errorMessages = new List<string> { "ChangeLanguageFailed" }
                 });
