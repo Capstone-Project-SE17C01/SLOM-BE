@@ -48,5 +48,10 @@ namespace Project.Infrastructure.Repositories {
                 .Where(x => x.UserId == userId && x.IsActive)
                 .FirstOrDefaultAsync();
         }
+
+        public async Task<List<UserLessonProgress>> GetLearnedLessons(Guid userId) {
+            var result = await _dbContext.UserLessonProgress.Where(x => x.UserId == userId).Include(x => x.Lesson).ToListAsync();
+            return result;
+        }
     }
 }

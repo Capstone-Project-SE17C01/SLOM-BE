@@ -32,6 +32,9 @@ public partial class ApplicationDbContext : DbContext {
     public DbSet<CourseReview> CourseReviews { get; set; }
     public DbSet<Role> Roles { get; set; }
     public DbSet<UserMessage> UserMessages { get; set; }
+    public DbSet<QuizOption> QuizOptions { get; set; }
+    public DbSet<Word> Words { get; set; }
+    public DbSet<WordQuiz> WordQuizzes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder) {
         ApplicationDbContextConfigurations.Configure(builder);
