@@ -11,7 +11,7 @@ namespace Project.Infrastructure.Repositories {
         }
 
         public async Task<Profile?> GetProfileByEmail(string email) {
-            var profile = await _dbContext.Profiles.FirstOrDefaultAsync(p => p.Email == email);
+            var profile = await _dbContext.Profiles.Include(p => p.PreferredLanguage).FirstOrDefaultAsync(p => p.Email == email);
             if (profile == null) {
                 throw new NotFoundException("Profile not found with the provided email.");
             }

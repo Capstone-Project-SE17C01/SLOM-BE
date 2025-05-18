@@ -27,6 +27,8 @@ public partial class ApplicationDbContext : DbContext {
     public DbSet<Quiz> Quizzes { get; set; }
     public DbSet<QuizAttempt> QuizAttempts { get; set; }
     public DbSet<UserCourseProgress> UserCourseProgress { get; set; }
+    public DbSet<UserLessonProgress> UserLessonProgress { get; set; }
+    public DbSet<UserModuleProgress> UserModuleProgress { get; set; }
     public DbSet<CourseReview> CourseReviews { get; set; }
     public DbSet<Role> Roles { get; set; }
     public DbSet<UserMessage> UserMessages { get; set; }
