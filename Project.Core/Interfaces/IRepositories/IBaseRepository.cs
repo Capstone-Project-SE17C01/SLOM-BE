@@ -12,5 +12,6 @@ namespace Project.Core.Interfaces.IRepositories {
         Task Update(T model);
         Task Delete(T model);
         Task SaveChangeAsync();
+        Task<int> CountAsync();
     }
 }
