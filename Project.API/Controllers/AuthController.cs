@@ -161,9 +161,11 @@ namespace Project.API.Controllers {
                         Filter = $"email = \"{registerDTO.email}\"",
                         Limit = 1
                     });
-                    var existing = listResp.Users[0];
-                    if (listResp.Users.Count > 0 && existing.UserStatus == UserStatusType.EXTERNAL_PROVIDER) {
-                        return BadRequest(new APIResponse() { errorMessages = new List<string> { "emailRegisteredWithGoogle" } });
+                    if (listResp == null) {
+                        var existing = listResp.Users[0];
+                        if (listResp.Users.Count > 0 && existing.UserStatus == UserStatusType.EXTERNAL_PROVIDER) {
+                            return BadRequest(new APIResponse() { errorMessages = new List<string> { "emailRegisteredWithGoogle" } });
+                        }
                     }
                 }
 
