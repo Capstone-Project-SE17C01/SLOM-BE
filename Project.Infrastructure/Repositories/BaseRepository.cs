@@ -92,5 +92,8 @@ namespace Project.Infrastructure.Repositories {
             await _dbContext.SaveChangesAsync();
         }
 
+        public async Task<int> CountAsync() {
+            return await _dbContext.Set<T>().CountAsync();
+        }
     }
 }

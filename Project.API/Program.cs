@@ -1,4 +1,4 @@
-using Azure.Identity;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.OData;
 using Microsoft.EntityFrameworkCore;
 using Project.API.Extensions;
@@ -16,7 +16,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Add services to the container.
 builder.Services.AddCors();
 builder.Services.RegisterService();
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(opts => {
+    opts.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    opts.JsonSerializerOptions.MaxDepth = 64;
+});
 builder.Services.AddControllers().AddOData(option => option.Select().Filter()
 .Count().OrderBy().Expand().SetMaxTop(100));
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
