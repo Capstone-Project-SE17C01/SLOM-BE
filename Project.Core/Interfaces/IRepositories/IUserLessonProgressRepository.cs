@@ -5,5 +5,6 @@ namespace Project.Core.Interfaces.IRepositories {
         Task<int> CountCompletedAsync(Guid moduleId, Guid userId);
         Task<int> CountLast7DaysCompletedLessonsAsync(Guid userId);
         Task<UserLessonProgress?> GetActiveLessonByUserIdAsync(Guid userId);
+        public Task<List<UserLessonProgress>> GetLearnedLessons(Guid userId);
     }
 }

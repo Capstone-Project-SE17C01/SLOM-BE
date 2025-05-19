@@ -46,7 +46,18 @@ namespace Project.Infrastructure.Repositories {
         public async Task<UserLessonProgress?> GetActiveLessonByUserIdAsync(Guid userId) {
             return await _dbContext.UserLessonProgress
                 .Where(x => x.UserId == userId && x.IsActive)
+                .Include(x => x.Lesson)
+                .AsNoTracking()
                 .FirstOrDefaultAsync();
+        }
+
+        public async Task<List<UserLessonProgress>> GetLearnedLessons(Guid userId) {
+            var result = await _dbContext.UserLessonProgress
+                .Where(x => x.UserId == userId)
+                .Include(x => x.Lesson)
+                .AsNoTracking()
+                .ToListAsync();
+            return result;
         }
     }
 }
