@@ -59,5 +59,55 @@ namespace Project.Infrastructure.Repositories {
                 .ToListAsync();
             return result;
         }
+
+        public async Task<bool> CreateNewLessonProgress(Guid userId, Guid lessonId) {
+            var user = _dbContext.Profiles.Where(x => x.Id == userId)
+                .FirstOrDefault();
+            var lesson = _dbContext.Lessons.Where(x => x.Id == lessonId)
+                .FirstOrDefault();
+
+            if(user is null || lesson is null) {
+                throw new Exception(user is null ? "User not found" : "Lesson not found");
+            }
+
+            if(_dbContext.UserLessonProgress.Where(x => x.UserId == userId && x.LessonId == lessonId).AsNoTracking().Count() > 0) {
+                throw new Exception("Progress created");
+            }
+
+            UserLessonProgress progress = new UserLessonProgress() {
+                LessonId = lessonId,
+                UserId = userId,
+                IsActive = true,
+                User = user,
+                Lesson = lesson,
+            };
+
+            try {
+                _dbContext.UserLessonProgress.Add(progress);
+                await _dbContext.SaveChangesAsync();
+                return true;
+            } catch {
+                return false;
+            }
+        }
+
+        public async Task<bool> CompleteLessons(Guid userId, Guid lessonId) {
+            var progress = await _dbContext.UserLessonProgress
+                .Where(x => x.UserId == userId && x.LessonId == lessonId)
+                .FirstOrDefaultAsync();
+
+            if(progress is null) {
+                throw new Exception("You have not learned this lessoon");
+            }
+
+            progress.CompletedAt = DateTime.UtcNow;
+            try {
+                _dbContext.UserLessonProgress.Update(progress);
+                await _dbContext.SaveChangesAsync();
+                return true;
+            } catch {
+                return false;
+            }
+        }
     }
 }

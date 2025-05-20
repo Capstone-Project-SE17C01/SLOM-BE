@@ -4,15 +4,13 @@ using Project.Core.Interfaces.IRepositories;
 using Project.Infrastructure.Data;
 
 namespace Project.Infrastructure.Repositories {
-    public class QuizRepository : BaseRepository<Quiz>, IQuizRepository {
-        public QuizRepository(ApplicationDbContext dbContext) : base(dbContext) {
+    public class WordRepository : BaseRepository<Word>, IWordRepository {
+        public WordRepository(ApplicationDbContext dbContext) : base(dbContext) {
         }
 
-        public async Task<List<Quiz>> GetAllQuizByLessonId(Guid lessonId) {
-            var result = await _dbContext.Quizzes
+        public async Task<List<Word>> GetWordByLessonId(Guid lessonId) {
+            var result = await _dbContext.Words
                 .Where(x => x.LessonId == lessonId)
-                .Include(x => x.WordQuizzes)
-                .Include(x => x.QuizOptions)
                 .AsNoTracking()
                 .ToListAsync();
             return result;
