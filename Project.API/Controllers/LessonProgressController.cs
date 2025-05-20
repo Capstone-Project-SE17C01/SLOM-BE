@@ -18,10 +18,12 @@ namespace Project.API.Controllers {
             try {
                 if (await _userLessonProgressRepository.CreateNewLessonProgress(userId, lessonId)) {
                     return Ok("Create progress success");
-                } else {
+                }
+                else {
                     return BadRequest(new APIResponse() { errorMessages = new List<string> { "Server Error" } });
                 }
-            } catch(Exception ex) {
+            }
+            catch (Exception ex) {
                 return BadRequest(new APIResponse() { errorMessages = new List<string> { ex.Message } });
             }
         }
@@ -31,10 +33,12 @@ namespace Project.API.Controllers {
             try {
                 if (await _userLessonProgressRepository.CompleteLessons(userId, lessonId)) {
                     return Ok("Mark complete success");
-                } else {
+                }
+                else {
                     return BadRequest(new APIResponse() { errorMessages = new List<string> { "Server Error" } });
                 }
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 return BadRequest(new APIResponse() { errorMessages = new List<string> { ex.Message } });
             }
         }

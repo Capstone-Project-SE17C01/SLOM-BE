@@ -66,11 +66,11 @@ namespace Project.Infrastructure.Repositories {
             var lesson = _dbContext.Lessons.Where(x => x.Id == lessonId)
                 .FirstOrDefault();
 
-            if(user is null || lesson is null) {
+            if (user is null || lesson is null) {
                 throw new Exception(user is null ? "User not found" : "Lesson not found");
             }
 
-            if(_dbContext.UserLessonProgress.Where(x => x.UserId == userId && x.LessonId == lessonId).AsNoTracking().Count() > 0) {
+            if (_dbContext.UserLessonProgress.Where(x => x.UserId == userId && x.LessonId == lessonId).AsNoTracking().Count() > 0) {
                 throw new Exception("Progress created");
             }
 
@@ -86,7 +86,8 @@ namespace Project.Infrastructure.Repositories {
                 _dbContext.UserLessonProgress.Add(progress);
                 await _dbContext.SaveChangesAsync();
                 return true;
-            } catch {
+            }
+            catch {
                 return false;
             }
         }
@@ -96,7 +97,7 @@ namespace Project.Infrastructure.Repositories {
                 .Where(x => x.UserId == userId && x.LessonId == lessonId)
                 .FirstOrDefaultAsync();
 
-            if(progress is null) {
+            if (progress is null) {
                 throw new Exception("You have not learned this lessoon");
             }
 
@@ -105,7 +106,8 @@ namespace Project.Infrastructure.Repositories {
                 _dbContext.UserLessonProgress.Update(progress);
                 await _dbContext.SaveChangesAsync();
                 return true;
-            } catch {
+            }
+            catch {
                 return false;
             }
         }
