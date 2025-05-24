@@ -12,6 +12,7 @@ namespace Project.Infrastructure.Repositories {
             var result = await _dbContext.Modules
                 .Where(x => x.CourseId == courseId)
                 .Include(x => x.Lessons)
+                .OrderBy(x => x.OrderNumber)
                 .AsNoTracking()
                 .ToListAsync();
             return result;

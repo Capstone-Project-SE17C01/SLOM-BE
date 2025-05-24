@@ -49,7 +49,6 @@ namespace Project.API.Controllers {
                 var recentModulesCompleted = await _userModuleProgressRepository.CountLast7DaysCompletedModulesAsync(userId);
                 var recentCoursesCompleted = await _userCourseProgressRepository.CountLast7DaysCompletedCoursesAsync(userId);
 
-                // 3) Build DTO using PascalCase
                 var summary = new SummaryResponseDTO {
                     totalCourse = totalCourses,
                     totalModules = totalModules,
@@ -57,7 +56,7 @@ namespace Project.API.Controllers {
                     totalCoursesCompleted = totalCoursesCompleted,
                     totalModulesCompleted = totalModulesCompleted,
                     totalLessonsCompleted = totalLessonsCompleted,
-                    activeLesson = activeLessonEntry?.Lesson,
+                    activeLesson = activeLessonEntry,
                     activities = new Activity {
                         recentLessonsCompleted = recentLessonsCompleted,
                         recentModulesCompleted = recentModulesCompleted,
@@ -66,8 +65,7 @@ namespace Project.API.Controllers {
                 };
 
                 return Ok(new APIResponse { result = summary });
-            }
-            catch (Exception ex) {
+            } catch (Exception) {
                 return BadRequest(new APIResponse { result = null, errorMessages = new List<string> { "Invalid request data for Get Summary" } });
             }
         }
@@ -84,8 +82,7 @@ namespace Project.API.Controllers {
                     RemainingCourses = remainingCourses
                 };
                 return Ok(new APIResponse { result = listCourseResponse });
-            }
-            catch (Exception) {
+            } catch (Exception) {
                 return BadRequest(new APIResponse { result = null, errorMessages = new List<string> { "Invalid request data for Get All Courses" } });
             }
         }

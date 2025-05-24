@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Project.Core.Entities.Business.DTOs;
 using Project.Core.Entities.General;
 using Project.Core.Interfaces.IRepositories;
 using Project.Infrastructure.Data;
@@ -15,8 +16,9 @@ namespace Project.API.Controllers {
         }
 
         [HttpGet("AllModules")]
-        public async Task<List<Module>> GetOngoingUserLesson(Guid courseId) {
-            return await _moduleRepository.GetModuleByCourseId(courseId);
+        public async Task<APIResponse> GetOngoingUserLesson(Guid courseId) {
+            List<Module> modules = await _moduleRepository.GetModuleByCourseId(courseId);
+            return new APIResponse() { result = modules };
         }
     }
 }
