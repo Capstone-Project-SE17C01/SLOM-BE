@@ -6,8 +6,6 @@ namespace Project.Core.Entities.General {
 
         public string? VideoSrc { get; set; }
 
-        public Guid? LessonId { get; set; }
-
         public Guid? WordId { get; set; }
 
         public Word? Word { get; set; } = null!;
