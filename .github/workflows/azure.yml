@@ -1,0 +1,195 @@
+trigger:
+  branches:
+    include:
+      - develop
+
+pr:
+  branches:
+    exclude:
+      - develop
+
+pool:
+  name: SLOM-BE
+
+variables:
+  imageName: 'campscholar-api'
+  subscription: 'Azure for Students(1)(54fd5c10-eccb-4b77-af4f-c7ad4ab8f162)'
+  tag: $(Build.BuildId)
+  containerRegistryUrl: 'campscholar.azurecr.io'
+  containerRegistryName: 'campscholar'
+  containerAppName: 'campscholar-container-app'
+  resourceGroupName: 'campscholar'
+  environmentName: 'campscholar-env'
+  location: 'southeastasia'
+
+stages:
+
+### Build Stage ###
+- stage: Build
+  displayName: "Build Docker Image"
+  jobs:
+    - job: BuildJob
+      displayName: "Build Docker Image Job"
+      steps:
+        - task: Docker@2
+          displayName: "Login to Azure Container Registry"
+          inputs:
+            containerRegistry: $(containerRegistryName)
+            command: login
+
+        - task: Docker@2
+          displayName: "Build Docker Image"
+          inputs:
+            containerRegistry: $(containerRegistryName)
+            repository: '$(imageName)'
+            command: 'build'
+            tags: '$(tag)'
+            Dockerfile: '$(System.DefaultWorkingDirectory)/Dockerfile'
+            buildContext: '$(System.DefaultWorkingDirectory)'
+
+### Push Stage ###
+- stage: Push
+  displayName: "Push Docker Image to ACR"
+  dependsOn: Build
+  jobs:
+    - job: PushJob
+      displayName: "Push Docker Image Job"
+      steps:
+        - task: Docker@2
+          displayName: "Push Docker Image to ACR"
+          inputs:
+            containerRegistry: 'campscholar'
+            repository: $(imageName)
+            command: push
+            tags: |
+              $(tag)
+
+### Deploy Stage ###
+- stage: Deploy
+  displayName: "Deploy to Azure Container Apps"
+  dependsOn: Push
+  jobs:
+    - job: DeployJob
+      displayName: "Deploy to Azure Container Apps"
+      steps:
+        - task: AzureCLI@2
+          displayName: "Ensure Azure Environment Exists"
+          inputs:
+            azureSubscription: $(subscription)
+            scriptType: bash
+            scriptLocation: inlineScript
+            inlineScript: |
+              echo "Checking if environment exists..."
+              if az containerapp env show --name $(environmentName) --resource-group $(resourceGroupName) > /dev/null 2>&1; then
+                echo "Environment $(environmentName) already exists."
+              else
+                echo "Creating environment $(environmentName)..."
+                az containerapp env create \
+                  --name $(environmentName) \
+                  --resource-group $(resourceGroupName) \
+                  --location $(location)
+
+        - task: AzureCLI@2
+          displayName: "Deploy or Update Container App"
+          inputs:
+            azureSubscription: $(subscription)
+            scriptType: bash
+            scriptLocation: inlineScript
+            inlineScript: |
+              echo "Checking if container app exists..."
+              if az containerapp show --name $(containerAppName) --resource-group $(resourceGroupName) > /dev/null 2>&1; then
+                echo "Updating existing container app $(containerAppName)..."
+                az containerapp update \
+                  --name $(containerAppName) \
+                  --resource-group $(resourceGroupName) \
+                  --image $(containerRegistryUrl)/$(imageName):$(tag) \
+                  --set-env-vars \
+                    StorageConfig__Container__Avatars=$(StorageConfig__Container__Avatars) \
+                    StorageConfig__Container__Problems=$(StorageConfig__Container__Problems) \
+                    InternalClientConfig__GenerateTestCaseApiOptions__ApiBaseUrl=$(InternalClientConfig__GenerateTestCaseApiOptions__ApiBaseUrl) \
+                    InternalClientConfig__GradeSubmissionApiOptions__ApiBaseUrl=$(InternalClientConfig__GradeSubmissionApiOptions__ApiBaseUrl) \
+                    InternalClientConfig__GradeSQLSubmissionApiOptions__ApiBaseUrl=$(InternalClientConfig__GradeSQLSubmissionApiOptions__ApiBaseUrl) \
+                    ASPNETCORE_ENVIRONMENT=$(ASPNETCORE_ENVIRONMENT) \
+                    ConnectionStrings__DefaultConnection=$(ConnectionStrings__DefaultConnection) \
+                    MinIOConfig__EndPoint=$(MinIOConfig__EndPoint) \
+                    MinIOConfig__AccessKey=$(MinIOConfig__AccessKey) \
+                    MinIOConfig__SecretKey=$(MinIOConfig__SecretKey) \
+                    MinIOConfig__UseSSL=$(MinIOConfig__UseSSL) \
+                    RedisCacheSettings__ConnectionString=$(RedisCacheSettings__ConnectionString) \
+                    RedisCacheSettings__InstanceName=$(RedisCacheSettings__InstanceName) \
+                    RedisCacheSettings__DefaultExpirationMinutes=$(RedisCacheSettings__DefaultExpirationMinutes) \
+                    Serilog__MinimumLevel__Default=$(Serilog__MinimumLevel__Default) \
+                    Serilog__MinimumLevel__Hangfire=$(Serilog__MinimumLevel__Hangfire) \
+                    Serilog__Override__Microsoft=$(Serilog__Override__Microsoft) \
+                    Serilog__Override__System=$(Serilog__Override__System) \
+                    Serilog__Override__Hangfire=$(Serilog__Override__Hangfire) \
+                    Serilog__WriteTo__0__Name=$(Serilog__WriteTo__0__Name) \
+                    Serilog__WriteTo__1__Name=$(Serilog__WriteTo__1__Name) \
+                    Serilog__WriteTo__1__Args__path=$(Serilog__WriteTo__1__Args__path) \
+                    Serilog__WriteTo__1__Args__rollingInterval=$(Serilog__WriteTo__1__Args__rollingInterval) \
+                    Serilog__WriteTo__1__Args__retainedFileCountLimit=$(Serilog__WriteTo__1__Args__retainedFileCountLimit) \
+                    Serilog__WriteTo__1__Args__rollOnFileSizeLimit=$(Serilog__WriteTo__1__Args__rollOnFileSizeLimit) \
+                    Serilog__WriteTo__1__Args__fileSizeLimitBytes=$(Serilog__WriteTo__1__Args__fileSizeLimitBytes) \
+                    Serilog__WriteTo__1__Args__shared=$(Serilog__WriteTo__1__Args__shared) \
+                    Serilog__WriteTo__1__Args__flushToDiskInterval=$(Serilog__WriteTo__1__Args__flushToDiskInterval) \
+                    AppConfig__EmailServiceConfig__ConnectionString=$(AppConfig__EmailServiceConfig__ConnectionString) \
+                    AppConfig__EmailServiceConfig__Sender=$(AppConfig__EmailServiceConfig__Sender) \
+                    AppConfig__FrontendConfig__Url=$(AppConfig__FrontendConfig__Url) \
+                    AppConfig__JwtConfig__SigningKey=$(AppConfig__JwtConfig__SigningKey) \
+                    AppConfig__JwtConfig__Issuer=$(AppConfig__JwtConfig__Issuer) \
+                    AppConfig__JwtConfig__Audience=$(AppConfig__JwtConfig__Audience) \
+                    AppConfig__JwtConfig__Modulus=$(AppConfig__JwtConfig__Modulus) \
+                    AppConfig__JwtConfig__Exponent=$(AppConfig__JwtConfig__Exponent)
+              else
+                echo "Creating new container app $(containerAppName)..."
+                az containerapp create \
+                  --name $(containerAppName) \
+                  --resource-group $(resourceGroupName) \
+                  --environment $(environmentName) \
+                  --image $(containerRegistryUrl)/$(imageName):$(tag) \
+                  --cpu 0.25 \
+                  --memory 0.5Gi \
+                  --target-port 80 \
+                  --ingress external \
+                  --registry-server $(containerRegistryUrl) \
+                  --min-replicas 0 \
+                  --max-replicas 1 \
+                  --registry-username $(acrUsername) \
+                  --registry-password $(DOCKER_REGISTRY_SERVER_PASSWORD) \
+                  --env-vars \
+                    StorageConfig__Container__Avatars=$(StorageConfig__Container__Avatars) \
+                    StorageConfig__Container__Problems=$(StorageConfig__Container__Problems) \
+                    InternalClientConfig__GenerateTestCaseApiOptions__ApiBaseUrl=$(InternalClientConfig__GenerateTestCaseApiOptions__ApiBaseUrl) \
+                    InternalClientConfig__GradeSubmissionApiOptions__ApiBaseUrl=$(InternalClientConfig__GradeSubmissionApiOptions__ApiBaseUrl) \
+                    InternalClientConfig__GradeSQLSubmissionApiOptions__ApiBaseUrl=$(InternalClientConfig__GradeSQLSubmissionApiOptions__ApiBaseUrl) \
+                    ASPNETCORE_ENVIRONMENT=$(ASPNETCORE_ENVIRONMENT) \
+                    ConnectionStrings__DefaultConnection=$(ConnectionStrings__DefaultConnection) \
+                    MinIOConfig__EndPoint=$(MinIOConfig__EndPoint) \
+                    MinIOConfig__AccessKey=$(MinIOConfig__AccessKey) \
+                    MinIOConfig__SecretKey=$(MinIOConfig__SecretKey) \
+                    MinIOConfig__UseSSL=$(MinIOConfig__UseSSL) \
+                    RedisCacheSettings__ConnectionString=$(RedisCacheSettings__ConnectionString) \
+                    RedisCacheSettings__InstanceName=$(RedisCacheSettings__InstanceName) \
+                    RedisCacheSettings__DefaultExpirationMinutes=$(RedisCacheSettings__DefaultExpirationMinutes) \
+                    Serilog__MinimumLevel__Default=$(Serilog__MinimumLevel__Default) \
+                    Serilog__MinimumLevel__Hangfire=$(Serilog__MinimumLevel__Hangfire) \
+                    Serilog__Override__Microsoft=$(Serilog__Override__Microsoft) \
+                    Serilog__Override__System=$(Serilog__Override__System) \
+                    Serilog__Override__Hangfire=$(Serilog__Override__Hangfire) \
+                    Serilog__WriteTo__0__Name=$(Serilog__WriteTo__0__Name) \
+                    Serilog__WriteTo__1__Name=$(Serilog__WriteTo__1__Name) \
+                    Serilog__WriteTo__1__Args__path=$(Serilog__WriteTo__1__Args__path) \
+                    Serilog__WriteTo__1__Args__rollingInterval=$(Serilog__WriteTo__1__Args__rollingInterval) \
+                    Serilog__WriteTo__1__Args__retainedFileCountLimit=$(Serilog__WriteTo__1__Args__retainedFileCountLimit) \
+                    Serilog__WriteTo__1__Args__rollOnFileSizeLimit=$(Serilog__WriteTo__1__Args__rollOnFileSizeLimit) \
+                    Serilog__WriteTo__1__Args__fileSizeLimitBytes=$(Serilog__WriteTo__1__Args__fileSizeLimitBytes) \
+                    Serilog__WriteTo__1__Args__shared=$(Serilog__WriteTo__1__Args__shared) \
+                    Serilog__WriteTo__1__Args__flushToDiskInterval=$(Serilog__WriteTo__1__Args__flushToDiskInterval) \
+                    AppConfig__EmailServiceConfig__ConnectionString=$(AppConfig__EmailServiceConfig__ConnectionString) \
+                    AppConfig__EmailServiceConfig__Sender=$(AppConfig__EmailServiceConfig__Sender) \
+                    AppConfig__FrontendConfig__Url=$(AppConfig__FrontendConfig__Url) \
+                    AppConfig__JwtConfig__SigningKey=$(AppConfig__JwtConfig__SigningKey) \
+                    AppConfig__JwtConfig__Issuer=$(AppConfig__JwtConfig__Issuer) \
+                    AppConfig__JwtConfig__Audience=$(AppConfig__JwtConfig__Audience) \
+                    AppConfig__JwtConfig__Modulus=$(AppConfig__JwtConfig__Modulus) \
+                    AppConfig__JwtConfig__Exponent=$(AppConfig__JwtConfig__Exponent)
