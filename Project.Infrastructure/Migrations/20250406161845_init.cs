@@ -1050,6 +1050,189 @@ namespace Project.Infrastructure.Migrations {
                 principalTable: "lessons",
                 principalColumn: "id",
                 onDelete: ReferentialAction.SetNull);
+
+            migrationBuilder.DropForeignKey(
+                name: "user_course_progress_lesson_id_fkey",
+                table: "user_course_progress");
+
+            migrationBuilder.DropPrimaryKey(
+                name: "user_module_progress_pkey",
+                table: "user_module_progress");
+
+            migrationBuilder.DropPrimaryKey(
+                name: "user_lesson_progress_pkey",
+                table: "user_lesson_progress");
+
+            migrationBuilder.DropPrimaryKey(
+                name: "user_course_progress_pkey",
+                table: "user_course_progress");
+
+            migrationBuilder.DropColumn(
+                name: "lesson_id",
+                table: "word_quizzes");
+
+            migrationBuilder.RenameColumn(
+                name: "IsActive",
+                table: "user_module_progress",
+                newName: "is_active");
+
+            migrationBuilder.RenameColumn(
+                name: "IsActive",
+                table: "user_lesson_progress",
+                newName: "is_active");
+
+            migrationBuilder.RenameColumn(
+                name: "IsActive",
+                table: "user_course_progress",
+                newName: "is_active");
+
+            migrationBuilder.RenameColumn(
+                name: "lesson_id",
+                table: "user_course_progress",
+                newName: "course_id");
+
+            migrationBuilder.RenameIndex(
+                name: "IX_user_course_progress_lesson_id",
+                table: "user_course_progress",
+                newName: "IX_user_course_progress_course_id");
+
+            migrationBuilder.AlterColumn<Guid>(
+                name: "id",
+                table: "words",
+                type: "uuid",
+                nullable: false,
+                defaultValueSql: "gen_random_uuid()",
+                oldClrType: typeof(Guid),
+                oldType: "uuid");
+
+            migrationBuilder.AlterColumn<Guid>(
+                name: "id",
+                table: "word_quizzes",
+                type: "uuid",
+                nullable: false,
+                defaultValueSql: "gen_random_uuid()",
+                oldClrType: typeof(Guid),
+                oldType: "uuid");
+
+            migrationBuilder.AlterColumn<bool>(
+                name: "is_active",
+                table: "user_module_progress",
+                type: "boolean",
+                nullable: false,
+                defaultValue: false,
+                oldClrType: typeof(bool),
+                oldType: "boolean");
+
+            migrationBuilder.AddColumn<Guid>(
+                name: "id",
+                table: "user_module_progress",
+                type: "uuid",
+                nullable: false,
+                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
+
+            migrationBuilder.AlterColumn<bool>(
+                name: "is_active",
+                table: "user_lesson_progress",
+                type: "boolean",
+                nullable: false,
+                defaultValue: false,
+                oldClrType: typeof(bool),
+                oldType: "boolean");
+
+            migrationBuilder.AddColumn<Guid>(
+                name: "id",
+                table: "user_lesson_progress",
+                type: "uuid",
+                nullable: false,
+                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
+
+            migrationBuilder.AddColumn<bool>(
+                name: "is_learned",
+                table: "user_lesson_progress",
+                type: "boolean",
+                nullable: false,
+                defaultValue: false);
+
+            migrationBuilder.AlterColumn<bool>(
+                name: "is_active",
+                table: "user_course_progress",
+                type: "boolean",
+                nullable: false,
+                defaultValue: false,
+                oldClrType: typeof(bool),
+                oldType: "boolean");
+
+            migrationBuilder.AddColumn<Guid>(
+                name: "id",
+                table: "user_course_progress",
+                type: "uuid",
+                nullable: false,
+                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
+
+            migrationBuilder.AlterColumn<Guid>(
+                name: "id",
+                table: "quizzes",
+                type: "uuid",
+                nullable: false,
+                defaultValueSql: "gen_random_uuid()",
+                oldClrType: typeof(Guid),
+                oldType: "uuid");
+
+            migrationBuilder.AlterColumn<Guid>(
+                name: "id",
+                table: "quiz_options",
+                type: "uuid",
+                nullable: false,
+                defaultValueSql: "gen_random_uuid()",
+                oldClrType: typeof(Guid),
+                oldType: "uuid");
+
+            migrationBuilder.AlterColumn<Guid>(
+                name: "id",
+                table: "lessons",
+                type: "uuid",
+                nullable: false,
+                defaultValueSql: "gen_random_uuid()",
+                oldClrType: typeof(Guid),
+                oldType: "uuid");
+
+            migrationBuilder.AddPrimaryKey(
+                name: "user_module_progress_pkey",
+                table: "user_module_progress",
+                column: "id");
+
+            migrationBuilder.AddPrimaryKey(
+                name: "user_lesson_progress_pkey",
+                table: "user_lesson_progress",
+                column: "id");
+
+            migrationBuilder.AddPrimaryKey(
+                name: "user_course_progress_pkey",
+                table: "user_course_progress",
+                column: "id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_user_module_progress_user_id",
+                table: "user_module_progress",
+                column: "user_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_user_lesson_progress_user_id",
+                table: "user_lesson_progress",
+                column: "user_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_user_course_progress_user_id",
+                table: "user_course_progress",
+                column: "user_id");
+
+            migrationBuilder.AddForeignKey(
+                name: "user_course_progress_course_id_fkey",
+                table: "user_course_progress",
+                column: "course_id",
+                principalTable: "courses",
+                principalColumn: "id",
+                onDelete: ReferentialAction.Cascade);
         }
 
         /// <inheritdoc />
