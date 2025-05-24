@@ -28,10 +28,12 @@ namespace Project.API.Controllers {
                         errorMessages = null,
                         result = "Create new lesson progress success"
                     });
-                } else {
+                }
+                else {
                     return BadRequest(new APIResponse() { errorMessages = new List<string> { "Server Error" } });
                 }
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 return BadRequest(new APIResponse() { errorMessages = new List<string> { ex.Message } });
             }
         }
@@ -44,10 +46,12 @@ namespace Project.API.Controllers {
                         errorMessages = null,
                         result = "Mark complete success"
                     });
-                } else {
+                }
+                else {
                     return BadRequest(new APIResponse() { errorMessages = new List<string> { "Server Error" } });
                 }
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 return BadRequest(new APIResponse() { errorMessages = new List<string> { ex.Message } });
             }
         }
@@ -60,10 +64,12 @@ namespace Project.API.Controllers {
                         errorMessages = null,
                         result = "Mark learned success"
                     });
-                } else {
+                }
+                else {
                     return BadRequest(new APIResponse() { errorMessages = new List<string> { "Server Error" } });
                 }
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 return BadRequest(new APIResponse() { errorMessages = new List<string> { ex.Message } });
             }
         }
