@@ -1,8 +1,8 @@
 namespace Project.Core.Entities.Business.DTOs.RegisterDTOs {
     public class RegisterationRequestDTO {
-        public required string email { get; set; }
-        public required string password { get; set; }
-        public required string role { get; set; }
-        public string? languageCode { get; set; }
+        public required string Email { get; set; }
+        public required string Password { get; set; }
+        public required string Role { get; set; }
+        public string? LanguageCode { get; set; }
     }
 }

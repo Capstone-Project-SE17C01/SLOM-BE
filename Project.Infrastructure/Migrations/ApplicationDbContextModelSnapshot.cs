@@ -317,6 +317,63 @@ namespace Project.Infrastructure.Migrations
                     b.ToTable("meetings", (string)null);
                 });
 
+            modelBuilder.Entity("Project.Core.Entities.General.MeetingInvitation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("email");
+
+                    b.Property<string>("InvitationCode")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("invitation_code");
+
+                    b.Property<Guid>("MeetingId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("meeting_id");
+
+                    b.Property<DateTime?>("RespondedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("responded_at");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status")
+                        .HasDefaultValueSql("'Pending'::character varying");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("meeting_invitations_pkey");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex(new[] { "MeetingId" }, "idx_meeting_invitations_meeting");
+
+                    b.HasIndex(new[] { "InvitationCode" }, "meeting_invitations_code_key")
+                        .IsUnique();
+
+                    b.ToTable("meeting_invitations", (string)null);
+                });
+
             modelBuilder.Entity("Project.Core.Entities.General.MeetingParticipant", b =>
                 {
                     b.Property<Guid>("MeetingId")
@@ -1148,6 +1205,26 @@ namespace Project.Infrastructure.Migrations
                     b.Navigation("Host");
                 });
 
+            modelBuilder.Entity("Project.Core.Entities.General.MeetingInvitation", b =>
+                {
+                    b.HasOne("Project.Core.Entities.General.Meeting", "Meeting")
+                        .WithMany("Invitations")
+                        .HasForeignKey("MeetingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("meeting_invitations_meeting_id_fkey");
+
+                    b.HasOne("Project.Core.Entities.General.Profile", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("meeting_invitations_user_id_fkey");
+
+                    b.Navigation("Meeting");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Project.Core.Entities.General.MeetingParticipant", b =>
                 {
                     b.HasOne("Project.Core.Entities.General.Meeting", "Meeting")
@@ -1482,6 +1559,8 @@ namespace Project.Infrastructure.Migrations
 
             modelBuilder.Entity("Project.Core.Entities.General.Meeting", b =>
                 {
+                    b.Navigation("Invitations");
+
                     b.Navigation("Participants");
 
                     b.Navigation("Recordings");

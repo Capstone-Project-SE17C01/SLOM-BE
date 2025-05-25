@@ -1,20 +1,18 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace Project.Core.Entities.Business.DTOs.PaymentDTOs {
     public class ReturnUrlQuery {
-        public required string userId { get; set; }
+        public required string UserId { get; set; }
 
-        public required string code { get; set; }
+        public required string Code { get; set; }
 
-        public required string id { get; set; }
+        public required string Id { get; set; }
 
-        public bool cancel { get; set; }
+        public bool Cancel { get; set; }
 
-        public required string status { get; set; }
+        public required string Status { get; set; }
 
-        public int orderCode { get; set; }
+        public int OrderCode { get; set; }
 
-        public int period { get; set; }
+        public int Period { get; set; }
     }
 
 }

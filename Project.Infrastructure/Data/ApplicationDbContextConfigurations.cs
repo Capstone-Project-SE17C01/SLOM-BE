@@ -143,9 +143,7 @@ namespace Project.Infrastructure.Data {
                     .HasForeignKey(d => d.HostId)
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("meetings_host_id_fkey");
-            });
-
-            modelBuilder.Entity<MeetingParticipant>(entity => {
+            });            modelBuilder.Entity<MeetingParticipant>(entity => {
                 entity.HasKey(e => new { e.MeetingId, e.UserId }).HasName("meeting_participants_pkey");
                 entity.ToTable("meeting_participants");
                 entity.HasIndex(e => new { e.MeetingId, e.UserId }, "idx_meeting_participants");
@@ -167,6 +165,37 @@ namespace Project.Infrastructure.Data {
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("meeting_participants_user_id_fkey");
+            });
+
+            modelBuilder.Entity<MeetingInvitation>(entity => {
+                entity.HasKey(e => e.Id).HasName("meeting_invitations_pkey");
+                entity.ToTable("meeting_invitations");
+                entity.HasIndex(e => e.MeetingId, "idx_meeting_invitations_meeting");
+                entity.HasIndex(e => e.InvitationCode, "meeting_invitations_code_key").IsUnique();
+
+                entity.Property(e => e.Id)
+                    .ValueGeneratedOnAdd()
+                    .HasDefaultValueSql("gen_random_uuid()")
+                    .HasColumnName("id");
+                entity.Property(e => e.MeetingId).HasColumnName("meeting_id");
+                entity.Property(e => e.UserId).HasColumnName("user_id");
+                entity.Property(e => e.Email).HasMaxLength(255).HasColumnName("email");
+                entity.Property(e => e.Status).HasMaxLength(20).HasDefaultValueSql("'Pending'::character varying").HasColumnName("status");
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("now()").HasColumnName("created_at");
+                entity.Property(e => e.RespondedAt).HasColumnName("responded_at");
+                entity.Property(e => e.InvitationCode).HasMaxLength(50).HasColumnName("invitation_code");
+
+                entity.HasOne(d => d.Meeting)
+                    .WithMany(p => p.Invitations)
+                    .HasForeignKey(d => d.MeetingId)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("meeting_invitations_meeting_id_fkey");
+
+                entity.HasOne(d => d.User)
+                    .WithMany()
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.SetNull)
+                    .HasConstraintName("meeting_invitations_user_id_fkey");
             });
 
             modelBuilder.Entity<MeetingRecording>(entity => {

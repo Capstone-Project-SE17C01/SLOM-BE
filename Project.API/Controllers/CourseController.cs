@@ -50,17 +50,17 @@ namespace Project.API.Controllers {
                 var recentCoursesCompleted = await _userCourseProgressRepository.CountLast7DaysCompletedCoursesAsync(userId);
 
                 var summary = new SummaryResponseDTO {
-                    totalCourse = totalCourses,
-                    totalModules = totalModules,
-                    totalLessons = totalLessons,
-                    totalCoursesCompleted = totalCoursesCompleted,
-                    totalModulesCompleted = totalModulesCompleted,
-                    totalLessonsCompleted = totalLessonsCompleted,
-                    activeLesson = activeLessonEntry,
-                    activities = new Activity {
-                        recentLessonsCompleted = recentLessonsCompleted,
-                        recentModulesCompleted = recentModulesCompleted,
-                        recentCoursesCompleted = recentCoursesCompleted
+                    TotalCourse = totalCourses,
+                    TotalModules = totalModules,
+                    TotalLessons = totalLessons,
+                    TotalCoursesCompleted = totalCoursesCompleted,
+                    TotalModulesCompleted = totalModulesCompleted,
+                    TotalLessonsCompleted = totalLessonsCompleted,
+                    ActiveLesson = activeLessonEntry,
+                    Activities = new Activity {
+                        RecentLessonsCompleted = recentLessonsCompleted,
+                        RecentModulesCompleted = recentModulesCompleted,
+                        RecentCoursesCompleted = recentCoursesCompleted
                     }
                 };
 

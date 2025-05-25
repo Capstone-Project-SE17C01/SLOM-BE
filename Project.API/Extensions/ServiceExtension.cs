@@ -6,7 +6,6 @@ using Project.Core.Entities.Business.DTOs.ProfileDTOs;
 using Project.Core.Interfaces.IMapper;
 using Project.Core.Interfaces.IRepositories;
 using Project.Core.Mapper;
-using Project.Infrastructure.Model.ASLPredictor;
 using Project.Infrastructure.Repositories;
 
 namespace Project.API.Extensions {
@@ -18,12 +17,6 @@ namespace Project.API.Extensions {
                     config["Environment:PAYOS_API_KEY"] ?? throw new Exception("Cannot find environment"),
                     config["Environment:PAYOS_CHECKSUM_KEY"] ?? throw new Exception("Cannot find environment"));
             services.AddSingleton(payOS);
-
-            services.AddSingleton(provider => {
-                var env = provider.GetRequiredService<IWebHostEnvironment>();
-                var modelPath = Path.Combine(env.ContentRootPath, "Models", "WLASL20c_model.onnx");
-                return new ASLPredictor(modelPath);
-            });
             // services.AddScoped<>();
             #endregion
 
@@ -31,6 +24,7 @@ namespace Project.API.Extensions {
             services.AddTransient<IProfileRepository, ProfileRepository>();
             services.AddScoped<IMessageRepository, MessageRepository>();
             services.AddScoped<IMessageService, MessageService>();
+            services.AddScoped<IMeetingRepository, MeetingRepository>();
             services.AddScoped<ILanguageRepository, LanguageRepository>();
             services.AddScoped<IUserCourseProgressRepository, UserCourseProgressRepository>();
             services.AddScoped<IUserModuleProgressRepository, UserModuleProgressRepository>();
