@@ -1,6 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-using Net.payOS.Types;
-
 namespace Project.Core.Entities.Business.DTOs.PaymentDTOs {
 
     namespace MyApi.Models {
@@ -9,21 +6,21 @@ namespace Project.Core.Entities.Business.DTOs.PaymentDTOs {
 
             public required Guid UserId { get; set; }
 
-            public required string paymentMethod { get; set; }
+            public required string PaymentMethod { get; set; }
 
             public required string Status { get; set; }
 
-            public int durationMonth { get; set; }
+            public int DurationMonth { get; set; }
 
-            public string? productName { get; set; }
+            public string? ProductName { get; set; }
 
-            public required string description { get; set; }
+            public required string Description { get; set; }
 
-            public required string returnUrl { get; set; }
+            public required string ReturnUrl { get; set; }
 
-            public required string cancelUrl { get; set; }
+            public required string CancelUrl { get; set; }
 
-            public int price { get; set; }
+            public int Price { get; set; }
 
         }
     }

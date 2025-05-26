@@ -1,13 +1,13 @@
 namespace Project.Core.Entities.Business.DTOs.CourseDTOs {
     public class Activity {
-        public int recentLessonsCompleted { get; set; }
-        public int recentModulesCompleted { get; set; }
-        public int recentCoursesCompleted { get; set; }
+        public int RecentLessonsCompleted { get; set; }
+        public int RecentModulesCompleted { get; set; }
+        public int RecentCoursesCompleted { get; set; }
 
         public Activity() {
-            recentLessonsCompleted = 0;
-            recentModulesCompleted = 0;
-            recentCoursesCompleted = 0;
+            RecentLessonsCompleted = 0;
+            RecentModulesCompleted = 0;
+            RecentCoursesCompleted = 0;
         }
     }
 }
