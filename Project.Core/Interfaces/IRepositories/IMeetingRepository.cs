@@ -1,9 +1,7 @@
 using Project.Core.Entities.General;
 
-namespace Project.Core.Interfaces.IRepositories
-{
-    public interface IMeetingRepository
-    {
+namespace Project.Core.Interfaces.IRepositories {
+    public interface IMeetingRepository {
         Task<Meeting> CreateMeetingAsync(Meeting meeting);
         Task<Meeting> GetMeetingByIdAsync(Guid id);
         Task<IEnumerable<Meeting>> GetActiveMeetingsAsync();
@@ -20,7 +18,7 @@ namespace Project.Core.Interfaces.IRepositories
         Task<IEnumerable<MeetingRecording>> GetRecordingsForMeetingAsync(Guid meetingId);
         Task<IEnumerable<MeetingRecording>> GetRecordingsByUserIdAsync(Guid userId);
         Task<IEnumerable<Meeting>> GetUserMeetingsAsync(Guid userId);
-        
+
         // Meeting Invitation methods
         Task<MeetingInvitation> CreateInvitationAsync(MeetingInvitation invitation);
         Task<IEnumerable<MeetingInvitation>> GetInvitationsByMeetingIdAsync(Guid meetingId);

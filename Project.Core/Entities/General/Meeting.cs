@@ -20,7 +20,7 @@ namespace Project.Core.Entities.General {
 
         public string? GuestCode { get; set; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;        public Profile Host { get; set; } = null!;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow; public Profile Host { get; set; } = null!;
         public ICollection<MeetingParticipant> Participants { get; set; } = new List<MeetingParticipant>();
         public ICollection<MeetingRecording> Recordings { get; set; } = new List<MeetingRecording>();
         public ICollection<Translation> Translations { get; set; } = new List<Translation>();

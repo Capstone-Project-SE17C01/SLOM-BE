@@ -1,7 +1,7 @@
 namespace Project.Core.Entities.Business.DTOs.MeetingDTOs {
     public class MeetingScheduleDto {
         public required string Title { get; set; }
-        public string Description { get; set; } = string.Empty; 
+        public string Description { get; set; } = string.Empty;
         public required DateTime StartTime { get; set; }
         public DateTime? EndTime { get; set; }
         public int? Duration { get; set; }

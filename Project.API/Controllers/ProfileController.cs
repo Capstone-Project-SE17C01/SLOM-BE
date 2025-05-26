@@ -38,8 +38,7 @@ namespace Project.API.Controllers {
         }
 
         [HttpGet("GetProfileByName")]
-        public async Task<List<ProfileByNameResponse>> GetProfilesByName(string input, string currentUserEmail)
-        {
+        public async Task<List<ProfileByNameResponse>> GetProfilesByName(string input, string currentUserEmail) {
             var profiles = await _profileRepository.GetProfileByName(input, currentUserEmail);
             return profiles.Where(profile => profile != null).ToList();
         }

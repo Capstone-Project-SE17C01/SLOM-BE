@@ -15,7 +15,8 @@ public partial class ApplicationDbContext : DbContext {
     public DbSet<Profile> Profiles { get; set; }
     public DbSet<SubscriptionPlan> SubscriptionPlans { get; set; }
     public DbSet<UserSubscription> UserSubscriptions { get; set; }
-    public DbSet<Payment> Payments { get; set; }    public DbSet<Meeting> Meetings { get; set; }
+    public DbSet<Payment> Payments { get; set; }
+    public DbSet<Meeting> Meetings { get; set; }
     public DbSet<MeetingParticipant> MeetingParticipants { get; set; }
     public DbSet<MeetingRecording> MeetingRecordings { get; set; }
     public DbSet<MeetingInvitation> MeetingInvitations { get; set; }

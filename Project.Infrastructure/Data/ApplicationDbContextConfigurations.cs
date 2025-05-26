@@ -143,7 +143,7 @@ namespace Project.Infrastructure.Data {
                     .HasForeignKey(d => d.HostId)
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("meetings_host_id_fkey");
-            });            modelBuilder.Entity<MeetingParticipant>(entity => {
+            }); modelBuilder.Entity<MeetingParticipant>(entity => {
                 entity.HasKey(e => new { e.MeetingId, e.UserId }).HasName("meeting_participants_pkey");
                 entity.ToTable("meeting_participants");
                 entity.HasIndex(e => new { e.MeetingId, e.UserId }, "idx_meeting_participants");
