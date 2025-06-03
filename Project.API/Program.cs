@@ -42,14 +42,9 @@ app.UseAuthorization();
 app.MapHub<MessagingHub>("/hub");
 
 app.UseCors(x => {
-    var corsOrigin = builder.Configuration["CorsOrigin"];
-    if (string.IsNullOrEmpty(corsOrigin)) {
-        throw new InvalidOperationException("CorsOrigin configuration is missing or empty.");
-    }
-    x.WithOrigins(corsOrigin)
+    x.AllowAnyOrigin()
         .AllowAnyHeader()
-        .AllowAnyMethod()
-        .AllowCredentials();
+        .AllowAnyMethod();
 });
 
 app.MapControllers();
