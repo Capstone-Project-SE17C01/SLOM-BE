@@ -1050,6 +1050,19 @@ namespace Project.Infrastructure.Migrations {
                 principalTable: "lessons",
                 principalColumn: "id",
                 onDelete: ReferentialAction.SetNull);
+
+            migrationBuilder.CreateTable(
+               name: "video_suggests",
+               columns: table => new {
+                   id = table.Column<Guid>(type: "uuid", nullable: false),
+                   title = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                   description = table.Column<string>(type: "text", nullable: true),
+                   video_url = table.Column<string>(type: "text", nullable: true),
+                   publish_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+               },
+               constraints: table => {
+                   table.PrimaryKey("PK_video_suggests", x => x.id);
+               });
         }
 
         /// <inheritdoc />

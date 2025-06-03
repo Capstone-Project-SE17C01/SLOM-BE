@@ -606,6 +606,24 @@ namespace Project.Infrastructure.Data {
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("received_message_profile_fkey");
             });
+
+            modelBuilder.Entity<VideoSuggest>(entity =>
+            {
+                entity.ToTable("video_suggests");
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Id)
+                      .HasColumnName("id")
+                      .IsRequired();
+                entity.Property(e => e.Title)
+                      .HasColumnName("title")
+                      .HasMaxLength(255);
+                entity.Property(e => e.Description)
+                      .HasColumnName("description");
+                entity.Property(e => e.VideoUrl)
+                      .HasColumnName("video_url");
+                entity.Property(e => e.PublishDate)
+                      .HasColumnName("publish_date");
+            });
         }
 
         public static void SeedData(ModelBuilder modelBuilder) {

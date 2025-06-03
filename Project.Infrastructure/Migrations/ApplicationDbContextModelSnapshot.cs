@@ -962,6 +962,35 @@ namespace Project.Infrastructure.Migrations
                     b.ToTable("user_subscriptions", (string)null);
                 });
 
+            modelBuilder.Entity("Project.Core.Entities.General.VideoSuggest", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text")
+                        .HasColumnName("description");
+
+                    b.Property<DateTime>("PublishDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("publish_date");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("title");
+
+                    b.Property<string>("VideoUrl")
+                        .HasColumnType("text")
+                        .HasColumnName("video_url");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("video_suggests", (string)null);
+                });
+
             modelBuilder.Entity("Project.Core.Entities.General.Word", b =>
                 {
                     b.Property<Guid>("Id")
