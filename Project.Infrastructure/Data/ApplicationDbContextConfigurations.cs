@@ -692,8 +692,7 @@ namespace Project.Infrastructure.Data {
                     .HasConstraintName("received_message_profile_fkey");
             });
 
-            modelBuilder.Entity<VideoSuggest>(entity =>
-            {
+            modelBuilder.Entity<VideoSuggest>(entity => {
                 entity.ToTable("video_suggests");
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Id)
