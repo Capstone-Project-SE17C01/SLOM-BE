@@ -143,9 +143,7 @@ namespace Project.Infrastructure.Data {
                     .HasForeignKey(d => d.HostId)
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("meetings_host_id_fkey");
-            });
-
-            modelBuilder.Entity<MeetingParticipant>(entity => {
+            }); modelBuilder.Entity<MeetingParticipant>(entity => {
                 entity.HasKey(e => new { e.MeetingId, e.UserId }).HasName("meeting_participants_pkey");
                 entity.ToTable("meeting_participants");
                 entity.HasIndex(e => new { e.MeetingId, e.UserId }, "idx_meeting_participants");
@@ -167,6 +165,37 @@ namespace Project.Infrastructure.Data {
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("meeting_participants_user_id_fkey");
+            });
+
+            modelBuilder.Entity<MeetingInvitation>(entity => {
+                entity.HasKey(e => e.Id).HasName("meeting_invitations_pkey");
+                entity.ToTable("meeting_invitations");
+                entity.HasIndex(e => e.MeetingId, "idx_meeting_invitations_meeting");
+                entity.HasIndex(e => e.InvitationCode, "meeting_invitations_code_key").IsUnique();
+
+                entity.Property(e => e.Id)
+                    .ValueGeneratedOnAdd()
+                    .HasDefaultValueSql("gen_random_uuid()")
+                    .HasColumnName("id");
+                entity.Property(e => e.MeetingId).HasColumnName("meeting_id");
+                entity.Property(e => e.UserId).HasColumnName("user_id");
+                entity.Property(e => e.Email).HasMaxLength(255).HasColumnName("email");
+                entity.Property(e => e.Status).HasMaxLength(20).HasDefaultValueSql("'Pending'::character varying").HasColumnName("status");
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("now()").HasColumnName("created_at");
+                entity.Property(e => e.RespondedAt).HasColumnName("responded_at");
+                entity.Property(e => e.InvitationCode).HasMaxLength(50).HasColumnName("invitation_code");
+
+                entity.HasOne(d => d.Meeting)
+                    .WithMany(p => p.Invitations)
+                    .HasForeignKey(d => d.MeetingId)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("meeting_invitations_meeting_id_fkey");
+
+                entity.HasOne(d => d.User)
+                    .WithMany()
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.SetNull)
+                    .HasConstraintName("meeting_invitations_user_id_fkey");
             });
 
             modelBuilder.Entity<MeetingRecording>(entity => {
@@ -304,7 +333,11 @@ namespace Project.Infrastructure.Data {
                 entity.ToTable("lessons");
                 entity.HasIndex(e => e.ModuleId, "idx_lessons_module");
 
-                entity.Property(e => e.Id).ValueGeneratedNever().HasColumnName("id");
+                entity.Property(e => e.Id)
+                .ValueGeneratedOnAdd()
+                .HasDefaultValueSql("gen_random_uuid()")
+                .HasColumnName("id");
+
                 entity.Property(e => e.ModuleId).HasColumnName("module_id");
                 entity.Property(e => e.Title).HasMaxLength(100).HasColumnName("title");
                 entity.Property(e => e.Content).HasColumnName("content");
@@ -326,7 +359,8 @@ namespace Project.Infrastructure.Data {
                 entity.ToTable("quizzes");
 
                 entity.Property(e => e.Id)
-                    .ValueGeneratedNever()
+                    .ValueGeneratedOnAdd()
+                    .HasDefaultValueSql("gen_random_uuid()")
                     .HasColumnName("id");
 
                 entity.Property(e => e.LessonId)
@@ -383,7 +417,8 @@ namespace Project.Infrastructure.Data {
                 entity.ToTable("quiz_options");
 
                 entity.Property(e => e.Id)
-                    .ValueGeneratedNever()
+                    .ValueGeneratedOnAdd()
+                    .HasDefaultValueSql("gen_random_uuid()")
                     .HasColumnName("id");
 
                 entity.Property(e => e.Text)
@@ -409,7 +444,8 @@ namespace Project.Infrastructure.Data {
                 entity.ToTable("word_quizzes");
 
                 entity.Property(e => e.Id)
-                    .ValueGeneratedNever()
+                    .ValueGeneratedOnAdd()
+                    .HasDefaultValueSql("gen_random_uuid()")
                     .HasColumnName("id");
 
                 entity.Property(e => e.Text)
@@ -417,9 +453,6 @@ namespace Project.Infrastructure.Data {
 
                 entity.Property(e => e.VideoSrc)
                     .HasColumnName("video_src");
-
-                entity.Property(e => e.LessonId)
-                    .HasColumnName("lesson_id");
 
                 entity.Property(e => e.WordId)
                     .HasColumnName("word_id");
@@ -446,7 +479,8 @@ namespace Project.Infrastructure.Data {
                 entity.ToTable("words");
 
                 entity.Property(e => e.Id)
-                    .ValueGeneratedNever()
+                    .ValueGeneratedOnAdd()
+                    .HasDefaultValueSql("gen_random_uuid()")
                     .HasColumnName("id");
 
                 entity.Property(e => e.Text)
@@ -497,12 +531,27 @@ namespace Project.Infrastructure.Data {
             });
 
             modelBuilder.Entity<UserCourseProgress>(entity => {
-                entity.HasKey(e => new { e.UserId, e.CourseId }).HasName("user_course_progress_pkey");
+                entity.HasKey(e => e.Id).HasName("user_course_progress_pkey");
+
                 entity.ToTable("user_course_progress");
 
-                entity.Property(e => e.UserId).HasColumnName("user_id");
-                entity.Property(e => e.CourseId).HasColumnName("lesson_id");
-                entity.Property(e => e.CompletedAt).HasDefaultValueSql("now()").HasColumnName("completed_at");
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.UserId)
+                    .HasColumnName("user_id");
+
+                entity.Property(e => e.CourseId)
+                    .HasColumnName("course_id");
+
+                entity.Property(e => e.CompletedAt)
+                    .HasDefaultValueSql("now()")
+                    .HasColumnName("completed_at");
+
+                entity.Property(e => e.IsActive)
+                    .HasColumnName("is_active")
+                    .HasDefaultValue(false);
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.CourseProgresses)
@@ -514,16 +563,35 @@ namespace Project.Infrastructure.Data {
                     .WithMany(p => p.UserCourseProgress)
                     .HasForeignKey(d => d.CourseId)
                     .OnDelete(DeleteBehavior.Cascade)
-                    .HasConstraintName("user_course_progress_lesson_id_fkey");
+                    .HasConstraintName("user_course_progress_course_id_fkey");
             });
 
+
             modelBuilder.Entity<UserLessonProgress>(entity => {
-                entity.HasKey(e => new { e.UserId, e.LessonId }).HasName("user_lesson_progress_pkey");
+                entity.HasKey(e => e.Id).HasName("user_lesson_progress_pkey");
                 entity.ToTable("user_lesson_progress");
 
-                entity.Property(e => e.UserId).HasColumnName("user_id");
-                entity.Property(e => e.LessonId).HasColumnName("lesson_id");
-                entity.Property(e => e.CompletedAt).HasDefaultValueSql("now()").HasColumnName("completed_at");
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.UserId)
+                    .HasColumnName("user_id");
+
+                entity.Property(e => e.LessonId)
+                    .HasColumnName("lesson_id");
+
+                entity.Property(e => e.CompletedAt)
+                    .HasDefaultValueSql("now()")
+                    .HasColumnName("completed_at");
+
+                entity.Property(e => e.IsActive)
+                    .HasColumnName("is_active")
+                    .HasDefaultValue(false);
+
+                entity.Property(e => e.IsLearned)
+                    .HasColumnName("is_learned")
+                    .HasDefaultValue(false);
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.LessonProgresses)
@@ -538,13 +606,29 @@ namespace Project.Infrastructure.Data {
                     .HasConstraintName("user_lesson_progress_lesson_id_fkey");
             });
 
+
+
             modelBuilder.Entity<UserModuleProgress>(entity => {
-                entity.HasKey(e => new { e.UserId, e.ModuleId }).HasName("user_module_progress_pkey");
+                entity.HasKey(e => e.Id).HasName("user_module_progress_pkey");
                 entity.ToTable("user_module_progress");
 
-                entity.Property(e => e.UserId).HasColumnName("user_id");
-                entity.Property(e => e.ModuleId).HasColumnName("module_id");
-                entity.Property(e => e.CompletedAt).HasDefaultValueSql("now()").HasColumnName("completed_at");
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.UserId)
+                    .HasColumnName("user_id");
+
+                entity.Property(e => e.ModuleId)
+                    .HasColumnName("module_id");
+
+                entity.Property(e => e.CompletedAt)
+                    .HasDefaultValueSql("now()")
+                    .HasColumnName("completed_at");
+
+                entity.Property(e => e.IsActive)
+                    .HasColumnName("is_active")
+                    .HasDefaultValue(false);
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.ModuleProgresses)
@@ -558,6 +642,7 @@ namespace Project.Infrastructure.Data {
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("user_module_progress_module_id_fkey");
             });
+
 
 
 

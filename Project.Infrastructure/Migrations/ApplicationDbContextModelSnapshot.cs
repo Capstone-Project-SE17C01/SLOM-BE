@@ -205,8 +205,10 @@ namespace Project.Infrastructure.Migrations
             modelBuilder.Entity("Project.Core.Entities.General.Lesson", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
-                        .HasColumnName("id");
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
 
                     b.Property<string>("Content")
                         .HasColumnType("text")
@@ -313,6 +315,63 @@ namespace Project.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("meetings", (string)null);
+                });
+
+            modelBuilder.Entity("Project.Core.Entities.General.MeetingInvitation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("email");
+
+                    b.Property<string>("InvitationCode")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("invitation_code");
+
+                    b.Property<Guid>("MeetingId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("meeting_id");
+
+                    b.Property<DateTime?>("RespondedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("responded_at");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status")
+                        .HasDefaultValueSql("'Pending'::character varying");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("meeting_invitations_pkey");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex(new[] { "MeetingId" }, "idx_meeting_invitations_meeting");
+
+                    b.HasIndex(new[] { "InvitationCode" }, "meeting_invitations_code_key")
+                        .IsUnique();
+
+                    b.ToTable("meeting_invitations", (string)null);
                 });
 
             modelBuilder.Entity("Project.Core.Entities.General.MeetingParticipant", b =>
@@ -549,8 +608,10 @@ namespace Project.Infrastructure.Migrations
             modelBuilder.Entity("Project.Core.Entities.General.Quiz", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
-                        .HasColumnName("id");
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
 
                     b.Property<string>("CorrectAnswer")
                         .IsRequired()
@@ -631,8 +692,10 @@ namespace Project.Infrastructure.Migrations
             modelBuilder.Entity("Project.Core.Entities.General.QuizOption", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
-                        .HasColumnName("id");
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
 
                     b.Property<bool>("IsCorrect")
                         .ValueGeneratedOnAdd()
@@ -802,13 +865,10 @@ namespace Project.Infrastructure.Migrations
 
             modelBuilder.Entity("Project.Core.Entities.General.UserCourseProgress", b =>
                 {
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
-                        .HasColumnName("user_id");
-
-                    b.Property<Guid>("CourseId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("lesson_id");
+                        .HasColumnName("id");
 
                     b.Property<DateTime?>("CompletedAt")
                         .ValueGeneratedOnAdd()
@@ -816,26 +876,36 @@ namespace Project.Infrastructure.Migrations
                         .HasColumnName("completed_at")
                         .HasDefaultValueSql("now()");
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
+                    b.Property<Guid>("CourseId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("course_id");
 
-                    b.HasKey("UserId", "CourseId")
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("is_active");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
                         .HasName("user_course_progress_pkey");
 
                     b.HasIndex("CourseId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("user_course_progress", (string)null);
                 });
 
             modelBuilder.Entity("Project.Core.Entities.General.UserLessonProgress", b =>
                 {
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
-                        .HasColumnName("user_id");
-
-                    b.Property<Guid>("LessonId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("lesson_id");
+                        .HasColumnName("id");
 
                     b.Property<DateTime?>("CompletedAt")
                         .ValueGeneratedOnAdd()
@@ -844,12 +914,31 @@ namespace Project.Infrastructure.Migrations
                         .HasDefaultValueSql("now()");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("is_active");
 
-                    b.HasKey("UserId", "LessonId")
+                    b.Property<bool>("IsLearned")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("is_learned");
+
+                    b.Property<Guid>("LessonId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("lesson_id");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
                         .HasName("user_lesson_progress_pkey");
 
                     b.HasIndex("LessonId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("user_lesson_progress", (string)null);
                 });
@@ -894,13 +983,10 @@ namespace Project.Infrastructure.Migrations
 
             modelBuilder.Entity("Project.Core.Entities.General.UserModuleProgress", b =>
                 {
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
-                        .HasColumnName("user_id");
-
-                    b.Property<Guid>("ModuleId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("module_id");
+                        .HasColumnName("id");
 
                     b.Property<DateTime?>("CompletedAt")
                         .ValueGeneratedOnAdd()
@@ -909,12 +995,25 @@ namespace Project.Infrastructure.Migrations
                         .HasDefaultValueSql("now()");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("is_active");
 
-                    b.HasKey("UserId", "ModuleId")
+                    b.Property<Guid>("ModuleId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("module_id");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
                         .HasName("user_module_progress_pkey");
 
                     b.HasIndex("ModuleId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("user_module_progress", (string)null);
                 });
@@ -994,8 +1093,10 @@ namespace Project.Infrastructure.Migrations
             modelBuilder.Entity("Project.Core.Entities.General.Word", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
-                        .HasColumnName("id");
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
 
                     b.Property<Guid?>("LessonId")
                         .HasColumnType("uuid")
@@ -1020,12 +1121,10 @@ namespace Project.Infrastructure.Migrations
             modelBuilder.Entity("Project.Core.Entities.General.WordQuiz", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<Guid?>("LessonId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("lesson_id");
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
 
                     b.Property<Guid?>("QuizId")
                         .HasColumnType("uuid")
@@ -1133,6 +1232,26 @@ namespace Project.Infrastructure.Migrations
                         .HasConstraintName("meetings_host_id_fkey");
 
                     b.Navigation("Host");
+                });
+
+            modelBuilder.Entity("Project.Core.Entities.General.MeetingInvitation", b =>
+                {
+                    b.HasOne("Project.Core.Entities.General.Meeting", "Meeting")
+                        .WithMany("Invitations")
+                        .HasForeignKey("MeetingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("meeting_invitations_meeting_id_fkey");
+
+                    b.HasOne("Project.Core.Entities.General.Profile", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("meeting_invitations_user_id_fkey");
+
+                    b.Navigation("Meeting");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Project.Core.Entities.General.MeetingParticipant", b =>
@@ -1303,7 +1422,7 @@ namespace Project.Infrastructure.Migrations
                         .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("user_course_progress_lesson_id_fkey");
+                        .HasConstraintName("user_course_progress_course_id_fkey");
 
                     b.HasOne("Project.Core.Entities.General.Profile", "User")
                         .WithMany("CourseProgresses")
@@ -1469,6 +1588,8 @@ namespace Project.Infrastructure.Migrations
 
             modelBuilder.Entity("Project.Core.Entities.General.Meeting", b =>
                 {
+                    b.Navigation("Invitations");
+
                     b.Navigation("Participants");
 
                     b.Navigation("Recordings");

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Project.Core.Entities.Business.DTOs;
 using Project.Core.Entities.General;
 using Project.Core.Interfaces.IRepositories;
 using Project.Infrastructure.Data;
@@ -18,23 +19,27 @@ namespace Project.API.Controllers {
         }
 
         [HttpGet("OngoingLesson")]
-        public async Task<UserLessonProgress?> GetOngoingUserLesson(Guid userId) {
-            return await _userLessonProgressRepository.GetActiveLessonByUserIdAsync(userId);
+        public async Task<APIResponse> GetOngoingUserLesson(Guid userId) {
+            Lesson? lesson = await _userLessonProgressRepository.GetActiveLessonByUserIdAsync(userId);
+            return new APIResponse() { errorMessages = null, result = lesson };
         }
 
-        [HttpGet("LearnedLesson")]
-        public async Task<List<UserLessonProgress>> GetLearnedLesson(Guid userId) {
-            return await _userLessonProgressRepository.GetLearnedLessons(userId);
+        [HttpGet("GetListLearnedLesson")]
+        public async Task<APIResponse> GetLearnedLesson(Guid userId) {
+            List<Lesson> lessons = await _userLessonProgressRepository.GetLearnedLessons(userId);
+            return new APIResponse() { errorMessages = null, result = lessons };
         }
 
         [HttpGet("GetListWordLesson")]
-        public async Task<List<Word>> GetListWordLesson(Guid lessonId) {
-            return await _wordRepository.GetWordByLessonId(lessonId);
+        public async Task<APIResponse> GetListWordLesson(Guid lessonId) {
+            List<Word> words = await _wordRepository.GetWordByLessonId(lessonId);
+            return new APIResponse() { errorMessages = null, result = words };
         }
 
-        [HttpGet("GetListQuiz")]
-        public async Task<List<Quiz>> GetListQuizLesson(Guid lessonId) {
-            return await _quizRepository.GetAllQuizByLessonId(lessonId);
+        [HttpGet("GetListQuizLesson")]
+        public async Task<APIResponse> GetListQuizLesson(Guid lessonId) {
+            List<Quiz> quizzes = await _quizRepository.GetAllQuizByLessonId(lessonId);
+            return new APIResponse() { errorMessages = null, result = quizzes };
         }
     }
 }

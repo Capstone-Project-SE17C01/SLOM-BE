@@ -45,21 +45,21 @@ namespace Project.API.Controllers {
         [HttpPost("CreatePaymentLink")]
         public async Task<IActionResult> CreatePaymentLink([FromBody] CreatePaymentRequest request) {
             try {
-                var productName = request.productName ?? "anonymous";
+                var productName = request.ProductName ?? "anonymous";
                 var orderCode = int.Parse(DateTimeOffset.Now.ToString("ffffff"));
 
                 var items = new List<ItemData>
                 {
-            new ItemData(productName, request.durationMonth, request.price)
+            new ItemData(productName, request.DurationMonth, request.Price)
         };
 
                 var paymentData = new PaymentData(
                     orderCode,
-                    request.price * request.durationMonth,
-                    request.description,
+                    request.Price * request.DurationMonth,
+                    request.Description,
                     items,
-                    request.cancelUrl,
-                    request.returnUrl
+                    request.CancelUrl,
+                    request.ReturnUrl
                 );
 
                 UserSubscription userSubscription = new UserSubscription();
@@ -75,7 +75,7 @@ namespace Project.API.Controllers {
                             UserId = request.UserId,
                             CreatedAt = DateTime.UtcNow,
                             StartDate = DateTime.UtcNow,
-                            EndDate = DateTime.UtcNow.AddMonths(request.durationMonth),
+                            EndDate = DateTime.UtcNow.AddMonths(request.DurationMonth),
                             Status = "UNACTIVE"
                         };
                     }
@@ -94,12 +94,12 @@ namespace Project.API.Controllers {
 
                 var payment = new Payment {
                     Id = Guid.NewGuid(),
-                    Amount = request.price * request.durationMonth,
+                    Amount = request.Price * request.DurationMonth,
                     TransactionId = createPayment.paymentLinkId,
                     OrderCode = (int)createPayment.orderCode,
                     Status = "PENDING",
                     CreatedAt = DateTime.UtcNow,
-                    PaymentMethod = request.paymentMethod,
+                    PaymentMethod = request.PaymentMethod,
                     Currency = createPayment.currency,
                     UserId = request.UserId,
                     SubscriptionId = userSubscription.Id
@@ -132,7 +132,7 @@ namespace Project.API.Controllers {
 
             PaymentLinkInformation paymentLinkInformation;
             try {
-                paymentLinkInformation = await _payOS.getPaymentLinkInformation(returnUrlQuery.orderCode);
+                paymentLinkInformation = await _payOS.getPaymentLinkInformation(returnUrlQuery.OrderCode);
             }
             catch (Exception) {
                 return BadRequest(new APIResponse {
@@ -143,20 +143,20 @@ namespace Project.API.Controllers {
             var newStatus = "null";
             var resultMessage = "null";
 
-            if (returnUrlQuery.status.Equals("PAID", StringComparison.OrdinalIgnoreCase) &&
+            if (returnUrlQuery.Status.Equals("PAID", StringComparison.OrdinalIgnoreCase) &&
                 paymentLinkInformation.status.Equals("PAID", StringComparison.OrdinalIgnoreCase) &&
-                returnUrlQuery.code == "00") {
+                returnUrlQuery.Code == "00") {
                 newStatus = "PAID";
                 resultMessage = "Payment successful";
             }
-            else if (returnUrlQuery.status.Equals("CANCELLED", StringComparison.OrdinalIgnoreCase) ||
-                         returnUrlQuery.cancel) {
+            else if (returnUrlQuery.Status.Equals("CANCELLED", StringComparison.OrdinalIgnoreCase) ||
+                         returnUrlQuery.Cancel) {
                 newStatus = "CANCELLED";
                 resultMessage = "Payment cancelled";
             }
-            else if (returnUrlQuery.status.Equals("PENDING", StringComparison.OrdinalIgnoreCase) ||
-                         returnUrlQuery.status.Equals("PROCESSING", StringComparison.OrdinalIgnoreCase)) {
-                newStatus = returnUrlQuery.status.ToUpper();
+            else if (returnUrlQuery.Status.Equals("PENDING", StringComparison.OrdinalIgnoreCase) ||
+                         returnUrlQuery.Status.Equals("PROCESSING", StringComparison.OrdinalIgnoreCase)) {
+                newStatus = returnUrlQuery.Status.ToUpper();
                 resultMessage = "Payment is pending";
             }
             else {
@@ -165,7 +165,7 @@ namespace Project.API.Controllers {
                 });
             }
 
-            var payment = await _paymentRepository.GetPaymentByOrderCodeAsync(returnUrlQuery.orderCode);
+            var payment = await _paymentRepository.GetPaymentByOrderCodeAsync(returnUrlQuery.OrderCode);
             if (payment == null) {
                 return NotFound(new APIResponse {
                     errorMessages = new List<string> { "Payment not found" }
@@ -190,11 +190,11 @@ namespace Project.API.Controllers {
             }
 
             if (newStatus.Equals("PAID", StringComparison.OrdinalIgnoreCase) && DateTime.UtcNow >= userSubscription.StartDate && DateTime.UtcNow <= userSubscription.EndDate) {
-                userSubscription.EndDate = userSubscription.EndDate.AddMonths(returnUrlQuery.period);
+                userSubscription.EndDate = userSubscription.EndDate.AddMonths(returnUrlQuery.Period);
             }
             else {
                 userSubscription.StartDate = DateTime.UtcNow;
-                userSubscription.EndDate = userSubscription.StartDate.AddMonths(returnUrlQuery.period);
+                userSubscription.EndDate = userSubscription.StartDate.AddMonths(returnUrlQuery.Period);
             }
 
             try {

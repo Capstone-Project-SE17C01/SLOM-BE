@@ -5,5 +5,7 @@ namespace Project.Core.Interfaces.IRepositories {
         Task<int> CountCompletedAsync(Guid courseId, Guid userId);
         Task<int> CountLast7DaysCompletedCoursesAsync(Guid userId);
         Task<List<Course>> GetCoursesByUserIdAsync(Guid userId);
+        Task MarkCourseCompleted(Guid userId, Guid courseId);
+        Task<bool> CheckIfAllModulesCompleted(Guid courseId, Guid userId);
     }
 }

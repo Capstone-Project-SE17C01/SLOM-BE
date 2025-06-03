@@ -1,8 +1,8 @@
 namespace Project.Core.Entities.Business.DTOs.LoginDTOs {
     public class LoginGoogleRequestDTO {
-        public required string code { get; set; }
-        public required string redirectUri { get; set; }
-        public required string role { get; set; }
-        public string? languageCode { get; set; }
+        public required string Code { get; set; }
+        public required string RedirectUri { get; set; }
+        public required string Role { get; set; }
+        public string? LanguageCode { get; set; }
     }
 }

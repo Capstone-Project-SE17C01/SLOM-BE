@@ -1,11 +1,11 @@
 namespace Project.Core.Entities.Business.DTOs.RegisterDTOs {
     public class ConfirmRegisterationRequestDTO {
-        public string? username { get; set; }
-        public required string email { get; set; }
-        public required string confirmationCode { get; set; }
-        public string? newPassword { get; set; }
-        public string? confirmNewPassword { get; set; }
-        public string? role { get; set; }
-        public bool isPasswordReset { get; set; } = false;
+        public string? Username { get; set; }
+        public required string Email { get; set; }
+        public required string ConfirmationCode { get; set; }
+        public string? NewPassword { get; set; }
+        public string? ConfirmNewPassword { get; set; }
+        public string? Role { get; set; }
+        public bool IsPasswordReset { get; set; } = false;
     }
 }

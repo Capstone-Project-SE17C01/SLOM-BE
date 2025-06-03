@@ -19,6 +19,7 @@ public partial class ApplicationDbContext : DbContext {
     public DbSet<Meeting> Meetings { get; set; }
     public DbSet<MeetingParticipant> MeetingParticipants { get; set; }
     public DbSet<MeetingRecording> MeetingRecordings { get; set; }
+    public DbSet<MeetingInvitation> MeetingInvitations { get; set; }
     public DbSet<Translation> Translations { get; set; }
     public DbSet<CourseCategory> CourseCategories { get; set; }
     public DbSet<Course> Courses { get; set; }

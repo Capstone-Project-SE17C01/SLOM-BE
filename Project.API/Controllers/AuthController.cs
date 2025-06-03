@@ -64,8 +64,8 @@ namespace Project.API.Controllers {
             {
             new KeyValuePair<string, string>("grant_type",    grantType),
             new KeyValuePair<string, string>("client_id",     clientId),
-            new KeyValuePair<string, string>("code",          request.code),
-            new KeyValuePair<string, string>("redirect_uri",  request.redirectUri),
+            new KeyValuePair<string, string>("code",          request.Code),
+            new KeyValuePair<string, string>("redirect_uri",  request.RedirectUri),
         });
 
             _httpClient.DefaultRequestHeaders.Accept.Clear();
@@ -95,21 +95,21 @@ namespace Project.API.Controllers {
                 var jwtToken = new JwtSecurityTokenHandler().ReadJwtToken(tokenResponse.IdToken);
                 var googleSub = jwtToken.Claims.First(c => c.Type == "sub").Value;
                 var loginResponse = _mapper.MapModel(tokenResponse);
-                loginResponse.userEmail = jwtToken.Claims.First(c => c.Type == "email").Value;
+                loginResponse.UserEmail = jwtToken.Claims.First(c => c.Type == "email").Value;
 
                 if (loginResponse == null) {
                     return BadRequest(new APIResponse() { errorMessages = new List<string> { "invalidJson" } });
                 }
                 else {
-                    bool isProfileExist = await _profileRepository.IsExists("email", loginResponse.userEmail);
+                    bool isProfileExist = await _profileRepository.IsExists("email", loginResponse.UserEmail);
                     if (!isProfileExist) {
-                        var langCode = loginGoogleRequest.languageCode != null ? loginGoogleRequest.languageCode.ToLower() : "en";
+                        var langCode = loginGoogleRequest.LanguageCode != null ? loginGoogleRequest.LanguageCode.ToLower() : "en";
                         var enLangId = await _languageRepository.GetIdByCodeAsync(langCode);
-                        var RoleId = await _roleRepository.GetIdByNameAsync(loginGoogleRequest.role);
+                        var RoleId = await _roleRepository.GetIdByNameAsync(loginGoogleRequest.Role);
 
                         var profile = new Core.Entities.General.Profile {
-                            Username = loginResponse.userEmail.Split('@')[0].Trim(),
-                            Email = loginResponse.userEmail.Trim(),
+                            Username = loginResponse.UserEmail.Split('@')[0].Trim(),
+                            Email = loginResponse.UserEmail.Trim(),
                             RoleId = RoleId,
                             CreatedAt = DateTime.UtcNow,
                             UpdatedAt = DateTime.UtcNow,
@@ -123,7 +123,7 @@ namespace Project.API.Controllers {
                         }
                         catch (Exception) {
                             var deleteUserRequest = new AdminDeleteUserRequest {
-                                Username = loginResponse.userEmail,
+                                Username = loginResponse.UserEmail,
                                 UserPoolId = _configuration["AWS:UserPoolId"]
                             };
                             await _provider.AdminDeleteUserAsync(deleteUserRequest);
@@ -144,7 +144,7 @@ namespace Project.API.Controllers {
         public async Task<IActionResult> Register(RegisterationRequestDTO registerDTO) {
             try {
                 var getUserRequest = new AdminGetUserRequest {
-                    Username = registerDTO.email,
+                    Username = registerDTO.Email,
                     UserPoolId = _configuration["AWS:UserPoolId"]
                 };
 
@@ -152,7 +152,7 @@ namespace Project.API.Controllers {
                     var getUserResponse = await _provider.AdminGetUserAsync(getUserRequest);
                     if (getUserResponse.UserStatus == UserStatusType.UNCONFIRMED) {
                         var deleteUserRequest = new AdminDeleteUserRequest {
-                            Username = registerDTO.email,
+                            Username = registerDTO.Email,
                             UserPoolId = _configuration["AWS:UserPoolId"]
                         };
                         await _provider.AdminDeleteUserAsync(deleteUserRequest);
@@ -164,7 +164,7 @@ namespace Project.API.Controllers {
                 catch (UserNotFoundException) {
                     var listResp = await _provider.ListUsersAsync(new ListUsersRequest {
                         UserPoolId = _configuration["AWS:UserPoolId"],
-                        Filter = $"email = \"{registerDTO.email}\"",
+                        Filter = $"email = \"{registerDTO.Email}\"",
                         Limit = 1
                     });
                     if (listResp == null) {
@@ -178,14 +178,14 @@ namespace Project.API.Controllers {
                 #region Create User after checking if user exists
                 var signUpRequest = new SignUpRequest {
                     ClientId = _configuration["AWS:ClientId"],
-                    Username = registerDTO.email,
-                    Password = registerDTO.password,
+                    Username = registerDTO.Email,
+                    Password = registerDTO.Password,
                     UserAttributes = new List<AttributeType>
                     {
                         new AttributeType
                         {
                             Name = "email",
-                            Value = registerDTO.email
+                            Value = registerDTO.Email
                         }
                     }
                 };
@@ -194,13 +194,13 @@ namespace Project.API.Controllers {
 
                 if (response.HttpStatusCode == System.Net.HttpStatusCode.OK) {
 
-                    var langCode = registerDTO.languageCode != null ? registerDTO.languageCode.ToLower() : "en";
+                    var langCode = registerDTO.LanguageCode != null ? registerDTO.LanguageCode.ToLower() : "en";
                     var enLangId = await _languageRepository.GetIdByCodeAsync(langCode);
-                    var RoleId = await _roleRepository.GetIdByNameAsync(registerDTO.role);
+                    var RoleId = await _roleRepository.GetIdByNameAsync(registerDTO.Role);
 
                     var profile = new Core.Entities.General.Profile {
-                        Username = registerDTO.email.Split('@')[0].Trim(),
-                        Email = registerDTO.email.Trim(),
+                        Username = registerDTO.Email.Split('@')[0].Trim(),
+                        Email = registerDTO.Email.Trim(),
                         RoleId = RoleId,
                         CreatedAt = DateTime.UtcNow,
                         UpdatedAt = DateTime.UtcNow,
@@ -214,7 +214,7 @@ namespace Project.API.Controllers {
                     }
                     catch (Exception ex) {
                         var deleteUserRequest = new AdminDeleteUserRequest {
-                            Username = registerDTO.email,
+                            Username = registerDTO.Email,
                             UserPoolId = _configuration["AWS:UserPoolId"]
                         };
 
@@ -236,20 +236,20 @@ namespace Project.API.Controllers {
 
         [HttpPost("Login")]
         public async Task<IActionResult> Login(LoginRequestDTO loginRequestDTO) {
-            var user = new CognitoUser(loginRequestDTO.email, _configuration["AWS:ClientId"], _userPool, _provider);
+            var user = new CognitoUser(loginRequestDTO.Email, _configuration["AWS:ClientId"], _userPool, _provider);
 
             var authRequest = new InitiateSrpAuthRequest {
-                Password = loginRequestDTO.password
+                Password = loginRequestDTO.Password
             };
 
             try {
                 var authResponse = await user.StartWithSrpAuthAsync(authRequest).ConfigureAwait(false);
                 if (authResponse.AuthenticationResult != null) {
                     var loginResponse = new LoginResponseDTO {
-                        idToken = authResponse.AuthenticationResult.IdToken,
-                        accessToken = authResponse.AuthenticationResult.AccessToken,
-                        refreshToken = authResponse.AuthenticationResult.RefreshToken,
-                        userEmail = loginRequestDTO.email
+                        IdToken = authResponse.AuthenticationResult.IdToken,
+                        AccessToken = authResponse.AuthenticationResult.AccessToken,
+                        RefreshToken = authResponse.AuthenticationResult.RefreshToken,
+                        UserEmail = loginRequestDTO.Email
                     };
                     return Ok(new APIResponse() { result = loginResponse });
                 }
@@ -265,7 +265,7 @@ namespace Project.API.Controllers {
         [HttpPost("ConfirmRegistration")]
         public async Task<IActionResult> ConfirmRegistration(ConfirmRegisterationRequestDTO confirmRegisterationRequest) {
             try {
-                if (confirmRegisterationRequest.isPasswordReset && !string.IsNullOrEmpty(confirmRegisterationRequest.newPassword)) {
+                if (confirmRegisterationRequest.IsPasswordReset && !string.IsNullOrEmpty(confirmRegisterationRequest.NewPassword)) {
                     return await HandlePasswordReset(confirmRegisterationRequest);
                 }
                 else {
@@ -278,16 +278,16 @@ namespace Project.API.Controllers {
         }
 
         private async Task<IActionResult> HandlePasswordReset(ConfirmRegisterationRequestDTO confirmRegisterationRequest) {
-            if (string.IsNullOrEmpty(confirmRegisterationRequest.newPassword)) {
+            if (string.IsNullOrEmpty(confirmRegisterationRequest.NewPassword)) {
                 return BadRequest(new APIResponse() { errorMessages = new List<string> { "emptynewPassword" } });
 
             }
 
             var confirmForgotPasswordRequest = new ConfirmForgotPasswordRequest {
                 ClientId = _configuration["AWS:ClientId"],
-                Username = confirmRegisterationRequest.email,
-                ConfirmationCode = confirmRegisterationRequest.confirmationCode,
-                Password = confirmRegisterationRequest.newPassword
+                Username = confirmRegisterationRequest.Email,
+                ConfirmationCode = confirmRegisterationRequest.ConfirmationCode,
+                Password = confirmRegisterationRequest.NewPassword
             };
 
             try {
@@ -300,14 +300,14 @@ namespace Project.API.Controllers {
         }
 
         private async Task<IActionResult> HandleRegistrationConfirmation(ConfirmRegisterationRequestDTO confirmRegisterationRequest) {
-            if (string.IsNullOrEmpty(confirmRegisterationRequest.username)) {
+            if (string.IsNullOrEmpty(confirmRegisterationRequest.Username)) {
                 return BadRequest(new APIResponse() { errorMessages = new List<string> { "emptyUsername" } });
             }
 
             var confirmSignUpRequest = new ConfirmSignUpRequest {
                 ClientId = _configuration["AWS:ClientId"],
-                Username = confirmRegisterationRequest.email,
-                ConfirmationCode = confirmRegisterationRequest.confirmationCode
+                Username = confirmRegisterationRequest.Email,
+                ConfirmationCode = confirmRegisterationRequest.ConfirmationCode
             };
 
             try {
@@ -328,12 +328,12 @@ namespace Project.API.Controllers {
         [HttpPost("ResendConfirmationCode")]
         public async Task<IActionResult> ResendConfirmationCode([FromBody] ResendConfirmationCode resendRequest) {
             try {
-                if (string.IsNullOrEmpty(resendRequest.email)) {
+                if (string.IsNullOrEmpty(resendRequest.Email)) {
                     return BadRequest(new APIResponse() { errorMessages = new List<string> { "emptyEmail" } });
                 }
 
                 var resendConfirmationRequest = new ResendConfirmationCodeRequest {
-                    Username = resendRequest.email,
+                    Username = resendRequest.Email,
                     ClientId = _configuration["AWS:ClientId"]
                 };
 
@@ -354,13 +354,13 @@ namespace Project.API.Controllers {
         [HttpPost("ForgotPassword")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequestDTO forgotPasswordRequestDto) {
 
-            if (string.IsNullOrEmpty(forgotPasswordRequestDto.email)) {
+            if (string.IsNullOrEmpty(forgotPasswordRequestDto.Email)) {
                 return BadRequest(new APIResponse() { errorMessages = new List<string> { "userNotFound" } });
             }
 
             var forgotPasswordRequest = new ForgotPasswordRequest {
                 ClientId = _configuration["AWS:ClientId"],
-                Username = forgotPasswordRequestDto.email
+                Username = forgotPasswordRequestDto.Email
             };
             try {
                 var response = await _provider.ForgotPasswordAsync(forgotPasswordRequest);
@@ -382,9 +382,9 @@ namespace Project.API.Controllers {
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequestDTO model) {
             try {
                 var request = new ChangePasswordRequest {
-                    AccessToken = model.accessToken,
-                    PreviousPassword = model.oldPassword,
-                    ProposedPassword = model.newPassword
+                    AccessToken = model.AccessToken,
+                    PreviousPassword = model.OldPassword,
+                    ProposedPassword = model.NewPassword
                 };
 
                 var response = await _provider.ChangePasswordAsync(request);

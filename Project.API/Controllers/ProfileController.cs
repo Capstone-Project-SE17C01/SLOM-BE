@@ -38,26 +38,27 @@ namespace Project.API.Controllers {
         }
 
         [HttpGet("GetProfileByName")]
-        public async Task<List<ProfileByNameResponse?>> GetProfilesByName(string input, string currentUserEmail) {
-            return await _profileRepository.GetProfileByName(input, currentUserEmail);
+        public async Task<List<ProfileByNameResponse>> GetProfilesByName(string input, string currentUserEmail) {
+            var profiles = await _profileRepository.GetProfileByName(input, currentUserEmail);
+            return profiles.Where(profile => profile != null).ToList();
         }
 
         [HttpPost("ChangeLanguage")]
         public async Task<IActionResult> ChangeLanguage([FromBody] ChangeLanguageRequestDTO request) {
-            var profile = await _profileRepository.GetProfileByEmail(request.email);
+            var profile = await _profileRepository.GetProfileByEmail(request.Email);
             if (profile == null) {
                 return NotFound(new APIResponse {
                     errorMessages = new List<string> { "Profile not found" }
                 });
             }
             try {
-                Language referredLanguage = await _languageRepository.GetLanguageByCodeAsync(request.newLanguageCode);
+                Language referredLanguage = await _languageRepository.GetLanguageByCodeAsync(request.NewLanguageCode);
                 profile.PreferredLanguageId = referredLanguage.Id;
                 await _profileRepository.Update(profile);
                 return Ok(new APIResponse {
                     result = new ChangeLanguageResponseDTO {
                         LanguageId = referredLanguage.Id,
-                        LanguageCode = request.newLanguageCode,
+                        LanguageCode = request.NewLanguageCode,
                     }
                 });
             }

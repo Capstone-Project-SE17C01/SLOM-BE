@@ -49,25 +49,24 @@ namespace Project.API.Controllers {
                 var recentModulesCompleted = await _userModuleProgressRepository.CountLast7DaysCompletedModulesAsync(userId);
                 var recentCoursesCompleted = await _userCourseProgressRepository.CountLast7DaysCompletedCoursesAsync(userId);
 
-                // 3) Build DTO using PascalCase
                 var summary = new SummaryResponseDTO {
-                    totalCourse = totalCourses,
-                    totalModules = totalModules,
-                    totalLessons = totalLessons,
-                    totalCoursesCompleted = totalCoursesCompleted,
-                    totalModulesCompleted = totalModulesCompleted,
-                    totalLessonsCompleted = totalLessonsCompleted,
-                    activeLesson = activeLessonEntry?.Lesson,
-                    activities = new Activity {
-                        recentLessonsCompleted = recentLessonsCompleted,
-                        recentModulesCompleted = recentModulesCompleted,
-                        recentCoursesCompleted = recentCoursesCompleted
+                    TotalCourse = totalCourses,
+                    TotalModules = totalModules,
+                    TotalLessons = totalLessons,
+                    TotalCoursesCompleted = totalCoursesCompleted,
+                    TotalModulesCompleted = totalModulesCompleted,
+                    TotalLessonsCompleted = totalLessonsCompleted,
+                    ActiveLesson = activeLessonEntry,
+                    Activities = new Activity {
+                        RecentLessonsCompleted = recentLessonsCompleted,
+                        RecentModulesCompleted = recentModulesCompleted,
+                        RecentCoursesCompleted = recentCoursesCompleted
                     }
                 };
 
                 return Ok(new APIResponse { result = summary });
             }
-            catch (Exception ex) {
+            catch (Exception) {
                 return BadRequest(new APIResponse { result = null, errorMessages = new List<string> { "Invalid request data for Get Summary" } });
             }
         }

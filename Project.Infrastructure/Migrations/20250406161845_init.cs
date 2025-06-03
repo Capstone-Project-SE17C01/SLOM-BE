@@ -439,6 +439,140 @@ namespace Project.Infrastructure.Migrations {
                 });
 
             migrationBuilder.CreateTable(
+                name: "meeting_invitations",
+                columns: table => new {
+                    id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    meeting_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    user_id = table.Column<Guid>(type: "uuid", nullable: true),
+                    email = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    status = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false, defaultValueSql: "'Pending'::character varying"),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()"),
+                    responded_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    invitation_code = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true)
+                },
+                constraints: table => {
+                    table.PrimaryKey("meeting_invitations_pkey", x => x.id);
+                    table.ForeignKey(
+                        name: "meeting_invitations_meeting_id_fkey",
+                        column: x => x.meeting_id,
+                        principalTable: "meetings",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "meeting_invitations_user_id_fkey",
+                        column: x => x.user_id,
+                        principalTable: "profiles",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "QuizOption",
+                columns: table => new {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Text = table.Column<string>(type: "text", nullable: true),
+                    QuizId = table.Column<Guid>(type: "uuid", nullable: true),
+                    IsCorrect = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table => {
+                    table.PrimaryKey("PK_QuizOption", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_QuizOption_quizzes_QuizId",
+                        column: x => x.QuizId,
+                        principalTable: "quizzes",
+                        principalColumn: "id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "user_lesson_progress",
+                columns: table => new {
+                    user_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    lesson_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    completed_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true, defaultValueSql: "now()"),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table => {
+                    table.PrimaryKey("user_lesson_progress_pkey", x => new { x.user_id, x.lesson_id });
+                    table.ForeignKey(
+                        name: "user_lesson_progress_lesson_id_fkey",
+                        column: x => x.lesson_id,
+                        principalTable: "lessons",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "user_lesson_progress_user_id_fkey",
+                        column: x => x.user_id,
+                        principalTable: "profiles",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "user_module_progress",
+                columns: table => new {
+                    user_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    module_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    completed_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true, defaultValueSql: "now()"),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table => {
+                    table.PrimaryKey("user_module_progress_pkey", x => new { x.user_id, x.module_id });
+                    table.ForeignKey(
+                        name: "user_module_progress_module_id_fkey",
+                        column: x => x.module_id,
+                        principalTable: "modules",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "user_module_progress_user_id_fkey",
+                        column: x => x.user_id,
+                        principalTable: "profiles",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Word",
+                columns: table => new {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Text = table.Column<string>(type: "text", nullable: true),
+                    VideoSrc = table.Column<string>(type: "text", nullable: true),
+                    LessonId = table.Column<Guid>(type: "uuid", nullable: true)
+                },
+                constraints: table => {
+                    table.PrimaryKey("PK_Word", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Word_lessons_LessonId",
+                        column: x => x.LessonId,
+                        principalTable: "lessons",
+                        principalColumn: "id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "WordQuiz",
+                columns: table => new {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Text = table.Column<string>(type: "text", nullable: true),
+                    VideoSrc = table.Column<string>(type: "text", nullable: true),
+                    LessonId = table.Column<Guid>(type: "uuid", nullable: true),
+                    WordId = table.Column<Guid>(type: "uuid", nullable: true),
+                    QuizId = table.Column<Guid>(type: "uuid", nullable: true)
+                },
+                constraints: table => {
+                    table.PrimaryKey("PK_WordQuiz", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_WordQuiz_Word_WordId",
+                        column: x => x.WordId,
+                        principalTable: "Word",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_WordQuiz_quizzes_QuizId",
+                        column: x => x.QuizId,
+                        principalTable: "quizzes",
+                        principalColumn: "id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "user_messages",
                 columns: table => new {
                     id = table.Column<int>(type: "integer", nullable: false)
@@ -646,6 +780,52 @@ namespace Project.Infrastructure.Migrations {
                 table: "user_subscriptions",
                 column: "user_id");
 
+            migrationBuilder.CreateIndex(
+                name: "idx_meeting_invitations_meeting",
+                table: "meeting_invitations",
+                column: "meeting_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_meeting_invitations_user_id",
+                table: "meeting_invitations",
+                column: "user_id");
+
+            migrationBuilder.CreateIndex(
+                name: "meeting_invitations_code_key",
+                table: "meeting_invitations",
+                column: "invitation_code",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_QuizOption_QuizId",
+                table: "QuizOption",
+                column: "QuizId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_user_lesson_progress_lesson_id",
+                table: "user_lesson_progress",
+                column: "lesson_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_user_module_progress_module_id",
+                table: "user_module_progress",
+                column: "module_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Word_LessonId",
+                table: "Word",
+                column: "LessonId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WordQuiz_QuizId",
+                table: "WordQuiz",
+                column: "QuizId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WordQuiz_WordId",
+                table: "WordQuiz",
+                column: "WordId");
+
             migrationBuilder.AddColumn<int>(
                name: "OrderCode",
                table: "payments",
@@ -719,142 +899,6 @@ namespace Project.Infrastructure.Migrations {
                 type: "boolean",
                 nullable: false,
                 defaultValue: false);
-
-            migrationBuilder.CreateTable(
-                name: "QuizOption",
-                columns: table => new {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Text = table.Column<string>(type: "text", nullable: true),
-                    QuizId = table.Column<Guid>(type: "uuid", nullable: true),
-                    IsCorrect = table.Column<bool>(type: "boolean", nullable: false)
-                },
-                constraints: table => {
-                    table.PrimaryKey("PK_QuizOption", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_QuizOption_quizzes_QuizId",
-                        column: x => x.QuizId,
-                        principalTable: "quizzes",
-                        principalColumn: "id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "user_lesson_progress",
-                columns: table => new {
-                    user_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    lesson_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    completed_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true, defaultValueSql: "now()"),
-                    IsActive = table.Column<bool>(type: "boolean", nullable: false)
-                },
-                constraints: table => {
-                    table.PrimaryKey("user_lesson_progress_pkey", x => new { x.user_id, x.lesson_id });
-                    table.ForeignKey(
-                        name: "user_lesson_progress_lesson_id_fkey",
-                        column: x => x.lesson_id,
-                        principalTable: "lessons",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "user_lesson_progress_user_id_fkey",
-                        column: x => x.user_id,
-                        principalTable: "profiles",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "user_module_progress",
-                columns: table => new {
-                    user_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    module_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    completed_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true, defaultValueSql: "now()"),
-                    IsActive = table.Column<bool>(type: "boolean", nullable: false)
-                },
-                constraints: table => {
-                    table.PrimaryKey("user_module_progress_pkey", x => new { x.user_id, x.module_id });
-                    table.ForeignKey(
-                        name: "user_module_progress_module_id_fkey",
-                        column: x => x.module_id,
-                        principalTable: "modules",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "user_module_progress_user_id_fkey",
-                        column: x => x.user_id,
-                        principalTable: "profiles",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Word",
-                columns: table => new {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Text = table.Column<string>(type: "text", nullable: true),
-                    VideoSrc = table.Column<string>(type: "text", nullable: true),
-                    LessonId = table.Column<Guid>(type: "uuid", nullable: true)
-                },
-                constraints: table => {
-                    table.PrimaryKey("PK_Word", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Word_lessons_LessonId",
-                        column: x => x.LessonId,
-                        principalTable: "lessons",
-                        principalColumn: "id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "WordQuiz",
-                columns: table => new {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Text = table.Column<string>(type: "text", nullable: true),
-                    VideoSrc = table.Column<string>(type: "text", nullable: true),
-                    LessonId = table.Column<Guid>(type: "uuid", nullable: true),
-                    WordId = table.Column<Guid>(type: "uuid", nullable: true),
-                    QuizId = table.Column<Guid>(type: "uuid", nullable: true)
-                },
-                constraints: table => {
-                    table.PrimaryKey("PK_WordQuiz", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_WordQuiz_Word_WordId",
-                        column: x => x.WordId,
-                        principalTable: "Word",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_WordQuiz_quizzes_QuizId",
-                        column: x => x.QuizId,
-                        principalTable: "quizzes",
-                        principalColumn: "id");
-                });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_QuizOption_QuizId",
-                table: "QuizOption",
-                column: "QuizId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_user_lesson_progress_lesson_id",
-                table: "user_lesson_progress",
-                column: "lesson_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_user_module_progress_module_id",
-                table: "user_module_progress",
-                column: "module_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Word_LessonId",
-                table: "Word",
-                column: "LessonId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_WordQuiz_QuizId",
-                table: "WordQuiz",
-                column: "QuizId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_WordQuiz_WordId",
-                table: "WordQuiz",
-                column: "WordId");
 
             migrationBuilder.AddForeignKey(
                 name: "user_course_progress_lesson_id_fkey",
@@ -1051,6 +1095,189 @@ namespace Project.Infrastructure.Migrations {
                 principalColumn: "id",
                 onDelete: ReferentialAction.SetNull);
 
+            migrationBuilder.DropForeignKey(
+                name: "user_course_progress_lesson_id_fkey",
+                table: "user_course_progress");
+
+            migrationBuilder.DropPrimaryKey(
+                name: "user_module_progress_pkey",
+                table: "user_module_progress");
+
+            migrationBuilder.DropPrimaryKey(
+                name: "user_lesson_progress_pkey",
+                table: "user_lesson_progress");
+
+            migrationBuilder.DropPrimaryKey(
+                name: "user_course_progress_pkey",
+                table: "user_course_progress");
+
+            migrationBuilder.DropColumn(
+                name: "lesson_id",
+                table: "word_quizzes");
+
+            migrationBuilder.RenameColumn(
+                name: "IsActive",
+                table: "user_module_progress",
+                newName: "is_active");
+
+            migrationBuilder.RenameColumn(
+                name: "IsActive",
+                table: "user_lesson_progress",
+                newName: "is_active");
+
+            migrationBuilder.RenameColumn(
+                name: "IsActive",
+                table: "user_course_progress",
+                newName: "is_active");
+
+            migrationBuilder.RenameColumn(
+                name: "lesson_id",
+                table: "user_course_progress",
+                newName: "course_id");
+
+            migrationBuilder.RenameIndex(
+                name: "IX_user_course_progress_lesson_id",
+                table: "user_course_progress",
+                newName: "IX_user_course_progress_course_id");
+
+            migrationBuilder.AlterColumn<Guid>(
+                name: "id",
+                table: "words",
+                type: "uuid",
+                nullable: false,
+                defaultValueSql: "gen_random_uuid()",
+                oldClrType: typeof(Guid),
+                oldType: "uuid");
+
+            migrationBuilder.AlterColumn<Guid>(
+                name: "id",
+                table: "word_quizzes",
+                type: "uuid",
+                nullable: false,
+                defaultValueSql: "gen_random_uuid()",
+                oldClrType: typeof(Guid),
+                oldType: "uuid");
+
+            migrationBuilder.AlterColumn<bool>(
+                name: "is_active",
+                table: "user_module_progress",
+                type: "boolean",
+                nullable: false,
+                defaultValue: false,
+                oldClrType: typeof(bool),
+                oldType: "boolean");
+
+            migrationBuilder.AddColumn<Guid>(
+                name: "id",
+                table: "user_module_progress",
+                type: "uuid",
+                nullable: false,
+                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
+
+            migrationBuilder.AlterColumn<bool>(
+                name: "is_active",
+                table: "user_lesson_progress",
+                type: "boolean",
+                nullable: false,
+                defaultValue: false,
+                oldClrType: typeof(bool),
+                oldType: "boolean");
+
+            migrationBuilder.AddColumn<Guid>(
+                name: "id",
+                table: "user_lesson_progress",
+                type: "uuid",
+                nullable: false,
+                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
+
+            migrationBuilder.AddColumn<bool>(
+                name: "is_learned",
+                table: "user_lesson_progress",
+                type: "boolean",
+                nullable: false,
+                defaultValue: false);
+
+            migrationBuilder.AlterColumn<bool>(
+                name: "is_active",
+                table: "user_course_progress",
+                type: "boolean",
+                nullable: false,
+                defaultValue: false,
+                oldClrType: typeof(bool),
+                oldType: "boolean");
+
+            migrationBuilder.AddColumn<Guid>(
+                name: "id",
+                table: "user_course_progress",
+                type: "uuid",
+                nullable: false,
+                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
+
+            migrationBuilder.AlterColumn<Guid>(
+                name: "id",
+                table: "quizzes",
+                type: "uuid",
+                nullable: false,
+                defaultValueSql: "gen_random_uuid()",
+                oldClrType: typeof(Guid),
+                oldType: "uuid");
+
+            migrationBuilder.AlterColumn<Guid>(
+                name: "id",
+                table: "quiz_options",
+                type: "uuid",
+                nullable: false,
+                defaultValueSql: "gen_random_uuid()",
+                oldClrType: typeof(Guid),
+                oldType: "uuid");
+
+            migrationBuilder.AlterColumn<Guid>(
+                name: "id",
+                table: "lessons",
+                type: "uuid",
+                nullable: false,
+                defaultValueSql: "gen_random_uuid()",
+                oldClrType: typeof(Guid),
+                oldType: "uuid");
+
+            migrationBuilder.AddPrimaryKey(
+                name: "user_module_progress_pkey",
+                table: "user_module_progress",
+                column: "id");
+
+            migrationBuilder.AddPrimaryKey(
+                name: "user_lesson_progress_pkey",
+                table: "user_lesson_progress",
+                column: "id");
+
+            migrationBuilder.AddPrimaryKey(
+                name: "user_course_progress_pkey",
+                table: "user_course_progress",
+                column: "id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_user_module_progress_user_id",
+                table: "user_module_progress",
+                column: "user_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_user_lesson_progress_user_id",
+                table: "user_lesson_progress",
+                column: "user_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_user_course_progress_user_id",
+                table: "user_course_progress",
+                column: "user_id");
+
+            migrationBuilder.AddForeignKey(
+                name: "user_course_progress_course_id_fkey",
+                table: "user_course_progress",
+                column: "course_id",
+                principalTable: "courses",
+                principalColumn: "id",
+                onDelete: ReferentialAction.Cascade);
+
             migrationBuilder.CreateTable(
                name: "video_suggests",
                columns: table => new {
@@ -1123,6 +1350,9 @@ namespace Project.Infrastructure.Migrations {
 
             migrationBuilder.DropTable(
                 name: "user_messages");
+
+            migrationBuilder.DropTable(
+                name: "meeting_invitations");
         }
     }
 }
