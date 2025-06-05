@@ -32,6 +32,7 @@ namespace Project.API.Extensions {
             services.AddScoped<ICourseRepository, CourseRepository>();
             services.AddScoped<IModuleRepository, ModuleRepository>();
             services.AddScoped<ILessonRepository, LessonRepository>();
+            services.AddScoped<IVideoSuggestRepository, VideoSuggestRepository>();
 
             // services.AddTransient<>();
             #endregion

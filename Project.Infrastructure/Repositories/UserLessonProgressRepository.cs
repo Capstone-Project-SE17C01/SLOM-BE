@@ -86,6 +86,17 @@ namespace Project.Infrastructure.Repositories {
             return result;
         }
 
+        public async Task<List<string>> GetTitleLearnedLessons(Guid userId) {
+            var titles = await _dbContext.Lessons
+                .Where(l => l.UserLessonProgress.Any(ulp => ulp.IsLearned && ulp.UserId == userId))
+                .Select(l => l.Title)
+                .AsNoTracking()
+                .ToListAsync();
+
+            return titles;
+        }
+
+
         public async Task<bool> CreateNewLessonProgress(Guid userId, Guid lessonId) {
             var user = _dbContext.Profiles.Where(x => x.Id == userId).AsNoTracking()
                 .FirstOrDefault();
@@ -117,8 +128,7 @@ namespace Project.Infrastructure.Repositories {
             try {
                 await Create(progress);
                 return true;
-            }
-            catch {
+            } catch {
                 return false;
             }
         }
@@ -143,8 +153,7 @@ namespace Project.Infrastructure.Repositories {
             try {
                 await Update(progress);
                 return true;
-            }
-            catch (Exception) {
+            } catch (Exception) {
                 return false;
             }
         }
@@ -171,8 +180,7 @@ namespace Project.Infrastructure.Repositories {
                 await ActivateNextLessonAsync(progress);
 
                 return true;
-            }
-            catch (Exception) {
+            } catch (Exception) {
                 return false;
             }
 
@@ -237,8 +245,7 @@ namespace Project.Infrastructure.Repositories {
                     CompletedAt = null
                 };
                 await _userModuleRepo.Create(moduleProgressNew);
-            }
-            else {
+            } else {
                 moduleProgressNew.IsActive = true;
                 moduleProgressNew.CompletedAt = null;
                 await _userModuleRepo.Update(moduleProgressNew);
@@ -272,8 +279,7 @@ namespace Project.Infrastructure.Repositories {
 
                 await Update(next);
 
-            }
-            else {
+            } else {
                 await ActivateFirstLessonOfNextModuleAsync(completedProgress);
             }
             await SaveChangeAsync();
@@ -308,8 +314,7 @@ namespace Project.Infrastructure.Repositories {
                     IsActive = true,
                     CompletedAt = null
                 };
-            }
-            else {
+            } else {
                 moduleProgressNew.IsActive = true;
                 moduleProgressNew.CompletedAt = null;
                 await _userModuleRepo.Update(moduleProgressNew);
@@ -339,8 +344,7 @@ namespace Project.Infrastructure.Repositories {
                     IsActive = true,
                     IsLearned = false
                 });
-            }
-            else {
+            } else {
                 nextProgress.IsActive = true;
                 await Update(nextProgress);
             }
