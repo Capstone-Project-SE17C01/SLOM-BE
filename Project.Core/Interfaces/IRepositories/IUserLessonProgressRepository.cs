@@ -7,6 +7,7 @@ namespace Project.Core.Interfaces.IRepositories {
         Task<UserLessonProgress?> GetActiveUserLessonProgressByUserIdAsync(Guid userId);
         Task<Lesson?> GetActiveLessonByUserIdAsync(Guid userId);
         public Task<List<Lesson>> GetLearnedLessons(Guid userId);
+        public Task<List<string>> GetTitleLearnedLessons(Guid userId);
         public Task<bool> CreateNewLessonProgress(Guid userId, Guid lessonId);
         public Task<bool> CompleteLessons(Guid userId, Guid lessonId);
         public Task<bool> LearnedLessons(Guid userId, Guid lessonId);

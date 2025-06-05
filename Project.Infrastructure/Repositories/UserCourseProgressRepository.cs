@@ -32,7 +32,7 @@ namespace Project.Infrastructure.Repositories {
         public async Task<List<Course>> GetCoursesByUserIdAsync(Guid userId) {
             return await _dbContext.UserCourseProgress
                 .Include(x => x.Course)
-                .Where(x => x.UserId == userId && x.Course != null)
+                .Where(x => x.UserId == userId && x.Course != null && x.Course.IsPublished)
                 .Select(x => x.Course!)
                 .ToListAsync();
         }
@@ -46,8 +46,7 @@ namespace Project.Infrastructure.Repositories {
                     userCourseProgress.CompletedAt = DateTime.UtcNow;
                     await _dbContext.SaveChangesAsync();
                 }
-            }
-            catch (Exception) {
+            } catch (Exception) {
                 throw new Exception("Error marking course as completed");
             }
         }

@@ -65,8 +65,7 @@ namespace Project.API.Controllers {
                 };
 
                 return Ok(new APIResponse { result = summary });
-            }
-            catch (Exception) {
+            } catch (Exception) {
                 return BadRequest(new APIResponse { result = null, errorMessages = new List<string> { "Invalid request data for Get Summary" } });
             }
         }
@@ -77,14 +76,13 @@ namespace Project.API.Controllers {
             try {
                 var courses = await _courseRepository.GetAll();
                 var learningCourses = await _userCourseProgressRepository.GetCoursesByUserIdAsync(userId);
-                var remainingCourses = courses.Where(c => !learningCourses.Any(lc => lc.Id == c.Id)).ToList();
+                var remainingCourses = courses.Where(c => !learningCourses.Any(lc => lc.Id == c.Id) && c.IsPublished).ToList();
                 var listCourseResponse = new ListCourseResponseDTO {
                     LearningCourses = learningCourses,
                     RemainingCourses = remainingCourses
                 };
                 return Ok(new APIResponse { result = listCourseResponse });
-            }
-            catch (Exception) {
+            } catch (Exception) {
                 return BadRequest(new APIResponse { result = null, errorMessages = new List<string> { "Invalid request data for Get All Courses" } });
             }
         }
