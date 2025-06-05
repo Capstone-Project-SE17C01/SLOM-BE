@@ -15,7 +15,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 // Add services to the container.
 builder.Services.AddCors();
-builder.Services.RegisterService();
+builder.Services.RegisterService(builder.Configuration);
 builder.Services.AddControllers().AddJsonOptions(opts => {
     opts.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     opts.JsonSerializerOptions.MaxDepth = 64;
