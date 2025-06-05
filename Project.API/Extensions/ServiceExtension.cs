@@ -10,9 +10,8 @@ using Project.Infrastructure.Repositories;
 
 namespace Project.API.Extensions {
     public static class ServiceExtension {
-        public static IServiceCollection RegisterService(this IServiceCollection services) {
+        public static IServiceCollection RegisterService(this IServiceCollection services, IConfiguration config) {
             #region Services
-            IConfiguration config = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
             PayOS payOS = new PayOS(config["Environment:PAYOS_CLIENT_ID"] ?? throw new Exception("Cannot find environment"),
                     config["Environment:PAYOS_API_KEY"] ?? throw new Exception("Cannot find environment"),
                     config["Environment:PAYOS_CHECKSUM_KEY"] ?? throw new Exception("Cannot find environment"));
