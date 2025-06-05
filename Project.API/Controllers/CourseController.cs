@@ -65,7 +65,8 @@ namespace Project.API.Controllers {
                 };
 
                 return Ok(new APIResponse { result = summary });
-            } catch (Exception) {
+            }
+            catch (Exception) {
                 return BadRequest(new APIResponse { result = null, errorMessages = new List<string> { "Invalid request data for Get Summary" } });
             }
         }
@@ -82,7 +83,8 @@ namespace Project.API.Controllers {
                     RemainingCourses = remainingCourses
                 };
                 return Ok(new APIResponse { result = listCourseResponse });
-            } catch (Exception) {
+            }
+            catch (Exception) {
                 return BadRequest(new APIResponse { result = null, errorMessages = new List<string> { "Invalid request data for Get All Courses" } });
             }
         }

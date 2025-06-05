@@ -28,7 +28,8 @@ namespace Project.API.Controllers {
                 return Ok(new APIResponse {
                     result = videoSuggests
                 });
-            } catch (Exception) {
+            }
+            catch (Exception) {
                 return StatusCode(500, new APIResponse {
                     errorMessages = new List<string> { "Error Video Suggest" }
                 });

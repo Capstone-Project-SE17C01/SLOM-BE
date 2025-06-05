@@ -46,7 +46,8 @@ namespace Project.Infrastructure.Repositories {
                     userCourseProgress.CompletedAt = DateTime.UtcNow;
                     await _dbContext.SaveChangesAsync();
                 }
-            } catch (Exception) {
+            }
+            catch (Exception) {
                 throw new Exception("Error marking course as completed");
             }
         }
