@@ -42,9 +42,10 @@ app.UseAuthorization();
 app.MapHub<MessagingHub>("/hub");
 
 app.UseCors(x => {
-    x.AllowAnyOrigin()
+    x.WithOrigins(builder.Configuration["CorsOrigin"] ?? "")
         .AllowAnyHeader()
-        .AllowAnyMethod();
+        .AllowAnyMethod()
+        .AllowCredentials();
 });
 
 app.MapControllers();
