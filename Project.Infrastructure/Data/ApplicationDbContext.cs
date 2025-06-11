@@ -37,6 +37,8 @@ public partial class ApplicationDbContext : DbContext {
     public DbSet<Word> Words { get; set; }
     public DbSet<WordQuiz> WordQuizzes { get; set; }
     public DbSet<VideoSuggest> VideoSuggests { get; set; }
+    public DbSet<Report> Reports { get; set; }
+    public DbSet<ReportType> ReportTypes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder) {
         ApplicationDbContextConfigurations.Configure(builder);

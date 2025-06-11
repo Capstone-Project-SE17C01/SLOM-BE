@@ -719,6 +719,66 @@ namespace Project.Infrastructure.Migrations
                     b.ToTable("quiz_options", (string)null);
                 });
 
+            modelBuilder.Entity("Project.Core.Entities.General.Report", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Content")
+                        .HasColumnType("text")
+                        .HasColumnName("content");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid>("ReportTypeId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("report_type_id");
+
+                    b.Property<bool>("Status")
+                        .HasColumnType("boolean")
+                        .HasColumnName("status");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("title");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReportTypeId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("reports", (string)null);
+                });
+
+            modelBuilder.Entity("Project.Core.Entities.General.ReportType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("name");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("report_types", (string)null);
+                });
+
             modelBuilder.Entity("Project.Core.Entities.General.Role", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1382,6 +1442,25 @@ namespace Project.Infrastructure.Migrations
                     b.Navigation("Quiz");
                 });
 
+            modelBuilder.Entity("Project.Core.Entities.General.Report", b =>
+                {
+                    b.HasOne("Project.Core.Entities.General.ReportType", "ReportType")
+                        .WithMany("Reports")
+                        .HasForeignKey("ReportTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Project.Core.Entities.General.Profile", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ReportType");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Project.Core.Entities.General.Translation", b =>
                 {
                     b.HasOne("Project.Core.Entities.General.Meeting", "Meeting")
@@ -1640,6 +1719,11 @@ namespace Project.Infrastructure.Migrations
                     b.Navigation("QuizOptions");
 
                     b.Navigation("WordQuizzes");
+                });
+
+            modelBuilder.Entity("Project.Core.Entities.General.ReportType", b =>
+                {
+                    b.Navigation("Reports");
                 });
 
             modelBuilder.Entity("Project.Core.Entities.General.Role", b =>

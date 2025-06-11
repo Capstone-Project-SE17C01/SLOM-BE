@@ -14,5 +14,13 @@ namespace Project.Infrastructure.Repositories {
                 .FirstOrDefaultAsync(p => p.OrderCode == orderCode);
             return payment ?? new Payment();
         }
+
+        public async Task<List<Payment>> GetListPaymentByUserIdAsync(Guid userId) {
+            var paymentInfos = await _dbContext.Payments
+                .AsNoTracking()
+                .Where(p => p.UserId == userId && p.Status != null && p.Status.Equals("PAID"))
+                .ToListAsync();
+            return paymentInfos;
+        }
     }
 }
