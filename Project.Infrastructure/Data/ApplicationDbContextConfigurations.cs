@@ -708,6 +708,67 @@ namespace Project.Infrastructure.Data {
                 entity.Property(e => e.PublishDate)
                       .HasColumnName("publish_date");
             });
+
+            modelBuilder.Entity<ReportType>(entity => {
+                entity.ToTable("report_types");
+
+                entity.HasKey(e => e.Id);
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .IsRequired();
+
+                entity.Property(e => e.Name)
+                    .HasColumnName("name")
+                    .HasMaxLength(255)
+                    .IsRequired();
+            });
+
+            modelBuilder.Entity<Report>(entity => {
+                entity.ToTable("reports");
+
+                entity.HasKey(e => e.Id);
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .IsRequired();
+
+                entity.Property(e => e.Title)
+                    .HasColumnName("title")
+                    .HasMaxLength(255)
+                    .IsRequired();
+
+                entity.Property(e => e.Content)
+                    .HasColumnName("content");
+
+                entity.Property(e => e.ReportTypeId)
+                    .HasColumnName("report_type_id")
+                    .IsRequired();
+
+                entity.Property(e => e.CreatedAt)
+                    .HasColumnName("created_at")
+                    .IsRequired();
+
+                entity.Property(e => e.Status)
+                    .HasColumnName("status")
+                    .IsRequired();
+
+                entity.Property(e => e.UserId)
+                    .HasColumnName("user_id")
+                    .IsRequired();
+
+                entity.HasOne(r => r.ReportType)
+                    .WithMany(rt => rt.Reports)
+                    .HasForeignKey(r => r.ReportTypeId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(r => r.User)
+                    .WithMany()
+                    .HasForeignKey(r => r.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+
         }
 
         public static void SeedData(ModelBuilder modelBuilder) {

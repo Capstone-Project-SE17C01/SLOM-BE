@@ -1290,6 +1290,54 @@ namespace Project.Infrastructure.Migrations {
                constraints: table => {
                    table.PrimaryKey("PK_video_suggests", x => x.id);
                });
+            migrationBuilder.CreateTable(
+              name: "report_types",
+              columns: table => new {
+                  id = table.Column<Guid>(type: "uuid", nullable: false),
+                  name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false)
+              },
+              constraints: table => {
+                  table.PrimaryKey("PK_report_types", x => x.id);
+              });
+
+            migrationBuilder.CreateTable(
+                name: "reports",
+                columns: table => new {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    title = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    content = table.Column<string>(type: "text", nullable: true),
+                    report_type_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    status = table.Column<bool>(type: "boolean", nullable: false),
+                    user_id = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table => {
+                    table.PrimaryKey("PK_reports", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_reports_profiles_user_id",
+                        column: x => x.user_id,
+                        principalTable: "profiles",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_reports_report_types_report_type_id",
+                        column: x => x.report_type_id,
+                        principalTable: "report_types",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+
+
+            migrationBuilder.CreateIndex(
+                name: "IX_reports_report_type_id",
+                table: "reports",
+                column: "report_type_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_reports_user_id",
+                table: "reports",
+                column: "user_id");
         }
 
         /// <inheritdoc />

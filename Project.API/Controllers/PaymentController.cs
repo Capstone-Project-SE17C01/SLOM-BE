@@ -5,6 +5,7 @@ using Project.Core.Entities.Business.DTOs;
 using Project.Core.Entities.Business.DTOs.PaymentDTOs;
 using Project.Core.Entities.Business.DTOs.PaymentDTOs.MyApi.Models;
 using Project.Core.Entities.General;
+using Project.Core.Interfaces.IMapper;
 using Project.Core.Interfaces.IRepositories;
 using Project.Infrastructure.Data;
 using Project.Infrastructure.Repositories;
@@ -18,13 +19,16 @@ namespace Project.API.Controllers {
         private readonly IPaymentRepository _paymentRepository;
         private readonly ISubscriptionPlanRepository _subscriptionPlanRepository;
         private readonly IUserSubscriptionRepository _userSubscriptionRepository;
+        private readonly IBaseMapper<Payment, HistoryPaymentDTO> _mapper;
 
-        public PaymentController(PayOS payOS, ApplicationDbContext context) {
+
+        public PaymentController(PayOS payOS, ApplicationDbContext context, IBaseMapper<Payment, HistoryPaymentDTO> mapper) {
             _payOS = payOS;
             _context = context;
             _paymentRepository = new PaymentRepository(context);
             _subscriptionPlanRepository = new SubscriptionPlanRepository(context);
             _userSubscriptionRepository = new UserSubscriptionRepository(context);
+            _mapper = mapper;
         }
 
         [HttpGet("GetAllPlan")]
@@ -34,8 +38,7 @@ namespace Project.API.Controllers {
                 return Ok(new APIResponse {
                     result = plans,
                 });
-            }
-            catch (Exception) {
+            } catch (Exception) {
                 return BadRequest(new APIResponse {
                     errorMessages = new List<string> { "failGetplan" }
                 });
@@ -45,7 +48,7 @@ namespace Project.API.Controllers {
         [HttpPost("CreatePaymentLink")]
         public async Task<IActionResult> CreatePaymentLink([FromBody] CreatePaymentRequest request) {
             try {
-                var productName = request.ProductName ?? "anonymous";
+                var productName = request.ProductName ?? "Subscription Plan";
                 var orderCode = int.Parse(DateTimeOffset.Now.ToString("ffffff"));
 
                 var items = new List<ItemData>
@@ -66,8 +69,7 @@ namespace Project.API.Controllers {
                 try {
                     userSubscription = await _userSubscriptionRepository.GetUserSubscriptionByBothIdAsync(request.UserId, request.SubscriptionId);
 
-                }
-                catch {
+                } catch {
                     if (userSubscription.Id.Equals(Guid.Empty)) {
                         userSubscription = new UserSubscription {
                             Id = Guid.NewGuid(),
@@ -82,8 +84,7 @@ namespace Project.API.Controllers {
 
                     try {
                         await _userSubscriptionRepository.Create(userSubscription);
-                    }
-                    catch (Exception) {
+                    } catch (Exception) {
                         return BadRequest(new APIResponse {
                             errorMessages = new List<string> { "Error Create User Subscription" }
                         });
@@ -113,8 +114,7 @@ namespace Project.API.Controllers {
                 };
 
                 return Ok(new APIResponse { result = response });
-            }
-            catch (Exception) {
+            } catch (Exception) {
                 return BadRequest(new APIResponse {
                     errorMessages = new List<string> { "errorCreatePaymentLink" }
                 });
@@ -129,12 +129,17 @@ namespace Project.API.Controllers {
                     errorMessages = new List<string> { "Invalid request" }
                 });
             }
+            var payment = await _paymentRepository.GetPaymentByOrderCodeAsync(returnUrlQuery.OrderCode);
+            if (payment == null) {
+                return NotFound(new APIResponse {
+                    errorMessages = new List<string> { "Payment not found" }
+                });
+            }
 
             PaymentLinkInformation paymentLinkInformation;
             try {
                 paymentLinkInformation = await _payOS.getPaymentLinkInformation(returnUrlQuery.OrderCode);
-            }
-            catch (Exception) {
+            } catch (Exception) {
                 return BadRequest(new APIResponse {
                     errorMessages = new List<string> { "errorRetrievingLinkInformation" }
                 });
@@ -148,35 +153,22 @@ namespace Project.API.Controllers {
                 returnUrlQuery.Code == "00") {
                 newStatus = "PAID";
                 resultMessage = "Payment successful";
-            }
-            else if (returnUrlQuery.Status.Equals("CANCELLED", StringComparison.OrdinalIgnoreCase) ||
-                         returnUrlQuery.Cancel) {
+
+            } else if (returnUrlQuery.Status.Equals("CANCELLED", StringComparison.OrdinalIgnoreCase) ||
+                           returnUrlQuery.Cancel) {
                 newStatus = "CANCELLED";
                 resultMessage = "Payment cancelled";
-            }
-            else if (returnUrlQuery.Status.Equals("PENDING", StringComparison.OrdinalIgnoreCase) ||
-                         returnUrlQuery.Status.Equals("PROCESSING", StringComparison.OrdinalIgnoreCase)) {
-                newStatus = returnUrlQuery.Status.ToUpper();
-                resultMessage = "Payment is pending";
-            }
-            else {
+
+            } else {
                 return BadRequest(new APIResponse {
                     errorMessages = new List<string> { "Payment failed" }
-                });
-            }
-
-            var payment = await _paymentRepository.GetPaymentByOrderCodeAsync(returnUrlQuery.OrderCode);
-            if (payment == null) {
-                return NotFound(new APIResponse {
-                    errorMessages = new List<string> { "Payment not found" }
                 });
             }
 
             try {
                 payment.Status = newStatus;
                 await _paymentRepository.Update(payment);
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 return BadRequest(new APIResponse {
                     errorMessages = new List<string> { $"Error updating payment: {ex.Message}" }
                 });
@@ -191,8 +183,7 @@ namespace Project.API.Controllers {
 
             if (newStatus.Equals("PAID", StringComparison.OrdinalIgnoreCase) && DateTime.UtcNow >= userSubscription.StartDate && DateTime.UtcNow <= userSubscription.EndDate) {
                 userSubscription.EndDate = userSubscription.EndDate.AddMonths(returnUrlQuery.Period);
-            }
-            else {
+            } else {
                 userSubscription.StartDate = DateTime.UtcNow;
                 userSubscription.EndDate = userSubscription.StartDate.AddMonths(returnUrlQuery.Period);
             }
@@ -200,8 +191,7 @@ namespace Project.API.Controllers {
             try {
                 userSubscription.Status = newStatus;
                 await _userSubscriptionRepository.Update(userSubscription);
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 return BadRequest(new APIResponse {
                     errorMessages = new List<string> { $"Error updating user subscription: {ex.Message}" }
                 });
@@ -211,5 +201,22 @@ namespace Project.API.Controllers {
                 result = resultMessage
             });
         }
+
+        [HttpGet("GetAllPaymentInformation")]
+        public async Task<IActionResult> GetAllPaymentInformation(Guid userId) {
+            try {
+                List<Payment> paymentInfos = await _paymentRepository.GetListPaymentByUserIdAsync(userId);
+                List<HistoryPaymentDTO> historyPaymentInfos = _mapper.MapList(paymentInfos).ToList();
+
+                return Ok(new APIResponse { result = historyPaymentInfos });
+            } catch (Exception ex) {
+
+                return BadRequest(new APIResponse {
+                    errorMessages = new List<string> { "errorRetrievingLinkInformation" }
+                });
+            }
+        }
+
+
     }
 }
