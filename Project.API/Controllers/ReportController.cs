@@ -30,7 +30,8 @@ namespace Project.API.Controllers {
                     return StatusCode(500, new { error = "Failed to create report." });
                 }
                 return Ok(new APIResponse { result = "Created successfully" });
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 return StatusCode(500, new { error = ex.Message });
             }
         }
