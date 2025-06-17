@@ -186,7 +186,7 @@ namespace Project.API.Controllers {
         [HttpGet("recordings/storage-paths/all")]
         public async Task<IActionResult> GetAllRecordingStoragePaths() {
             var recordings = await _meetingRepository.GetAllRecordingsAsync();
-            
+
             var storagePaths = recordings
                 .Where(r => !string.IsNullOrEmpty(r.StoragePath))
                 .Select(r => new {
