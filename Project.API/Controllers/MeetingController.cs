@@ -183,6 +183,27 @@ namespace Project.API.Controllers {
             }));
         }
 
+        [HttpGet("recordings/storage-paths/all")]
+        public async Task<IActionResult> GetAllRecordingStoragePaths() {
+            var recordings = await _meetingRepository.GetAllRecordingsAsync();
+            
+            var storagePaths = recordings
+                .Where(r => !string.IsNullOrEmpty(r.StoragePath))
+                .Select(r => new {
+                    storagePath = r.StoragePath,
+                    meetingId = r.MeetingId,
+                    recordingId = r.Id,
+                    createdAt = r.CreatedAt
+                })
+                .OrderByDescending(r => r.createdAt)
+                .ToList();
+
+            return Ok(new {
+                totalCount = storagePaths.Count,
+                storagePaths = storagePaths
+            });
+        }
+
         [HttpPost("{id}/join")]
         public async Task<IActionResult> JoinMeeting(Guid id, [FromBody] JoinMeetingDto joinDto) {
             var meeting = await _meetingRepository.GetMeetingByIdAsync(id);

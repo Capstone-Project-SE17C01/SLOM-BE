@@ -17,6 +17,7 @@ namespace Project.Core.Interfaces.IRepositories {
         Task<MeetingRecording> AddRecordingAsync(MeetingRecording recording);
         Task<IEnumerable<MeetingRecording>> GetRecordingsForMeetingAsync(Guid meetingId);
         Task<IEnumerable<MeetingRecording>> GetRecordingsByUserIdAsync(Guid userId);
+        Task<IEnumerable<MeetingRecording>> GetAllRecordingsAsync();
         Task<IEnumerable<Meeting>> GetUserMeetingsAsync(Guid userId);
 
         // Meeting Invitation methods

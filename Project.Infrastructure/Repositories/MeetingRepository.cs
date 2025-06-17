@@ -160,6 +160,13 @@ namespace Project.Infrastructure.Repositories {
                 .AsNoTracking()
                 .ToListAsync();
         }
+        public async Task<IEnumerable<MeetingRecording>> GetAllRecordingsAsync() {
+            return await _context.MeetingRecordings
+                .Include(r => r.Meeting)
+                .OrderByDescending(r => r.CreatedAt)
+                .AsNoTracking()
+                .ToListAsync();
+        }
         public async Task<IEnumerable<Meeting>> GetUserMeetingsAsync(Guid userId) {
             return await _context.Meetings
                 .Include(m => m.Host)
