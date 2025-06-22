@@ -30,6 +30,7 @@ namespace Project.Core.Entities.General {
         public ICollection<CourseReview> CourseReviews { get; set; } = new List<CourseReview>();
         public ICollection<UserMessage> SentMessages { get; set; } = new List<UserMessage>();
         public ICollection<UserMessage> ReceivedMessages { get; set; } = new List<UserMessage>();
+        public Reminder? Reminder { get; set; }
         public Role? Role { get; set; }
     }
 }

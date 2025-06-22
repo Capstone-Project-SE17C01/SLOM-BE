@@ -1327,8 +1327,6 @@ namespace Project.Infrastructure.Migrations {
                         onDelete: ReferentialAction.Restrict);
                 });
 
-
-
             migrationBuilder.CreateIndex(
                 name: "IX_reports_report_type_id",
                 table: "reports",
@@ -1338,6 +1336,43 @@ namespace Project.Infrastructure.Migrations {
                 name: "IX_reports_user_id",
                 table: "reports",
                 column: "user_id");
+
+            migrationBuilder.CreateTable(
+               name: "reminders",
+               columns: table => new {
+                   id = table.Column<Guid>(type: "uuid", nullable: false),
+                   email = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                   message = table.Column<string>(type: "text", nullable: true),
+                   time_to_send = table.Column<TimeSpan>(type: "interval", nullable: false),
+                   is_active = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true),
+                   created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()"),
+                   last_sent_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                   user_id = table.Column<Guid>(type: "uuid", nullable: true)
+               },
+               constraints: table => {
+                   table.PrimaryKey("reminders_pkey", x => x.id);
+                   table.ForeignKey(
+                       name: "FK_reminders_profiles_user_id",
+                       column: x => x.user_id,
+                       principalTable: "profiles",
+                       principalColumn: "id",
+                       onDelete: ReferentialAction.Cascade);
+               });
+
+
+            migrationBuilder.CreateIndex(
+                name: "IX_reminders_user_id",
+                table: "reminders",
+                column: "user_id",
+                unique: true);
+
+            migrationBuilder.AlterColumn<TimeOnly>(
+               name: "time_to_send",
+               table: "reminders",
+               type: "time",
+               nullable: false,
+               oldClrType: typeof(TimeSpan),
+               oldType: "interval");
         }
 
         /// <inheritdoc />

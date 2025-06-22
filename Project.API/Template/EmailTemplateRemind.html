@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Meeting Invitation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .content {
+            background: #f9f9f9;
+            padding: 30px;
+            border-radius: 0 0 10px 10px;
+        }
+
+        .meeting-details {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .detail-row {
+            display: flex;
+            margin: 10px 0;
+        }
+
+        .detail-label {
+            font-weight: bold;
+            width: 120px;
+            color: #555;
+        }
+
+        .detail-value {
+            flex: 1;
+        }
+
+        .join-button {
+            display: inline-block;
+            background: #4CAF50;
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+            .join-button:hover {
+                background: #45a049;
+            }
+
+        .custom-message {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            border-left: 4px solid #2196F3;
+        }
+
+        .footer {
+            text-align: center;
+            color: #777;
+            font-size: 12px;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📚 Daily Study Reminder</h1>
+        <p>Sent by <strong>{{SenderName}}</strong></p>
+    </div>
+
+    <div class="content">
+        <h2>📌 Reminder Details</h2>
+        <div class="reminder-details">
+            <div class="detail-row">
+                <span class="detail-label">📋 Title:</span>
+                <span class="detail-value">{{RemindTitle}}</span>
+            </div>
+
+            {{RemindDescription}}
+
+            <div class="detail-row">
+                <span class="detail-label">⏰ Reminder Time:</span>
+                <span class="detail-value">{{RemindTime}}</span>
+            </div>
+        </div>
+
+        {{CustomMessageSection}}
+
+        <div class="footer" style="margin-top: 40px; text-align: center; font-size: 0.9em; color: #888;">
+            <p>This is an automated message from the <strong>SLOM Course Reminder</strong> system.</p>
+            <p>Stay consistent and good luck with your studies! 📖</p>
+        </div>
+    </div>
+</body>
+</html>

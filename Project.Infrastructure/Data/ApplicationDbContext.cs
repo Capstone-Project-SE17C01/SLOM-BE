@@ -39,6 +39,7 @@ public partial class ApplicationDbContext : DbContext {
     public DbSet<VideoSuggest> VideoSuggests { get; set; }
     public DbSet<Report> Reports { get; set; }
     public DbSet<ReportType> ReportTypes { get; set; }
+    public DbSet<Reminder> Reminders { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder) {
         ApplicationDbContextConfigurations.Configure(builder);

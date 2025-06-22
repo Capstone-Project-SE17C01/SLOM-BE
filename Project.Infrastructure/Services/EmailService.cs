@@ -46,8 +46,7 @@ namespace Project.Infrastructure.Services {
                 }
 
                 return true;
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 Console.WriteLine($"Error sending email: {ex.Message}");
                 return false;
             }
@@ -74,8 +73,7 @@ namespace Project.Infrastructure.Services {
                 <span class='detail-value'>{meeting.Description}</span>
             </div>";
                 template = template.Replace("{{MeetingDescription}}", descriptionHtml);
-            }
-            else {
+            } else {
                 template = template.Replace("{{MeetingDescription}}", "");
             }
 
@@ -86,8 +84,7 @@ namespace Project.Infrastructure.Services {
                 <span class='detail-value'><strong>{meeting.GuestCode}</strong></span>
             </div>";
                 template = template.Replace("{{GuestCodeSection}}", guestCodeHtml);
-            }
-            else {
+            } else {
                 template = template.Replace("{{GuestCodeSection}}", "");
             }
 
@@ -98,8 +95,79 @@ namespace Project.Infrastructure.Services {
             <p>{customMessage}</p>
         </div>";
                 template = template.Replace("{{CustomMessageSection}}", customMessageHtml);
+            } else {
+                template = template.Replace("{{CustomMessageSection}}", "");
             }
-            else {
+
+            return template;
+        }
+
+        public async Task<bool> SendCourseReminderEmailAsync(Reminder reminder, string senderName, string? customMessage = null) {
+            try {
+                var smtpHost = _configuration["EmailSettings:SmtpHost"] ?? "smtp.gmail.com";
+                var smtpPort = int.Parse(_configuration["EmailSettings:SmtpPort"] ?? "587");
+                var smtpEmail = _configuration["EmailSettings:SmtpEmail"];
+                var smtpPassword = _configuration["EmailSettings:SmtpPassword"];
+                var frontendUrl = _configuration["EmailSettings:FrontendUrl"] ?? "http://localhost:3000";
+
+                if (string.IsNullOrEmpty(smtpEmail) || string.IsNullOrEmpty(smtpPassword)) {
+                    throw new InvalidOperationException("Email configuration is missing");
+                }
+
+                using var client = new SmtpClient(smtpHost, smtpPort) {
+                    Credentials = new NetworkCredential(smtpEmail, smtpPassword),
+                    EnableSsl = true
+                };
+
+                var subject = "⏰ It's time to study! - SLOM Reminder";
+                var htmlBody = GenerateReminderEmailTemplate(reminder, senderName, customMessage);
+                var message = new MailMessage {
+                    From = new MailAddress(smtpEmail, "SLOM Meeting System"),
+                    Subject = subject,
+                    Body = htmlBody,
+                    IsBodyHtml = true
+                };
+
+                message.To.Add(reminder.Email);
+                await client.SendMailAsync(message);
+
+                return true;
+            } catch (Exception ex) {
+                Console.WriteLine($"Error sending email: {ex.Message}");
+                return false;
+            }
+        }
+
+        private string GenerateReminderEmailTemplate(Reminder reminder, string senderName, string? customMessage) {
+            var templatePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Template", "EmailTemplateRemind.html");
+            string template = File.ReadAllText(templatePath);
+
+            var remindTime = reminder.TimeToSend.ToString(@"hh\:mm");
+
+            template = template.Replace("{{SenderName}}", senderName);
+            template = template.Replace("{{RemindTitle}}", "⏰ Remind Learning - SLOM Reminder");
+            template = template.Replace("{{RemindTime}}", remindTime);
+
+            if (!string.IsNullOrEmpty(reminder.Message)) {
+                var descriptionHtml = $@"
+            <div class='detail-row'>
+                <span class='detail-label'>📚 Desciption:</span>
+                <span class='detail-value'>{reminder.Message}</span>
+            </div>";
+                template = template.Replace("{{RemindDescription}}", descriptionHtml);
+            } else {
+                template = template.Replace("{{RemindDescription}}", "");
+            }
+
+
+            if (!string.IsNullOrEmpty(customMessage)) {
+                var customMessageHtml = $@"
+            <div class='custom-message'>
+                <h3>📨 Personal Message:</h3>
+                <p>{customMessage}</p>
+            </div>";
+                template = template.Replace("{{CustomMessageSection}}", customMessageHtml);
+            } else {
                 template = template.Replace("{{CustomMessageSection}}", "");
             }
 

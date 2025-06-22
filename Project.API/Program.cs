@@ -27,6 +27,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSignalR();
 builder.Services.AddHostedService<ScheduledMeetingNotifier>();
+builder.Services.AddHostedService<ReminderCourseNotifier>();
 
 var app = builder.Build();
 
