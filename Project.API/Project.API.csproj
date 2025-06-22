@@ -7,6 +7,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Remove="Template\EmailTemplateRemind.html" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="Template\EmailTemplateRemind.html">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
 	  <Content Include="Template\EmailTemplate.html">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>

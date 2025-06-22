@@ -768,6 +768,24 @@ namespace Project.Infrastructure.Data {
                     .OnDelete(DeleteBehavior.Cascade);
             });
 
+            modelBuilder.Entity<Reminder>(entity => {
+                entity.HasKey(e => e.Id).HasName("reminders_pkey");
+                entity.ToTable("reminders");
+
+                entity.Property(e => e.Id).ValueGeneratedNever().HasColumnName("id");
+                entity.Property(e => e.Email).IsRequired().HasMaxLength(255).HasColumnName("email");
+                entity.Property(e => e.Message).HasColumnName("message");
+                entity.Property(e => e.TimeToSend).HasColumnName("time_to_send").HasColumnType("time");
+                entity.Property(e => e.IsActive).HasDefaultValue(true).HasColumnName("is_active");
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("now()").HasColumnName("created_at");
+                entity.Property(e => e.LastSentDate).HasColumnName("last_sent_date");
+                entity.Property(e => e.UserId).HasColumnName("user_id");
+
+                entity.HasOne(d => d.User)
+                    .WithOne(u => u.Reminder)
+                    .HasForeignKey<Reminder>(r => r.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
 
         }
 

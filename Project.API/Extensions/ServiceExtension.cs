@@ -4,6 +4,7 @@ using Project.API.SignalR.Service;
 using Project.Core.Entities.Business.DTOs.LoginDTOs;
 using Project.Core.Entities.Business.DTOs.PaymentDTOs;
 using Project.Core.Entities.Business.DTOs.ProfileDTOs;
+using Project.Core.Entities.Business.DTOs.ReminderDTOs;
 using Project.Core.Entities.Business.DTOs.ReportDTOs;
 using Project.Core.Entities.General;
 using Project.Core.Interfaces.IMapper;
@@ -39,6 +40,7 @@ namespace Project.API.Extensions {
             services.AddScoped<IVideoSuggestRepository, VideoSuggestRepository>();
             services.AddScoped<IReportTypeRepository, ReportTypeRepository>();
             services.AddScoped<IReportRepository, ReportRepository>();
+            services.AddScoped<IReminderRepository, ReminderRepository>();
 
             // services.AddTransient<>();
             #endregion
@@ -59,6 +61,9 @@ namespace Project.API.Extensions {
                    .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Amount))
                    .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt));
                 cfg.CreateMap<CreateReportRequestDTO, Report>();
+
+                cfg.CreateMap<CreateReminderDTO, Reminder>();
+
             });
 
             IMapper mapper = configuration.CreateMapper();
@@ -66,6 +71,7 @@ namespace Project.API.Extensions {
             services.AddSingleton<IBaseMapper<Core.Entities.General.Profile, ProfileByEmailResponse>>(new BaseMapper<Core.Entities.General.Profile, ProfileByEmailResponse>(mapper));
             services.AddSingleton<IBaseMapper<Payment, HistoryPaymentDTO>>(new BaseMapper<Payment, HistoryPaymentDTO>(mapper));
             services.AddSingleton<IBaseMapper<CreateReportRequestDTO, Report>>(new BaseMapper<CreateReportRequestDTO, Report>(mapper));
+            services.AddSingleton<IBaseMapper<CreateReminderDTO, Reminder>>(new BaseMapper<CreateReminderDTO, Reminder>(mapper));
 
             #endregion
 

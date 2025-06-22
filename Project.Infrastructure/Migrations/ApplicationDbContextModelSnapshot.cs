@@ -719,6 +719,55 @@ namespace Project.Infrastructure.Migrations
                     b.ToTable("quiz_options", (string)null);
                 });
 
+            modelBuilder.Entity("Project.Core.Entities.General.Reminder", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("email");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("is_active");
+
+                    b.Property<DateTime?>("LastSentDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_sent_date");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("text")
+                        .HasColumnName("message");
+
+                    b.Property<TimeOnly>("TimeToSend")
+                        .HasColumnType("time")
+                        .HasColumnName("time_to_send");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("reminders_pkey");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("reminders", (string)null);
+                });
+
             modelBuilder.Entity("Project.Core.Entities.General.Report", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1442,6 +1491,16 @@ namespace Project.Infrastructure.Migrations
                     b.Navigation("Quiz");
                 });
 
+            modelBuilder.Entity("Project.Core.Entities.General.Reminder", b =>
+                {
+                    b.HasOne("Project.Core.Entities.General.Profile", "User")
+                        .WithOne("Reminder")
+                        .HasForeignKey("Project.Core.Entities.General.Reminder", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Project.Core.Entities.General.Report", b =>
                 {
                     b.HasOne("Project.Core.Entities.General.ReportType", "ReportType")
@@ -1704,6 +1763,8 @@ namespace Project.Infrastructure.Migrations
                     b.Navigation("QuizAttempts");
 
                     b.Navigation("ReceivedMessages");
+
+                    b.Navigation("Reminder");
 
                     b.Navigation("SentMessages");
 
