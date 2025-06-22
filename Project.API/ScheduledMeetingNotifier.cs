@@ -1,25 +1,19 @@
 using Microsoft.EntityFrameworkCore;
 using Project.Infrastructure.Data;
 
-public class ScheduledMeetingNotifier : BackgroundService
-{
+public class ScheduledMeetingNotifier : BackgroundService {
     private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<ScheduledMeetingNotifier> _logger;
 
-    public ScheduledMeetingNotifier(IServiceProvider serviceProvider, ILogger<ScheduledMeetingNotifier> logger)
-    {
+    public ScheduledMeetingNotifier(IServiceProvider serviceProvider, ILogger<ScheduledMeetingNotifier> logger) {
         _serviceProvider = serviceProvider;
         _logger = logger;
     }
 
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-    {
-        while (!stoppingToken.IsCancellationRequested)
-        {
-            try
-            {
-                using (var scope = _serviceProvider.CreateScope())
-                {
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken) {
+        while (!stoppingToken.IsCancellationRequested) {
+            try {
+                using (var scope = _serviceProvider.CreateScope()) {
                     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                     var emailService = scope.ServiceProvider.GetRequiredService<Project.Core.Interfaces.IServices.IEmailService>();
 
@@ -37,8 +31,7 @@ public class ScheduledMeetingNotifier : BackgroundService
                         )
                         .ToListAsync(stoppingToken);
 
-                    foreach (var meeting in meetings)
-                    {
+                    foreach (var meeting in meetings) {
                         var recipientEmails = meeting.Invitations
                             .Select(p => p.Email)
                             .Where(email => !string.IsNullOrEmpty(email))
@@ -62,8 +55,7 @@ public class ScheduledMeetingNotifier : BackgroundService
                     }
                 }
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 _logger.LogError(ex, "Error in ScheduledMeetingNotifier");
             }
 

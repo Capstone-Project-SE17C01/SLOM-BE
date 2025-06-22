@@ -316,7 +316,8 @@ namespace Project.API.Controllers {
                         recipientCount = emailDto.RecipientEmails.Count,
                         recipients = emailDto.RecipientEmails
                     });
-                } else {
+                }
+                else {
                     return StatusCode(500, new { message = "Failed to send some or all emails. Please check email configuration." });
                 }
             }
@@ -333,12 +334,9 @@ namespace Project.API.Controllers {
         }
 
         [HttpPost("invitation")]
-        public async Task<IActionResult> AddInvitation([FromBody] MeetingInvitationDto dto)
-        {
-            foreach (var email in dto.Email)
-            {
-                var invitation = new MeetingInvitation
-                {
+        public async Task<IActionResult> AddInvitation([FromBody] MeetingInvitationDto dto) {
+            foreach (var email in dto.Email) {
+                var invitation = new MeetingInvitation {
                     Id = Guid.NewGuid(),
                     MeetingId = dto.MeetingId,
                     Email = email,

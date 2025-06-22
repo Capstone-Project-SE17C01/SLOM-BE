@@ -74,7 +74,8 @@ namespace Project.Infrastructure.Services {
                 <span class='detail-value'>{meeting.Description}</span>
             </div>";
                 template = template.Replace("{{MeetingDescription}}", descriptionHtml);
-            } else {
+            }
+            else {
                 template = template.Replace("{{MeetingDescription}}", "");
             }
 
@@ -85,7 +86,8 @@ namespace Project.Infrastructure.Services {
                 <span class='detail-value'><strong>{meeting.GuestCode}</strong></span>
             </div>";
                 template = template.Replace("{{GuestCodeSection}}", guestCodeHtml);
-            } else {
+            }
+            else {
                 template = template.Replace("{{GuestCodeSection}}", "");
             }
 
@@ -96,7 +98,8 @@ namespace Project.Infrastructure.Services {
             <p>{customMessage}</p>
         </div>";
                 template = template.Replace("{{CustomMessageSection}}", customMessageHtml);
-            } else {
+            }
+            else {
                 template = template.Replace("{{CustomMessageSection}}", "");
             }
 
