@@ -16,5 +16,6 @@ namespace Project.Core.Interfaces.IRepositories {
         Task<bool> RemoveParticipantAsync(Guid meetingId, Guid userId);
         Task<MeetingRecording> AddRecordingAsync(MeetingRecording recording);
         Task<IEnumerable<MeetingRecording>> GetRecordingsByUserIdAsync(Guid userId);
+        Task<MeetingInvitation> AddMeetingInvitationAsync(MeetingInvitation invitation);
     }
 }

@@ -153,5 +153,11 @@ namespace Project.Infrastructure.Repositories {
                 .AsNoTracking()
                 .ToListAsync();
         }
+        public async Task<MeetingInvitation> AddMeetingInvitationAsync(MeetingInvitation invitation)
+        {
+            await _context.MeetingInvitations.AddAsync(invitation);
+            await _context.SaveChangesAsync();
+            return invitation;
+        }
     }
 }

@@ -26,6 +26,7 @@ builder.Services.AddControllers().AddOData(option => option.Select().Filter()
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSignalR();
+builder.Services.AddHostedService<ScheduledMeetingNotifier>();
 
 var app = builder.Build();
 

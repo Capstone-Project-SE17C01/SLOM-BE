@@ -332,5 +332,23 @@ namespace Project.API.Controllers {
                 .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
+        [HttpPost("invitation")]
+        public async Task<IActionResult> AddInvitation([FromBody] MeetingInvitationDto dto)
+        {
+            foreach (var email in dto.Email)
+            {
+                var invitation = new MeetingInvitation
+                {
+                    Id = Guid.NewGuid(),
+                    MeetingId = dto.MeetingId,
+                    Email = email,
+                    Status = "Pending",
+                    CreatedAt = DateTime.UtcNow
+                };
+                await _meetingRepository.AddMeetingInvitationAsync(invitation);
+            }
+
+            return Ok();
+        }
     }
 }
