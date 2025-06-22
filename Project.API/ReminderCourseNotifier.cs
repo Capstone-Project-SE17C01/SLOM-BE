@@ -52,7 +52,8 @@ public class ReminderCourseNotifier : BackgroundService {
                         _logger.LogInformation($"Sent course reminder for user {reminder.UserId}, result: {result}");
                     }
                 }
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 _logger.LogError(ex, "Error in ScheduledMeetingNotifier");
             }
 

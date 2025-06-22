@@ -46,7 +46,8 @@ namespace Project.Infrastructure.Services {
                 }
 
                 return true;
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 Console.WriteLine($"Error sending email: {ex.Message}");
                 return false;
             }
@@ -73,7 +74,8 @@ namespace Project.Infrastructure.Services {
                 <span class='detail-value'>{meeting.Description}</span>
             </div>";
                 template = template.Replace("{{MeetingDescription}}", descriptionHtml);
-            } else {
+            }
+            else {
                 template = template.Replace("{{MeetingDescription}}", "");
             }
 
@@ -84,7 +86,8 @@ namespace Project.Infrastructure.Services {
                 <span class='detail-value'><strong>{meeting.GuestCode}</strong></span>
             </div>";
                 template = template.Replace("{{GuestCodeSection}}", guestCodeHtml);
-            } else {
+            }
+            else {
                 template = template.Replace("{{GuestCodeSection}}", "");
             }
 
@@ -95,7 +98,8 @@ namespace Project.Infrastructure.Services {
             <p>{customMessage}</p>
         </div>";
                 template = template.Replace("{{CustomMessageSection}}", customMessageHtml);
-            } else {
+            }
+            else {
                 template = template.Replace("{{CustomMessageSection}}", "");
             }
 
@@ -132,7 +136,8 @@ namespace Project.Infrastructure.Services {
                 await client.SendMailAsync(message);
 
                 return true;
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 Console.WriteLine($"Error sending email: {ex.Message}");
                 return false;
             }
@@ -155,7 +160,8 @@ namespace Project.Infrastructure.Services {
                 <span class='detail-value'>{reminder.Message}</span>
             </div>";
                 template = template.Replace("{{RemindDescription}}", descriptionHtml);
-            } else {
+            }
+            else {
                 template = template.Replace("{{RemindDescription}}", "");
             }
 
@@ -167,7 +173,8 @@ namespace Project.Infrastructure.Services {
                 <p>{customMessage}</p>
             </div>";
                 template = template.Replace("{{CustomMessageSection}}", customMessageHtml);
-            } else {
+            }
+            else {
                 template = template.Replace("{{CustomMessageSection}}", "");
             }
 
