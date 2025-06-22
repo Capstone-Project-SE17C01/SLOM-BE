@@ -2,15 +2,18 @@ using Microsoft.AspNetCore.Mvc;
 using Project.Core.Entities.Business.DTOs.MeetingDTOs;
 using Project.Core.Entities.General;
 using Project.Core.Interfaces.IRepositories;
+using Project.Core.Interfaces.IServices;
 
 namespace Project.API.Controllers {
     [ApiController]
     [Route("api/[controller]")]
     public class MeetingController : ControllerBase {
         private readonly IMeetingRepository _meetingRepository;
+        private readonly IEmailService _emailService;
 
-        public MeetingController(IMeetingRepository meetingRepository) {
+        public MeetingController(IMeetingRepository meetingRepository, IEmailService emailService) {
             _meetingRepository = meetingRepository;
+            _emailService = emailService;
         }
 
         [HttpPost]
@@ -136,33 +139,6 @@ namespace Project.API.Controllers {
                 status = m.Status
             }));
         }
-        [HttpGet("user/{userId}")]
-        public async Task<IActionResult> GetUserMeetings(string userId) {
-            if (string.IsNullOrEmpty(userId))
-                return BadRequest("User ID is required");
-
-            var userGuid = Guid.Parse(userId);
-            var meetings = await _meetingRepository.GetUserMeetingsAsync(userGuid);
-            var invitedMeetings = await _meetingRepository.GetMeetingsByInvitationAsync(userGuid);
-
-            // Combine both lists and remove duplicates
-            var allMeetings = meetings.Union(invitedMeetings, new MeetingComparer()).ToList();
-
-            return Ok(allMeetings.Select(m => new {
-                id = m.Id,
-                title = m.Title,
-                description = m.Description,
-                hostId = m.HostId,
-                hostName = m.Host?.Username,
-                isHost = m.HostId == userGuid,
-                isInvited = m.Invitations.Any(i => i.UserId == userGuid),
-                invitationStatus = m.Invitations.FirstOrDefault(i => i.UserId == userGuid)?.Status,
-                startTime = m.StartTime,
-                endTime = m.EndTime,
-                status = m.Status,
-                isPrivate = m.IsPrivate
-            }));
-        }
 
         [HttpGet("recordings/{userId}")]
         public async Task<IActionResult> GetUserRecordings(string userId) {
@@ -181,27 +157,6 @@ namespace Project.API.Controllers {
                 transcription = r.Transcription,
                 createdAt = r.CreatedAt
             }));
-        }
-
-        [HttpGet("recordings/storage-paths/all")]
-        public async Task<IActionResult> GetAllRecordingStoragePaths() {
-            var recordings = await _meetingRepository.GetAllRecordingsAsync();
-
-            var storagePaths = recordings
-                .Where(r => !string.IsNullOrEmpty(r.StoragePath))
-                .Select(r => new {
-                    storagePath = r.StoragePath,
-                    meetingId = r.MeetingId,
-                    recordingId = r.Id,
-                    createdAt = r.CreatedAt
-                })
-                .OrderByDescending(r => r.createdAt)
-                .ToList();
-
-            return Ok(new {
-                totalCount = storagePaths.Count,
-                storagePaths = storagePaths
-            });
         }
 
         [HttpPost("{id}/join")]
@@ -265,20 +220,6 @@ namespace Project.API.Controllers {
             });
         }
 
-        [HttpGet("{id}/recordings")]
-        public async Task<IActionResult> GetMeetingRecordings(Guid id) {
-            var recordings = await _meetingRepository.GetRecordingsForMeetingAsync(id);
-
-            return Ok(recordings.Select(r => new {
-                id = r.Id,
-                meetingId = r.MeetingId,
-                storagePath = r.StoragePath,
-                duration = r.Duration,
-                processed = r.Processed,
-                transcription = r.Transcription,
-                createdAt = r.CreatedAt
-            }));
-        }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMeeting(Guid id, [FromQuery] string userId) {
@@ -350,6 +291,40 @@ namespace Project.API.Controllers {
             });
         }
 
+        [HttpPost("{id}/send-email")]
+        public async Task<IActionResult> SendMeetingEmail(Guid id, [FromBody] SendMeetingEmailDto emailDto) {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var meeting = await _meetingRepository.GetMeetingByIdAsync(id);
+            if (meeting == null)
+                return NotFound("Meeting not found");
+
+            try {
+                var success = await _emailService.SendMeetingScheduleEmailAsync(
+                    meeting,
+                    emailDto.RecipientEmails,
+                    emailDto.SenderName,
+                    emailDto.CustomMessage
+                );
+
+                if (success) {
+                    return Ok(new {
+                        message = $"Meeting invitation emails sent successfully to {emailDto.RecipientEmails.Count} recipient(s)",
+                        meetingId = meeting.Id,
+                        meetingTitle = meeting.Title,
+                        recipientCount = emailDto.RecipientEmails.Count,
+                        recipients = emailDto.RecipientEmails
+                    });
+                } else {
+                    return StatusCode(500, new { message = "Failed to send some or all emails. Please check email configuration." });
+                }
+            }
+            catch (Exception ex) {
+                return StatusCode(500, new { message = "Error sending emails", error = ex.Message });
+            }
+        }
+
         private static string GenerateRandomCode() {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             var random = new Random();
@@ -357,316 +332,23 @@ namespace Project.API.Controllers {
                 .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
-        // Meeting Invitation Endpoints
-        [HttpPost("schedule-with-invites")]
-        public async Task<IActionResult> ScheduleMeetingWithInvites([FromBody] MeetingScheduleWithInvitesDto scheduleDto) {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var hostId = Guid.Parse(scheduleDto.HostId);
-
-            // Create the meeting
-            var meeting = new Meeting {
-                Id = Guid.NewGuid(),
-                HostId = hostId,
-                Title = scheduleDto.Title,
-                Description = scheduleDto.Description,
-                StartTime = DateTime.SpecifyKind(scheduleDto.StartTime, DateTimeKind.Utc),
-                EndTime = scheduleDto.EndTime.HasValue ?
-                    DateTime.SpecifyKind(scheduleDto.EndTime.Value, DateTimeKind.Utc) :
-                    (scheduleDto.Duration.HasValue ?
-                        DateTime.SpecifyKind(scheduleDto.StartTime.AddMinutes(scheduleDto.Duration.Value), DateTimeKind.Utc) :
-                        null),
-                Status = "Scheduled",
-                IsPrivate = scheduleDto.IsPrivate,
-                MaxParticipants = scheduleDto.MaxParticipants,
-                GuestCode = scheduleDto.IsPrivate ? GenerateRandomCode() : null,
-                CreatedAt = DateTime.UtcNow
-            };
-
-            var createdMeeting = await _meetingRepository.CreateMeetingAsync(meeting);
-
-            // Create invitations
-            var invitations = new List<MeetingInvitation>();
-
-            // Invite users by ID
-            if (scheduleDto.InviteUserIds != null && scheduleDto.InviteUserIds.Any()) {
-                foreach (var userId in scheduleDto.InviteUserIds) {
-                    var invitation = new MeetingInvitation {
-                        Id = Guid.NewGuid(),
-                        MeetingId = createdMeeting.Id,
-                        UserId = userId,
-                        Status = "Pending",
-                        CreatedAt = DateTime.UtcNow,
-                        InvitationCode = GenerateInvitationCode()
-                    };
-
-                    var createdInvitation = await _meetingRepository.CreateInvitationAsync(invitation);
-                    invitations.Add(createdInvitation);
-                }
+        [HttpPost("invitation")]
+        public async Task<IActionResult> AddInvitation([FromBody] MeetingInvitationDto dto)
+        {
+            foreach (var email in dto.Email)
+            {
+                var invitation = new MeetingInvitation
+                {
+                    Id = Guid.NewGuid(),
+                    MeetingId = dto.MeetingId,
+                    Email = email,
+                    Status = "Pending",
+                    CreatedAt = DateTime.UtcNow
+                };
+                await _meetingRepository.AddMeetingInvitationAsync(invitation);
             }
 
-            // Invite users by email
-            if (scheduleDto.InviteEmails != null && scheduleDto.InviteEmails.Any()) {
-                foreach (var email in scheduleDto.InviteEmails) {
-                    var invitation = new MeetingInvitation {
-                        Id = Guid.NewGuid(),
-                        MeetingId = createdMeeting.Id,
-                        Email = email,
-                        Status = "Pending",
-                        CreatedAt = DateTime.UtcNow,
-                        InvitationCode = GenerateInvitationCode()
-                    };
-
-                    var createdInvitation = await _meetingRepository.CreateInvitationAsync(invitation);
-                    invitations.Add(createdInvitation);
-                }
-            }
-
-            return Ok(new {
-                meeting = new {
-                    id = createdMeeting.Id,
-                    title = createdMeeting.Title,
-                    description = createdMeeting.Description,
-                    startTime = createdMeeting.StartTime,
-                    endTime = createdMeeting.EndTime,
-                    status = createdMeeting.Status,
-                    isPrivate = createdMeeting.IsPrivate,
-                    guestCode = createdMeeting.GuestCode
-                },
-                invitations = invitations.Select(i => new {
-                    id = i.Id,
-                    userId = i.UserId,
-                    email = i.Email,
-                    status = i.Status,
-                    invitationCode = i.InvitationCode,
-                    createdAt = i.CreatedAt
-                })
-            });
-        }
-
-        [HttpPost("{meetingId}/invite")]
-        public async Task<IActionResult> InviteToMeeting(Guid meetingId, [FromBody] MeetingInviteDto inviteDto) {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var meeting = await _meetingRepository.GetMeetingByIdAsync(meetingId);
-            if (meeting == null)
-                return NotFound("Meeting not found");
-
-            var hostId = Guid.Parse(inviteDto.HostId);
-            if (meeting.HostId != hostId)
-                return Forbid("Only the host can invite users to this meeting");
-
-            var invitations = new List<MeetingInvitation>();
-
-            // Invite users by ID
-            if (inviteDto.UserIds != null && inviteDto.UserIds.Any()) {
-                foreach (var userId in inviteDto.UserIds) {
-                    // Check if user is already invited
-                    var existingInvitation = (await _meetingRepository.GetInvitationsByMeetingIdAsync(meetingId))
-                        .FirstOrDefault(i => i.UserId == userId);
-
-                    if (existingInvitation == null) {
-                        var invitation = new MeetingInvitation {
-                            Id = Guid.NewGuid(),
-                            MeetingId = meetingId,
-                            UserId = userId,
-                            Status = "Pending",
-                            CreatedAt = DateTime.UtcNow,
-                            InvitationCode = GenerateInvitationCode()
-                        };
-
-                        var createdInvitation = await _meetingRepository.CreateInvitationAsync(invitation);
-                        invitations.Add(createdInvitation);
-                    }
-                }
-            }
-
-            // Invite users by email
-            if (inviteDto.Emails != null && inviteDto.Emails.Any()) {
-                foreach (var email in inviteDto.Emails) {
-                    // Check if email is already invited
-                    var existingInvitation = (await _meetingRepository.GetInvitationsByMeetingIdAsync(meetingId))
-                        .FirstOrDefault(i => i.Email == email);
-
-                    if (existingInvitation == null) {
-                        var invitation = new MeetingInvitation {
-                            Id = Guid.NewGuid(),
-                            MeetingId = meetingId,
-                            Email = email,
-                            Status = "Pending",
-                            CreatedAt = DateTime.UtcNow,
-                            InvitationCode = GenerateInvitationCode()
-                        };
-
-                        var createdInvitation = await _meetingRepository.CreateInvitationAsync(invitation);
-                        invitations.Add(createdInvitation);
-                    }
-                }
-            }
-
-            return Ok(new {
-                message = $"Sent {invitations.Count} invitation(s)",
-                invitations = invitations.Select(i => new {
-                    id = i.Id,
-                    userId = i.UserId,
-                    email = i.Email,
-                    status = i.Status,
-                    invitationCode = i.InvitationCode,
-                    createdAt = i.CreatedAt
-                })
-            });
-        }
-
-        [HttpGet("invitations/user/{userId}")]
-        public async Task<IActionResult> GetUserInvitations(string userId) {
-            if (string.IsNullOrEmpty(userId))
-                return BadRequest("User ID is required");
-
-            var invitations = await _meetingRepository.GetInvitationsByUserIdAsync(Guid.Parse(userId));
-
-            return Ok(invitations.Select(i => new {
-                id = i.Id,
-                meetingId = i.MeetingId,
-                meetingTitle = i.Meeting?.Title,
-                meetingDescription = i.Meeting?.Description,
-                hostName = i.Meeting?.Host?.Username,
-                startTime = i.Meeting?.StartTime,
-                endTime = i.Meeting?.EndTime,
-                status = i.Status,
-                invitationCode = i.InvitationCode,
-                createdAt = i.CreatedAt,
-                respondedAt = i.RespondedAt
-            }));
-        }
-
-        [HttpGet("invitations/email/{email}")]
-        public async Task<IActionResult> GetEmailInvitations(string email) {
-            if (string.IsNullOrEmpty(email))
-                return BadRequest("Email is required");
-
-            var invitations = await _meetingRepository.GetInvitationsByEmailAsync(email);
-
-            return Ok(invitations.Select(i => new {
-                id = i.Id,
-                meetingId = i.MeetingId,
-                meetingTitle = i.Meeting?.Title,
-                meetingDescription = i.Meeting?.Description,
-                hostName = i.Meeting?.Host?.Username,
-                startTime = i.Meeting?.StartTime,
-                endTime = i.Meeting?.EndTime,
-                status = i.Status,
-                invitationCode = i.InvitationCode,
-                createdAt = i.CreatedAt,
-                respondedAt = i.RespondedAt
-            }));
-        }
-
-        [HttpPost("invitations/respond")]
-        public async Task<IActionResult> RespondToInvitation([FromBody] InvitationResponseDto responseDto) {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var invitation = await _meetingRepository.GetInvitationByCodeAsync(responseDto.InvitationCode);
-            if (invitation == null)
-                return NotFound("Invitation not found");
-
-            var userId = Guid.Parse(responseDto.UserId);
-
-            // Check if this user can respond to this invitation
-            if (invitation.UserId.HasValue && invitation.UserId != userId)
-                return Forbid("You are not authorized to respond to this invitation");
-
-            // If invitation was sent by email and user is responding, link the user
-            if (!invitation.UserId.HasValue)
-                invitation.UserId = userId;
-
-            invitation.Status = responseDto.Response;
-            invitation.RespondedAt = DateTime.UtcNow;
-
-            await _meetingRepository.UpdateInvitationAsync(invitation);
-
-            // If accepted, add user as participant
-            if (responseDto.Response == "Accepted") {
-                await _meetingRepository.AddParticipantAsync(invitation.MeetingId, userId, "Web");
-            }
-
-            return Ok(new {
-                message = $"Invitation {responseDto.Response.ToLower()}",
-                invitation = new {
-                    id = invitation.Id,
-                    meetingId = invitation.MeetingId,
-                    meetingTitle = invitation.Meeting?.Title,
-                    status = invitation.Status,
-                    respondedAt = invitation.RespondedAt
-                }
-            });
-        }
-
-        [HttpGet("{meetingId}/invitations")]
-        public async Task<IActionResult> GetMeetingInvitations(Guid meetingId, [FromQuery] string userId) {
-            if (string.IsNullOrEmpty(userId))
-                return BadRequest("User ID is required");
-
-            var meeting = await _meetingRepository.GetMeetingByIdAsync(meetingId);
-            if (meeting == null)
-                return NotFound("Meeting not found");
-
-            var hostId = Guid.Parse(userId);
-            if (meeting.HostId != hostId)
-                return Forbid("Only the host can view meeting invitations");
-
-            var invitations = await _meetingRepository.GetInvitationsByMeetingIdAsync(meetingId);
-
-            return Ok(invitations.Select(i => new {
-                id = i.Id,
-                userId = i.UserId,
-                userName = i.User?.Username,
-                email = i.Email,
-                status = i.Status,
-                invitationCode = i.InvitationCode,
-                createdAt = i.CreatedAt,
-                respondedAt = i.RespondedAt
-            }));
-        }
-
-        [HttpGet("user/{userId}/invited-meetings")]
-        public async Task<IActionResult> GetUserInvitedMeetings(string userId) {
-            if (string.IsNullOrEmpty(userId))
-                return BadRequest("User ID is required");
-
-            var meetings = await _meetingRepository.GetMeetingsByInvitationAsync(Guid.Parse(userId));
-
-            return Ok(meetings.Select(m => new {
-                id = m.Id,
-                title = m.Title,
-                description = m.Description,
-                hostId = m.HostId,
-                hostName = m.Host?.Username,
-                startTime = m.StartTime,
-                endTime = m.EndTime,
-                status = m.Status,
-                isPrivate = m.IsPrivate,
-                invitationStatus = m.Invitations.FirstOrDefault(i => i.UserId == Guid.Parse(userId))?.Status
-            }));
-        }
-
-        private static string GenerateInvitationCode() {
-            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            var random = new Random();
-            return new string(Enumerable.Repeat(chars, 12)
-                .Select(s => s[random.Next(s.Length)]).ToArray());
-        }
-
-        private class MeetingComparer : IEqualityComparer<Meeting> {
-            public bool Equals(Meeting x, Meeting y) {
-                return x.Id == y.Id;
-            }
-
-            public int GetHashCode(Meeting obj) {
-                return obj.Id.GetHashCode();
-            }
+            return Ok();
         }
     }
 }

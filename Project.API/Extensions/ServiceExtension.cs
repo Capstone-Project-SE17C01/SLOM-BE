@@ -8,8 +8,10 @@ using Project.Core.Entities.Business.DTOs.ReportDTOs;
 using Project.Core.Entities.General;
 using Project.Core.Interfaces.IMapper;
 using Project.Core.Interfaces.IRepositories;
+using Project.Core.Interfaces.IServices;
 using Project.Core.Mapper;
 using Project.Infrastructure.Repositories;
+using Project.Infrastructure.Services;
 
 namespace Project.API.Extensions {
     public static class ServiceExtension {
@@ -19,7 +21,7 @@ namespace Project.API.Extensions {
                     config["Environment:PAYOS_API_KEY"] ?? throw new Exception("Cannot find environment"),
                     config["Environment:PAYOS_CHECKSUM_KEY"] ?? throw new Exception("Cannot find environment"));
             services.AddSingleton(payOS);
-            // services.AddScoped<>();
+            services.AddScoped<IEmailService, EmailService>();
             #endregion
 
             #region Repositories

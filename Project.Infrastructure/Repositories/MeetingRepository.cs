@@ -145,13 +145,6 @@ namespace Project.Infrastructure.Repositories {
             return recording;
         }
 
-        public async Task<IEnumerable<MeetingRecording>> GetRecordingsForMeetingAsync(Guid meetingId) {
-            return await _context.MeetingRecordings
-                .Where(r => r.MeetingId == meetingId)
-                .OrderByDescending(r => r.CreatedAt)
-                .AsNoTracking()
-                .ToListAsync();
-        }
         public async Task<IEnumerable<MeetingRecording>> GetRecordingsByUserIdAsync(Guid userId) {
             return await _context.MeetingRecordings
                 .Include(r => r.Meeting)
@@ -160,91 +153,11 @@ namespace Project.Infrastructure.Repositories {
                 .AsNoTracking()
                 .ToListAsync();
         }
-        public async Task<IEnumerable<MeetingRecording>> GetAllRecordingsAsync() {
-            return await _context.MeetingRecordings
-                .Include(r => r.Meeting)
-                .OrderByDescending(r => r.CreatedAt)
-                .AsNoTracking()
-                .ToListAsync();
-        }
-        public async Task<IEnumerable<Meeting>> GetUserMeetingsAsync(Guid userId) {
-            return await _context.Meetings
-                .Include(m => m.Host)
-                .Include(m => m.Participants)
-                .Where(m => m.HostId == userId || m.Participants.Any(p => p.UserId == userId))
-                .OrderByDescending(m => m.StartTime)
-                .AsNoTracking()
-                .ToListAsync();
-        }
-
-        // Meeting Invitation methods
-        public async Task<MeetingInvitation> CreateInvitationAsync(MeetingInvitation invitation) {
+        public async Task<MeetingInvitation> AddMeetingInvitationAsync(MeetingInvitation invitation)
+        {
             await _context.MeetingInvitations.AddAsync(invitation);
             await _context.SaveChangesAsync();
             return invitation;
-        }
-
-        public async Task<IEnumerable<MeetingInvitation>> GetInvitationsByMeetingIdAsync(Guid meetingId) {
-            return await _context.MeetingInvitations
-                .Include(i => i.User)
-                .Where(i => i.MeetingId == meetingId)
-                .OrderByDescending(i => i.CreatedAt)
-                .AsNoTracking()
-                .ToListAsync();
-        }
-
-        public async Task<IEnumerable<MeetingInvitation>> GetInvitationsByUserIdAsync(Guid userId) {
-            return await _context.MeetingInvitations
-                .Include(i => i.Meeting)
-                .ThenInclude(m => m.Host)
-                .Where(i => i.UserId == userId)
-                .OrderByDescending(i => i.CreatedAt)
-                .AsNoTracking()
-                .ToListAsync();
-        }
-
-        public async Task<IEnumerable<MeetingInvitation>> GetInvitationsByEmailAsync(string email) {
-            return await _context.MeetingInvitations
-                .Include(i => i.Meeting)
-                .ThenInclude(m => m.Host)
-                .Where(i => i.Email == email)
-                .OrderByDescending(i => i.CreatedAt)
-                .AsNoTracking()
-                .ToListAsync();
-        }
-
-        public async Task<MeetingInvitation?> GetInvitationByCodeAsync(string invitationCode) {
-            return await _context.MeetingInvitations
-                .Include(i => i.Meeting)
-                .ThenInclude(m => m.Host)
-                .Include(i => i.User)
-                .FirstOrDefaultAsync(i => i.InvitationCode == invitationCode);
-        }
-
-        public async Task<MeetingInvitation> UpdateInvitationAsync(MeetingInvitation invitation) {
-            _context.MeetingInvitations.Update(invitation);
-            await _context.SaveChangesAsync();
-            return invitation;
-        }
-
-        public async Task<bool> DeleteInvitationAsync(Guid invitationId) {
-            var invitation = await _context.MeetingInvitations.FindAsync(invitationId);
-            if (invitation == null)
-                return false;
-
-            _context.MeetingInvitations.Remove(invitation);
-            await _context.SaveChangesAsync();
-            return true;
-        }
-
-        public async Task<IEnumerable<Meeting>> GetMeetingsByInvitationAsync(Guid userId) {
-            return await _context.Meetings
-                .Include(m => m.Host)
-                .Include(m => m.Invitations)
-                .Where(m => m.Invitations.Any(i => i.UserId == userId && i.Status == "Accepted"))
-                .OrderByDescending(m => m.StartTime)
-                .AsNoTracking()
-                .ToListAsync();
         }
     }
 }

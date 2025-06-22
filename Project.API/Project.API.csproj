@@ -7,6 +7,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Content Include="Template\EmailTemplate.html">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Amazon.AspNetCore.Identity.Cognito" Version="3.0.2" />
 		<PackageReference Include="AWSSDK.CognitoIdentityProvider" Version="3.7.403.2" />
 		<PackageReference Include="Azure.Extensions.AspNetCore.Configuration.Secrets" Version="1.4.0" />
