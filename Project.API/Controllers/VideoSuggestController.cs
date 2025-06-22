@@ -19,7 +19,7 @@ namespace Project.API.Controllers {
         public async Task<IActionResult> GetVideoSuggest([FromQuery] VideoSuggestRequestDTO requestDTO) {
             try {
                 var videoSuggests = await _videoRepo.GetVideoSuggestsByUserId(requestDTO);
-                if (videoSuggests == null || !videoSuggests.Any()) {
+                if (videoSuggests == null) {
                     return NotFound(new APIResponse {
                         errorMessages = new List<string> { "NoVideoSuggest" }
                     });
