@@ -41,6 +41,7 @@ namespace Project.API.Extensions {
             services.AddScoped<IReportTypeRepository, ReportTypeRepository>();
             services.AddScoped<IReportRepository, ReportRepository>();
             services.AddScoped<IReminderRepository, ReminderRepository>();
+            services.AddScoped<IFeedbackRepository, FeedbackRepository>();
 
             // services.AddTransient<>();
             #endregion

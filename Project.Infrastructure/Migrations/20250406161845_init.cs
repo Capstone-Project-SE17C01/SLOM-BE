@@ -599,6 +599,21 @@ namespace Project.Infrastructure.Migrations {
                 }
             );
 
+            migrationBuilder.CreateTable(
+                name: "Feedbacks",
+                columns: table => new {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Email = table.Column<string>(type: "text", nullable: false),
+                    Subject = table.Column<string>(type: "text", nullable: false),
+                    Message = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table => {
+                    table.PrimaryKey("PK_Feedbacks", x => x.Id);
+                }
+            );
+
             migrationBuilder.CreateIndex(
                 name: "IX_user_messages_receiver_id",
                 table: "user_messages",
@@ -1436,6 +1451,9 @@ namespace Project.Infrastructure.Migrations {
 
             migrationBuilder.DropTable(
                 name: "meeting_invitations");
+
+            migrationBuilder.DropTable(
+                name: "Feedbacks");
         }
     }
 }
