@@ -8,8 +8,7 @@ using Project.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connection = builder.Configuration
-                .GetConnectionString("DefaultConnection");
+var connection = Environment.GetEnvironmentVariable("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connection));
 
