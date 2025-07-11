@@ -8,7 +8,9 @@ using Project.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connection = Environment.GetEnvironmentVariable("DefaultConnection");
+var connection = Environment.GetEnvironmentVariable("DefaultConnection") ?? builder.Configuration.GetConnectionString("DefaultConnection")
+                                                                         ?? throw new InvalidOperationException("Connection string not found");
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connection));
 
