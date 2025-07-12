@@ -1,11 +1,8 @@
 using Project.Core.Entities.General;
 
-namespace Project.Tests.TestData.SeedData
-{
-    public static class PaymentSeed
-    {
-        public static List<Payment> GetPayments()
-        {
+namespace Project.Tests.TestData.SeedData {
+    public static class PaymentSeed {
+        public static List<Payment> GetPayments() {
             return new List<Payment>
             {
                 new Payment
@@ -37,10 +34,8 @@ namespace Project.Tests.TestData.SeedData
             };
         }
 
-        public static Payment GetSinglePayment()
-        {
-            return new Payment
-            {
+        public static Payment GetSinglePayment() {
+            return new Payment {
                 Id = Guid.NewGuid(),
                 UserId = Guid.NewGuid(),
                 SubscriptionId = Guid.NewGuid(),

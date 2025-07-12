@@ -1,3 +1,4 @@
+using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Project.API.Controllers;
@@ -5,7 +6,6 @@ using Project.Core.Entities.Business.DTOs;
 using Project.Core.Entities.General;
 using Project.Core.Interfaces.IRepositories;
 using Xunit;
-using FluentAssertions;
 
 namespace Project.Tests.Unit.Controllers;
 
@@ -151,4 +151,4 @@ public class ReportTypeControllerTests {
     // 
     // Note: The controller only has one method (GetAllAsync) that simply calls repository.GetAll()
     // and wraps the result in an APIResponse. There are no validation checks or complex logic to test.
-} 
+}

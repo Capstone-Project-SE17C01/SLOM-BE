@@ -1,17 +1,16 @@
+using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using Project.API.Controllers;
 using Project.Core.Entities.Business.DTOs;
 using Project.Core.Entities.Business.DTOs.CourseDTOs;
 using Project.Core.Entities.General;
 using Project.Core.Interfaces.IRepositories;
-using Project.API.Controllers;
 using Xunit;
-using FluentAssertions;
 
 namespace Project.Tests.Unit.Controllers;
 
-public class CourseControllerTests
-{
+public class CourseControllerTests {
     private readonly Mock<IProfileRepository> _mockProfileRepository = new();
     private readonly Mock<ICourseRepository> _mockCourseRepository = new();
     private readonly Mock<IModuleRepository> _mockModuleRepository = new();
@@ -20,8 +19,7 @@ public class CourseControllerTests
     private readonly Mock<IUserModuleProgressRepository> _mockUserModuleProgressRepository = new();
     private readonly Mock<IUserLessonProgressRepository> _mockUserLessonProgressRepository = new();
 
-    private CourseController CreateController()
-    {
+    private CourseController CreateController() {
         return new CourseController(
             _mockProfileRepository.Object,
             _mockCourseRepository.Object,
@@ -36,8 +34,7 @@ public class CourseControllerTests
     #region GetSummary Tests
 
     [Fact]
-    public async Task GetSummary_WithValidData_ReturnsOkWithSummary()
-    {
+    public async Task GetSummary_WithValidData_ReturnsOkWithSummary() {
         // Arrange
         var controller = CreateController();
         var userId = Guid.NewGuid();
@@ -78,8 +75,7 @@ public class CourseControllerTests
     }
 
     [Fact]
-    public async Task GetSummary_WhenRepositoryThrowsException_ReturnsBadRequest()
-    {
+    public async Task GetSummary_WhenRepositoryThrowsException_ReturnsBadRequest() {
         // Arrange
         var controller = CreateController();
         var userId = Guid.NewGuid();
@@ -99,8 +95,7 @@ public class CourseControllerTests
     }
 
     [Fact]
-    public async Task GetSummary_WithEmptyGuids_ReturnsOk()
-    {
+    public async Task GetSummary_WithEmptyGuids_ReturnsOk() {
         // Arrange
         var controller = CreateController();
         var userId = Guid.Empty;
@@ -143,8 +138,7 @@ public class CourseControllerTests
     #region GetAllCourses Tests
 
     [Fact]
-    public async Task GetAllCourses_WithValidUserId_ReturnsOkWithCourses()
-    {
+    public async Task GetAllCourses_WithValidUserId_ReturnsOkWithCourses() {
         // Arrange
         var controller = CreateController();
         var userId = Guid.NewGuid();
@@ -178,8 +172,7 @@ public class CourseControllerTests
     }
 
     [Fact]
-    public async Task GetAllCourses_WhenRepositoryThrowsException_ReturnsBadRequest()
-    {
+    public async Task GetAllCourses_WhenRepositoryThrowsException_ReturnsBadRequest() {
         // Arrange
         var controller = CreateController();
         var userId = Guid.NewGuid();
@@ -198,8 +191,7 @@ public class CourseControllerTests
     }
 
     [Fact]
-    public async Task GetAllCourses_WithEmptyUserId_ReturnsOk()
-    {
+    public async Task GetAllCourses_WithEmptyUserId_ReturnsOk() {
         // Arrange
         var controller = CreateController();
         var userId = Guid.Empty;
@@ -222,8 +214,7 @@ public class CourseControllerTests
     }
 
     [Fact]
-    public async Task GetAllCourses_WithNoLearningCourses_ReturnsAllPublishedCoursesAsRemaining()
-    {
+    public async Task GetAllCourses_WithNoLearningCourses_ReturnsAllPublishedCoursesAsRemaining() {
         // Arrange
         var controller = CreateController();
         var userId = Guid.NewGuid();
@@ -250,8 +241,7 @@ public class CourseControllerTests
     }
 
     [Fact]
-    public async Task GetAllCourses_WithAllCoursesInLearning_ReturnsEmptyRemainingCourses()
-    {
+    public async Task GetAllCourses_WithAllCoursesInLearning_ReturnsEmptyRemainingCourses() {
         // Arrange
         var controller = CreateController();
         var userId = Guid.NewGuid();
@@ -281,8 +271,7 @@ public class CourseControllerTests
     #region Edge Cases
 
     [Fact]
-    public async Task GetSummary_WithNullActiveLesson_HandlesGracefully()
-    {
+    public async Task GetSummary_WithNullActiveLesson_HandlesGracefully() {
         // Arrange
         var controller = CreateController();
         var userId = Guid.NewGuid();
@@ -311,8 +300,7 @@ public class CourseControllerTests
     }
 
     [Fact]
-    public async Task GetAllCourses_WithNullCourses_HandlesGracefully()
-    {
+    public async Task GetAllCourses_WithNullCourses_HandlesGracefully() {
         // Arrange
         var controller = CreateController();
         var userId = Guid.NewGuid();

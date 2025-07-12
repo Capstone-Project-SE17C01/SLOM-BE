@@ -1,3 +1,4 @@
+using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using Project.Core.Entities.General;
@@ -5,7 +6,6 @@ using Project.Infrastructure.Data;
 using Project.Infrastructure.Repositories;
 using Project.Tests.Helpers;
 using Xunit;
-using FluentAssertions;
 
 namespace Project.Tests.Unit.Repositories {
     public class BaseRepositoryTests {
@@ -14,7 +14,7 @@ namespace Project.Tests.Unit.Repositories {
             // Arrange
             using var context = TestMockHelper.CreateInMemoryDbContext("GetAllTest");
             var repo = new BaseRepository<Course>(context);
-            
+
             // Add test data
             var courses = TestDataFixture.Courses;
             context.Courses.AddRange(courses);
@@ -50,7 +50,7 @@ namespace Project.Tests.Unit.Repositories {
             using var context = TestMockHelper.CreateInMemoryDbContext("DeleteTest");
             var repo = new BaseRepository<Course>(context);
             var course = TestDataFixture.SingleCourse;
-            
+
             // Add course first
             context.Courses.Add(course);
             await context.SaveChangesAsync();

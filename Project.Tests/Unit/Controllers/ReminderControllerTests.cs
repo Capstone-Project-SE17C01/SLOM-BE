@@ -1,3 +1,4 @@
+using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Project.API.Controllers;
@@ -7,7 +8,6 @@ using Project.Core.Entities.General;
 using Project.Core.Interfaces.IMapper;
 using Project.Core.Interfaces.IRepositories;
 using Xunit;
-using FluentAssertions;
 
 namespace Project.Tests.Unit.Controllers;
 
@@ -432,4 +432,4 @@ public class ReminderControllerTests {
     // Note: The controller checks if reminder == null from mapper.MapModel() (which can return null),
     // but IBaseRepository.Create() method returns Task<T> (Task<Reminder>), not null, so we don't test
     // repository returning null scenarios as they don't reflect the actual interface contract.
-} 
+}

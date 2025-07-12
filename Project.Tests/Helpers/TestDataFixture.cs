@@ -1,10 +1,8 @@
-using Project.Tests.TestData.SeedData;
 using Project.Core.Entities.General;
+using Project.Tests.TestData.SeedData;
 
-namespace Project.Tests.Helpers
-{
-    public static class TestDataFixture
-    {
+namespace Project.Tests.Helpers {
+    public static class TestDataFixture {
 
         public static List<Course> Courses => CourseSeed.GetCourses();
         public static Course SingleCourse => CourseSeed.GetSingleCourse();

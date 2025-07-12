@@ -1,3 +1,4 @@
+using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Project.API.Controllers;
@@ -7,7 +8,6 @@ using Project.Core.Entities.General;
 using Project.Core.Interfaces.IMapper;
 using Project.Core.Interfaces.IRepositories;
 using Xunit;
-using FluentAssertions;
 
 namespace Project.Tests.Unit.Controllers;
 
@@ -76,7 +76,7 @@ public class ReportControllerTests {
         result.Should().BeOfType<BadRequestObjectResult>();
         var badRequestResult = result as BadRequestObjectResult;
         badRequestResult!.Value.Should().NotBeNull();
-        
+
         // Use reflection to access the error property since it's an anonymous type
         var errorProperty = badRequestResult.Value.GetType().GetProperty("error");
         errorProperty.Should().NotBeNull();
@@ -200,7 +200,7 @@ public class ReportControllerTests {
         var objectResult = result as ObjectResult;
         objectResult!.StatusCode.Should().Be(500);
         objectResult.Value.Should().NotBeNull();
-        
+
         // Use reflection to access the error property since it's an anonymous type
         var errorProperty = objectResult.Value.GetType().GetProperty("error");
         errorProperty.Should().NotBeNull();
@@ -231,7 +231,7 @@ public class ReportControllerTests {
         var objectResult = result as ObjectResult;
         objectResult!.StatusCode.Should().Be(500);
         objectResult.Value.Should().NotBeNull();
-        
+
         // Use reflection to access the error property since it's an anonymous type
         var errorProperty = objectResult.Value.GetType().GetProperty("error");
         errorProperty.Should().NotBeNull();
@@ -336,4 +336,4 @@ public class ReportControllerTests {
     // Note: The controller checks if result == null from repository.Create(), but according to
     // IBaseRepository interface, Create method returns Task<T> (Task<Report>), not null.
     // This null check might be unnecessary, but we test the controller's actual behavior.
-} 
+}

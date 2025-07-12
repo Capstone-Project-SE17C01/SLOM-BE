@@ -1,11 +1,8 @@
 using Project.Core.Entities.General;
 
-namespace Project.Tests.TestData.SeedData
-{
-    public static class MeetingSeed
-    {
-        public static List<Meeting> GetMeetings()
-        {
+namespace Project.Tests.TestData.SeedData {
+    public static class MeetingSeed {
+        public static List<Meeting> GetMeetings() {
             return new List<Meeting>
             {
                 new Meeting
@@ -39,10 +36,8 @@ namespace Project.Tests.TestData.SeedData
             };
         }
 
-        public static Meeting GetSingleMeeting()
-        {
-            return new Meeting
-            {
+        public static Meeting GetSingleMeeting() {
+            return new Meeting {
                 Id = Guid.NewGuid(),
                 HostId = Guid.NewGuid(),
                 Title = "Cuộc họp kiểm thử",

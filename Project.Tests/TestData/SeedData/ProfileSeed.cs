@@ -1,11 +1,8 @@
 using Project.Core.Entities.General;
 
-namespace Project.Tests.TestData.SeedData
-{
-    public static class ProfileSeed
-    {
-        public static List<Profile> GetProfiles()
-        {
+namespace Project.Tests.TestData.SeedData {
+    public static class ProfileSeed {
+        public static List<Profile> GetProfiles() {
             return new List<Profile>
             {
                 new Profile
@@ -33,10 +30,8 @@ namespace Project.Tests.TestData.SeedData
             };
         }
 
-        public static Profile GetSingleProfile()
-        {
-            return new Profile
-            {
+        public static Profile GetSingleProfile() {
+            return new Profile {
                 Id = Guid.Parse("99999999-9999-9999-9999-999999999999"),
                 Username = "singleuser",
                 Email = "singleuser@example.com",

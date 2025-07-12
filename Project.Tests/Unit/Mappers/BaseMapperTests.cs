@@ -1,8 +1,8 @@
+using FluentAssertions;
 using Moq;
 using Project.Core.Mapper;
 using Project.Tests.Helpers;
 using Xunit;
-using FluentAssertions;
 
 namespace Project.Tests.Unit.Mappers {
     public class BaseMapperTests {

@@ -1,3 +1,4 @@
+using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Project.API.Controllers;
@@ -8,7 +9,6 @@ using Project.Core.Entities.General;
 using Project.Core.Interfaces.IMapper;
 using Project.Core.Interfaces.IRepositories;
 using Xunit;
-using FluentAssertions;
 
 namespace Project.Tests.Unit.Controllers;
 
@@ -358,4 +358,4 @@ public class ProfileControllerTests {
     // Note: ProfileController has proper dependency injection via interfaces for all dependencies,
     // so all functionality can be properly unit tested. The controller also has exception handling
     // in the ChangeLanguage method, so we test exception scenarios for that method.
-} 
+}
