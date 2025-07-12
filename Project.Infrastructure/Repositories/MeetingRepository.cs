@@ -17,7 +17,7 @@ namespace Project.Infrastructure.Repositories {
             return meeting;
         }
 
-        public async Task<Meeting> GetMeetingByIdAsync(Guid id) {
+        public async Task<Meeting?> GetMeetingByIdAsync(Guid id) {
             var meeting = await _context.Meetings
                 .Include(m => m.Host)
                 .Include(m => m.Participants)
@@ -25,7 +25,7 @@ namespace Project.Infrastructure.Repositories {
                 .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.Id == id);
 
-            return meeting!;
+            return meeting;
         }
         public async Task<IEnumerable<Meeting>> GetActiveMeetingsAsync() {
             var now = DateTime.UtcNow;

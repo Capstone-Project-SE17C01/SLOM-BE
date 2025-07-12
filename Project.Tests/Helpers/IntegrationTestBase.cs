@@ -10,27 +10,22 @@ public abstract class IntegrationTestBase
     protected HttpClient Client { get; private set; } = null!;
     protected ApplicationDbContext DbContext { get; private set; } = null!;
 
-    [OneTimeSetUp]
-    public void OneTimeSetUp()
+    [SetUp]
+    public virtual void SetUp()
     {
         Factory = new TestWebApplicationFactory<Program>();
         Client = Factory.CreateClient();
 
         using var scope = Factory.Services.CreateScope();
         DbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        
+        // Ensure database is clean for each test
+        DbContext.Database.EnsureDeleted();
+        DbContext.Database.EnsureCreated();
     }
 
-    [SetUp]
-    public virtual void SetUp()
-    {
-        using var scope = Factory.Services.CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        context.Database.EnsureDeleted();
-        context.Database.EnsureCreated();
-    }
-
-    [OneTimeTearDown]
-    public void OneTimeTearDown()
+    [TearDown]
+    public virtual void TearDown()
     {
         Client?.Dispose();
         Factory?.Dispose();

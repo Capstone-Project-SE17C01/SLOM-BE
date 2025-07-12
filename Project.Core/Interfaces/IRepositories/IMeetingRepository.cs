@@ -3,7 +3,7 @@ using Project.Core.Entities.General;
 namespace Project.Core.Interfaces.IRepositories {
     public interface IMeetingRepository {
         Task<Meeting> CreateMeetingAsync(Meeting meeting);
-        Task<Meeting> GetMeetingByIdAsync(Guid id);
+        Task<Meeting?> GetMeetingByIdAsync(Guid id);
         Task<IEnumerable<Meeting>> GetActiveMeetingsAsync();
         Task<IEnumerable<Meeting>> GetActiveMeetingsAsync(Guid userId);
         Task<IEnumerable<Meeting>> GetScheduledMeetingsByMonthAsync(int year, int month);
