@@ -8,6 +8,7 @@ public class TestWebApplicationFactory<TProgram> : WebApplicationFactory<TProgra
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
+
         builder.ConfigureServices(services =>
         {
             var descriptor = services.SingleOrDefault(

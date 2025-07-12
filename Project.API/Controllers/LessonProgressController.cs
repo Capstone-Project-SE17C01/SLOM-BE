@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Project.Core.Entities.Business.DTOs;
 using Project.Core.Interfaces.IRepositories;
-using Project.Infrastructure.Data;
-using Project.Infrastructure.Repositories;
 
 namespace Project.API.Controllers {
     [Route("api/[controller]")]
@@ -13,11 +11,15 @@ namespace Project.API.Controllers {
         private readonly IUserCourseProgressRepository _userCourseProgressRepository;
         private readonly ILessonRepository _lessonRepository;
 
-        public LessonProgressController(ApplicationDbContext context) {
-            _userLessonProgressRepository = new UserLessonProgressRepository(context);
-            _userModuleProgressRepository = new UserModuleProgressRepository(context);
-            _userCourseProgressRepository = new UserCourseProgressRepository(context);
-            _lessonRepository = new LessonRepository(context);
+        public LessonProgressController(
+            IUserLessonProgressRepository userLessonProgressRepository,
+            IUserModuleProgressRepository userModuleProgressRepository,
+            IUserCourseProgressRepository userCourseProgressRepository,
+            ILessonRepository lessonRepository) {
+            _userLessonProgressRepository = userLessonProgressRepository;
+            _userModuleProgressRepository = userModuleProgressRepository;
+            _userCourseProgressRepository = userCourseProgressRepository;
+            _lessonRepository = lessonRepository;
         }
 
         [HttpPost("AddNewProgress")]

@@ -2,8 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using Project.Core.Entities.Business.DTOs;
 using Project.Core.Entities.General;
 using Project.Core.Interfaces.IRepositories;
-using Project.Infrastructure.Data;
-using Project.Infrastructure.Repositories;
 
 namespace Project.API.Controllers {
     [Route("api/Lesson")]
@@ -12,10 +10,14 @@ namespace Project.API.Controllers {
         private readonly IUserLessonProgressRepository _userLessonProgressRepository;
         private readonly IWordRepository _wordRepository;
         private readonly IQuizRepository _quizRepository;
-        public LessonController(ApplicationDbContext context) {
-            _userLessonProgressRepository = new UserLessonProgressRepository(context);
-            _wordRepository = new WordRepository(context);
-            _quizRepository = new QuizRepository(context);
+        
+        public LessonController(
+            IUserLessonProgressRepository userLessonProgressRepository,
+            IWordRepository wordRepository,
+            IQuizRepository quizRepository) {
+            _userLessonProgressRepository = userLessonProgressRepository;
+            _wordRepository = wordRepository;
+            _quizRepository = quizRepository;
         }
 
         [HttpGet("OngoingLesson")]

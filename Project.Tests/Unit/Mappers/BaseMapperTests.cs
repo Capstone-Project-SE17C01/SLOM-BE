@@ -1,34 +1,41 @@
+using Moq;
 using Project.Core.Mapper;
 using Project.Tests.Helpers;
+using Xunit;
+using FluentAssertions;
 
 namespace Project.Tests.Unit.Mappers {
     public class BaseMapperTests {
         public class Source { public int Id { get; set; } }
         public class Destination { public int Id { get; set; } }
 
-        [Test]
+        [Fact]
         public void Map_ShouldReturnMappedObject() {
+            // Arrange
             var source = new Source { Id = 10 };
             var dest = new Destination { Id = 10 };
             var mockMapper = TestMockHelper.CreateMockMapper<Source, Destination>(dest);
-
             var baseMapper = new BaseMapper<Source, Destination>(mockMapper.Object);
 
+            // Act
             var result = baseMapper.MapModel(source);
 
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result.Id, Is.EqualTo(10));
+            // Assert
+            result.Should().NotBeNull();
+            result!.Id.Should().Be(10);
         }
 
-        [Test]
+        [Fact]
         public void Map_ShouldReturnNull_WhenSourceIsNull() {
+            // Arrange
             var mockMapper = TestMockHelper.CreateMockMapper<Source, Destination>(null);
-
             var baseMapper = new BaseMapper<Source, Destination>(mockMapper.Object);
 
+            // Act
             var result = baseMapper.MapModel(null);
 
-            Assert.That(result, Is.Null);
+            // Assert
+            result.Should().BeNull();
         }
     }
 }

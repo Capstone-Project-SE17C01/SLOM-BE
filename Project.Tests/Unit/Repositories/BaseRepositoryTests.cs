@@ -1,50 +1,67 @@
 using Microsoft.EntityFrameworkCore;
+using Moq;
 using Project.Core.Entities.General;
 using Project.Infrastructure.Data;
 using Project.Infrastructure.Repositories;
 using Project.Tests.Helpers;
+using Xunit;
+using FluentAssertions;
 
 namespace Project.Tests.Unit.Repositories {
     public class BaseRepositoryTests {
-        [Test]
+        [Fact]
         public async Task GetAll_ShouldReturnAllEntities() {
-            var data = TestDataFixture.Courses.AsQueryable();
-            var mockSet = TestMockHelper.CreateMockDbSet(data);
-            Mock<ApplicationDbContext> mockContext = TestMockHelper.CreateMockDbContext(mockSet);
+            // Arrange
+            using var context = TestMockHelper.CreateInMemoryDbContext("GetAllTest");
+            var repo = new BaseRepository<Course>(context);
+            
+            // Add test data
+            var courses = TestDataFixture.Courses;
+            context.Courses.AddRange(courses);
+            await context.SaveChangesAsync();
 
-            var repo = new BaseRepository<Course>(mockContext.Object);
-
+            // Act
             var result = await repo.GetAll();
 
-            Assert.That(result.Count(), Is.EqualTo(data.Count()));
+            // Assert
+            result.Should().HaveCount(courses.Count);
         }
 
-        [Test]
+        [Fact]
         public async Task Create_ShouldAddEntity() {
-            var mockSet = new Mock<DbSet<Course>>();
-            Mock<ApplicationDbContext> mockContext = TestMockHelper.CreateMockDbContext(mockSet);
-
-            var repo = new BaseRepository<Course>(mockContext.Object);
+            // Arrange
+            using var context = TestMockHelper.CreateInMemoryDbContext("CreateTest");
+            var repo = new BaseRepository<Course>(context);
             var course = TestDataFixture.SingleCourse;
 
+            // Act
             var result = await repo.Create(course);
+            await context.SaveChangesAsync();
 
-            mockSet.Verify(m => m.AddAsync(course, default), Times.Once);
-            mockContext.Verify(m => m.SaveChangesAsync(default), Times.Once);
+            // Assert
+            var savedCourse = await context.Courses.FindAsync(course.Id);
+            savedCourse.Should().NotBeNull();
+            savedCourse!.Title.Should().Be(course.Title);
         }
 
-        [Test]
+        [Fact]
         public async Task Delete_ShouldRemoveEntity() {
-            var mockSet = new Mock<DbSet<Course>>();
-            Mock<ApplicationDbContext> mockContext = TestMockHelper.CreateMockDbContext(mockSet);
-
-            var repo = new BaseRepository<Course>(mockContext.Object);
+            // Arrange
+            using var context = TestMockHelper.CreateInMemoryDbContext("DeleteTest");
+            var repo = new BaseRepository<Course>(context);
             var course = TestDataFixture.SingleCourse;
+            
+            // Add course first
+            context.Courses.Add(course);
+            await context.SaveChangesAsync();
 
+            // Act
             await repo.Delete(course);
+            await context.SaveChangesAsync();
 
-            mockSet.Verify(m => m.Remove(course), Times.Once);
-            mockContext.Verify(m => m.SaveChangesAsync(default), Times.Once);
+            // Assert
+            var deletedCourse = await context.Courses.FindAsync(course.Id);
+            deletedCourse.Should().BeNull();
         }
     }
 }
