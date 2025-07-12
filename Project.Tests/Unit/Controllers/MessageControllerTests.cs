@@ -1,10 +1,10 @@
+using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Project.API.Controllers;
 using Project.Core.Entities.Business.DTOs.MessageDTOs;
 using Project.Core.Interfaces.IRepositories;
 using Xunit;
-using FluentAssertions;
 
 namespace Project.Tests.Unit.Controllers;
 
@@ -356,4 +356,4 @@ public class MessageControllerTests {
     // The GetMessage method parses the userId string to Guid, but this is handled by Guid.Parse()
     // which will throw FormatException for invalid GUIDs, but since the controller doesn't handle
     // exceptions, we don't test invalid GUID scenarios.
-} 
+}

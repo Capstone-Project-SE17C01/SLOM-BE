@@ -1,11 +1,8 @@
 using Project.Core.Entities.General;
 
-namespace Project.Tests.TestData.SeedData
-{
-    public static class LessonSeed
-    {
-        public static List<Lesson> GetLessons()
-        {
+namespace Project.Tests.TestData.SeedData {
+    public static class LessonSeed {
+        public static List<Lesson> GetLessons() {
             return new List<Lesson>
             {
                 new Lesson
@@ -33,10 +30,8 @@ namespace Project.Tests.TestData.SeedData
             };
         }
 
-        public static Lesson GetSingleLesson()
-        {
-            return new Lesson
-            {
+        public static Lesson GetSingleLesson() {
+            return new Lesson {
                 Id = Guid.NewGuid(),
                 ModuleId = Guid.NewGuid(),
                 Title = "Bài học kiểm thử",

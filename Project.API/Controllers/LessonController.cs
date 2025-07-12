@@ -10,7 +10,7 @@ namespace Project.API.Controllers {
         private readonly IUserLessonProgressRepository _userLessonProgressRepository;
         private readonly IWordRepository _wordRepository;
         private readonly IQuizRepository _quizRepository;
-        
+
         public LessonController(
             IUserLessonProgressRepository userLessonProgressRepository,
             IWordRepository wordRepository,

@@ -1,27 +1,24 @@
+using FluentAssertions;
 using Moq;
+using Project.API.Controllers;
 using Project.Core.Entities.Business.DTOs;
 using Project.Core.Entities.General;
 using Project.Core.Interfaces.IRepositories;
-using Project.API.Controllers;
 using Xunit;
-using FluentAssertions;
 
 namespace Project.Tests.Unit.Controllers;
 
-public class ModuleControllerTests
-{
+public class ModuleControllerTests {
     private readonly Mock<IModuleRepository> _mockModuleRepository = new();
 
-    private ModuleController CreateController()
-    {
+    private ModuleController CreateController() {
         return new ModuleController(_mockModuleRepository.Object);
     }
 
     #region GetOngoingUserLesson Tests
 
     [Fact]
-    public async Task GetOngoingUserLesson_WithValidCourseId_ReturnsOkWithModules()
-    {
+    public async Task GetOngoingUserLesson_WithValidCourseId_ReturnsOkWithModules() {
         // Arrange
         var controller = CreateController();
         var courseId = Guid.NewGuid();
@@ -47,8 +44,7 @@ public class ModuleControllerTests
     }
 
     [Fact]
-    public async Task GetOngoingUserLesson_WithNonExistentCourseId_ReturnsOkWithEmptyList()
-    {
+    public async Task GetOngoingUserLesson_WithNonExistentCourseId_ReturnsOkWithEmptyList() {
         // Arrange
         var controller = CreateController();
         var courseId = Guid.NewGuid();
@@ -67,8 +63,7 @@ public class ModuleControllerTests
     }
 
     [Fact]
-    public async Task GetOngoingUserLesson_WithEmptyCourseId_ReturnsOkWithEmptyList()
-    {
+    public async Task GetOngoingUserLesson_WithEmptyCourseId_ReturnsOkWithEmptyList() {
         // Arrange
         var controller = CreateController();
         var courseId = Guid.Empty;
@@ -87,8 +82,7 @@ public class ModuleControllerTests
     }
 
     [Fact]
-    public async Task GetOngoingUserLesson_WithNullModules_ReturnsOkWithNull()
-    {
+    public async Task GetOngoingUserLesson_WithNullModules_ReturnsOkWithNull() {
         // Arrange
         var controller = CreateController();
         var courseId = Guid.NewGuid();
@@ -109,8 +103,7 @@ public class ModuleControllerTests
     #region Edge Cases
 
     [Fact]
-    public async Task GetOngoingUserLesson_WithLargeCourseId_ReturnsOk()
-    {
+    public async Task GetOngoingUserLesson_WithLargeCourseId_ReturnsOk() {
         // Arrange
         var controller = CreateController();
         var courseId = Guid.Parse("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF");
@@ -133,4 +126,4 @@ public class ModuleControllerTests
 
     // Note: ModuleController does not have exception handling, so we don't test exception scenarios
     // If exception handling is needed, it should be added to the controller first
-} 
+}

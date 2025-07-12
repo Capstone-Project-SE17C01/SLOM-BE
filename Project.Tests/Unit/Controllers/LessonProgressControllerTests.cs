@@ -1,22 +1,20 @@
+using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using Project.API.Controllers;
 using Project.Core.Entities.Business.DTOs;
 using Project.Core.Interfaces.IRepositories;
-using Project.API.Controllers;
 using Xunit;
-using FluentAssertions;
 
 namespace Project.Tests.Integration.Controllers;
 
-public class LessonProgressControllerTests
-{
+public class LessonProgressControllerTests {
     private readonly Mock<IUserLessonProgressRepository> _mockUserLessonProgressRepository = new();
     private readonly Mock<IUserModuleProgressRepository> _mockUserModuleProgressRepository = new();
     private readonly Mock<IUserCourseProgressRepository> _mockUserCourseProgressRepository = new();
     private readonly Mock<ILessonRepository> _mockLessonRepository = new();
 
-    private LessonProgressController CreateController()
-    {
+    private LessonProgressController CreateController() {
         return new LessonProgressController(
             _mockUserLessonProgressRepository.Object,
             _mockUserModuleProgressRepository.Object,
@@ -28,8 +26,7 @@ public class LessonProgressControllerTests
     #region CreateNewUserLesson Tests
 
     [Fact]
-    public async Task CreateNewUserLesson_WithValidData_ReturnsOk()
-    {
+    public async Task CreateNewUserLesson_WithValidData_ReturnsOk() {
         // Arrange
         var controller = CreateController();
         var userId = Guid.NewGuid();
@@ -51,8 +48,7 @@ public class LessonProgressControllerTests
     }
 
     [Fact]
-    public async Task CreateNewUserLesson_WhenRepositoryReturnsFalse_ReturnsBadRequest()
-    {
+    public async Task CreateNewUserLesson_WhenRepositoryReturnsFalse_ReturnsBadRequest() {
         // Arrange
         var controller = CreateController();
         var userId = Guid.NewGuid();
@@ -73,8 +69,7 @@ public class LessonProgressControllerTests
     }
 
     [Fact]
-    public async Task CreateNewUserLesson_WhenRepositoryThrowsException_ReturnsBadRequest()
-    {
+    public async Task CreateNewUserLesson_WhenRepositoryThrowsException_ReturnsBadRequest() {
         // Arrange
         var controller = CreateController();
         var userId = Guid.NewGuid();
@@ -99,8 +94,7 @@ public class LessonProgressControllerTests
     #region MarkCompleteLesson Tests
 
     [Fact]
-    public async Task MarkCompleteLesson_WithValidData_ReturnsOk()
-    {
+    public async Task MarkCompleteLesson_WithValidData_ReturnsOk() {
         // Arrange
         var controller = CreateController();
         var userId = Guid.NewGuid();
@@ -122,8 +116,7 @@ public class LessonProgressControllerTests
     }
 
     [Fact]
-    public async Task MarkCompleteLesson_WhenRepositoryReturnsFalse_ReturnsBadRequest()
-    {
+    public async Task MarkCompleteLesson_WhenRepositoryReturnsFalse_ReturnsBadRequest() {
         // Arrange
         var controller = CreateController();
         var userId = Guid.NewGuid();
@@ -144,8 +137,7 @@ public class LessonProgressControllerTests
     }
 
     [Fact]
-    public async Task MarkCompleteLesson_WhenRepositoryThrowsException_ReturnsBadRequest()
-    {
+    public async Task MarkCompleteLesson_WhenRepositoryThrowsException_ReturnsBadRequest() {
         // Arrange
         var controller = CreateController();
         var userId = Guid.NewGuid();
@@ -170,8 +162,7 @@ public class LessonProgressControllerTests
     #region MarkLearnLesson Tests
 
     [Fact]
-    public async Task MarkLearnLesson_WithValidData_ReturnsOk()
-    {
+    public async Task MarkLearnLesson_WithValidData_ReturnsOk() {
         // Arrange
         var controller = CreateController();
         var userId = Guid.NewGuid();
@@ -193,8 +184,7 @@ public class LessonProgressControllerTests
     }
 
     [Fact]
-    public async Task MarkLearnLesson_WhenRepositoryReturnsFalse_ReturnsBadRequest()
-    {
+    public async Task MarkLearnLesson_WhenRepositoryReturnsFalse_ReturnsBadRequest() {
         // Arrange
         var controller = CreateController();
         var userId = Guid.NewGuid();
@@ -215,8 +205,7 @@ public class LessonProgressControllerTests
     }
 
     [Fact]
-    public async Task MarkLearnLesson_WhenRepositoryThrowsException_ReturnsBadRequest()
-    {
+    public async Task MarkLearnLesson_WhenRepositoryThrowsException_ReturnsBadRequest() {
         // Arrange
         var controller = CreateController();
         var userId = Guid.NewGuid();
@@ -241,8 +230,7 @@ public class LessonProgressControllerTests
     #region Edge Cases
 
     [Fact]
-    public async Task CreateNewUserLesson_WithEmptyGuids_ReturnsOk()
-    {
+    public async Task CreateNewUserLesson_WithEmptyGuids_ReturnsOk() {
         // Arrange
         var controller = CreateController();
         var userId = Guid.Empty;
@@ -259,8 +247,7 @@ public class LessonProgressControllerTests
     }
 
     [Fact]
-    public async Task MarkCompleteLesson_WithEmptyGuids_ReturnsOk()
-    {
+    public async Task MarkCompleteLesson_WithEmptyGuids_ReturnsOk() {
         // Arrange
         var controller = CreateController();
         var userId = Guid.Empty;
@@ -277,8 +264,7 @@ public class LessonProgressControllerTests
     }
 
     [Fact]
-    public async Task MarkLearnLesson_WithEmptyGuids_ReturnsOk()
-    {
+    public async Task MarkLearnLesson_WithEmptyGuids_ReturnsOk() {
         // Arrange
         var controller = CreateController();
         var userId = Guid.Empty;
@@ -295,4 +281,4 @@ public class LessonProgressControllerTests
     }
 
     #endregion
-} 
+}

@@ -1,11 +1,8 @@
 using Project.Core.Entities.General;
 
-namespace Project.Tests.TestData.SeedData
-{
-    public static class CourseSeed
-    {
-        public static List<Course> GetCourses()
-        {
+namespace Project.Tests.TestData.SeedData {
+    public static class CourseSeed {
+        public static List<Course> GetCourses() {
             return new List<Course>
             {
                 new Course
@@ -39,10 +36,8 @@ namespace Project.Tests.TestData.SeedData
             };
         }
 
-        public static Course GetSingleCourse()
-        {
-            return new Course
-            {
+        public static Course GetSingleCourse() {
+            return new Course {
                 Id = Guid.NewGuid(),
                 Title = "Khóa học Đặc biệt",
                 Description = "Khóa học dành cho kiểm thử.",
