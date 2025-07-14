@@ -26,7 +26,7 @@ public class ReminderController : ControllerBase {
         var reminder = await _remindRepo.GetReminderByEmailAsync(email, true);
 
         if (reminder == null)
-            return NotFound(new APIResponse { errorMessages = ["No active reminder found for this email"] });
+            return Ok(new APIResponse { errorMessages = ["No active reminder found for this email"] });
 
         return Ok(new APIResponse { result = reminder });
     }
@@ -65,8 +65,7 @@ public class ReminderController : ControllerBase {
                 return StatusCode(500, new APIResponse { errorMessages = ["Failed to create reminder"] });
 
             return Ok(new APIResponse { result = created });
-        }
-        catch (Exception) {
+        } catch (Exception) {
             return StatusCode(500, new APIResponse { errorMessages = ["Unexpected server error"] });
         }
     }

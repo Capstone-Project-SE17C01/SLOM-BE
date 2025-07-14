@@ -42,6 +42,18 @@ namespace Project.API.Extensions {
             services.AddScoped<IReportRepository, ReportRepository>();
             services.AddScoped<IReminderRepository, ReminderRepository>();
             services.AddScoped<IFeedbackRepository, FeedbackRepository>();
+            services.AddScoped<IWordRepository, WordRepository>();
+            services.AddScoped<IQuizRepository, QuizRepository>();
+            services.AddScoped<ICourseCategoryRepository, CourseCategoryRepository>();
+            services.AddScoped<ICourseReviewRepository, CourseReviewRepository>();
+            services.AddScoped<IPaymentRepository, PaymentRepository>();
+            services.AddScoped<IQuizAttemptRepository, QuizAttemptRepository>();
+            services.AddScoped<IQuizOptionRepository, QuizOptionRepository>();
+            services.AddScoped<IRoleRepository, RoleRepository>();
+            services.AddScoped<ISubscriptionPlanRepository, SubscriptionPlanRepository>();
+            services.AddScoped<IUserSubscriptionRepository, UserSubscriptionRepository>();
+            services.AddScoped<IWordQuizRepository, WordQuizRepository>();
+
 
             // services.AddTransient<>();
             #endregion
