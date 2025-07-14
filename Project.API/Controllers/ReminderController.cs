@@ -65,7 +65,8 @@ public class ReminderController : ControllerBase {
                 return StatusCode(500, new APIResponse { errorMessages = ["Failed to create reminder"] });
 
             return Ok(new APIResponse { result = created });
-        } catch (Exception) {
+        }
+        catch (Exception) {
             return StatusCode(500, new APIResponse { errorMessages = ["Unexpected server error"] });
         }
     }
