@@ -26,5 +26,14 @@ namespace Project.Infrastructure.Repositories {
                 .Select(x => new ProfileByNameResponse { UserAvatar = x.AvatarUrl ?? "", UserName = x.Username ?? "", UserEmail = x.Email ?? "" })
                 .Where(x => x.UserName.Contains(name) && x.UserEmail != currentUserEmail).Take(5).ToListAsync();
         }
+
+        public async Task<string?> GetRoleNameByEmailAsync(string email)
+        {
+            var profile = await _dbContext.Profiles
+                .Include(p => p.Role)
+                .FirstOrDefaultAsync(p => p.Email == email);
+
+            return profile?.Role?.Name;
+        }
     }
 }
