@@ -68,5 +68,35 @@ namespace Project.API.Controllers {
                 });
             }
         }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateProfile([FromBody] ProfileUpdateModel profile) {
+            if (profile == null || string.IsNullOrEmpty(profile.Email)) {
+                return BadRequest(new APIResponse {
+                    errorMessages = new List<string> { "Invalid profile data" }
+                });
+            }
+            try {
+                var existingProfile = await _profileRepository.GetProfileByEmail(profile.Email);
+                if (existingProfile == null) {
+                    return NotFound(new APIResponse {
+                        errorMessages = new List<string> { "Profile not found" }
+                    });
+                }
+                existingProfile.Username = profile.Username;
+                existingProfile.AvatarUrl = profile.AvatarUrl;
+                existingProfile.Bio = profile.Bio;
+                existingProfile.Location = profile.Location;
+                await _profileRepository.Update(existingProfile);
+                return Ok(new APIResponse {
+                    result = _mapper.MapModel(existingProfile)
+                });
+            }
+            catch (Exception ex) {
+                return StatusCode(500, new APIResponse {
+                    errorMessages = new List<string> { ex.Message }
+                });
+            }
+        }
     }
 }

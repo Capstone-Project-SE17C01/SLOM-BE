@@ -592,6 +592,9 @@ namespace Project.Infrastructure.Migrations
                         .HasColumnType("text")
                         .HasColumnName("avatar_url");
 
+                    b.Property<string>("Bio")
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
@@ -602,6 +605,9 @@ namespace Project.Infrastructure.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)")
                         .HasColumnName("email");
+
+                    b.Property<string>("Location")
+                        .HasColumnType("text");
 
                     b.Property<Guid?>("PreferredLanguageId")
                         .HasColumnType("uuid")
@@ -621,6 +627,9 @@ namespace Project.Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)")
                         .HasColumnName("username");
+
+                    b.Property<bool>("VipUser")
+                        .HasColumnType("boolean");
 
                     b.HasKey("Id")
                         .HasName("profiles_pkey");

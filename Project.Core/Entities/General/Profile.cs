@@ -10,6 +10,12 @@ namespace Project.Core.Entities.General {
 
         public string? AvatarUrl { get; set; }
 
+        public string? Bio { get; set; }
+
+        public string? Location { get; set; }
+
+        public bool VipUser { get; set; } = false;
+
         public Guid? PreferredLanguageId { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
