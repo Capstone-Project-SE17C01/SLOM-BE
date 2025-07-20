@@ -27,8 +27,7 @@ namespace Project.Infrastructure.Repositories {
                 .Where(x => x.UserName.Contains(name) && x.UserEmail != currentUserEmail).Take(5).ToListAsync();
         }
 
-        public async Task<string?> GetRoleNameByEmailAsync(string email)
-        {
+        public async Task<string?> GetRoleNameByEmailAsync(string email) {
             var profile = await _dbContext.Profiles
                 .Include(p => p.Role)
                 .FirstOrDefaultAsync(p => p.Email == email);
