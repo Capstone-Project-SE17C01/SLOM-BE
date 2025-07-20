@@ -17,6 +17,7 @@ namespace Project.API.Controllers {
         private readonly PayOS _payOS;
         private readonly ApplicationDbContext _context;
         private readonly IPaymentRepository _paymentRepository;
+        private readonly IProfileRepository _profileRepository;
         private readonly ISubscriptionPlanRepository _subscriptionPlanRepository;
         private readonly IUserSubscriptionRepository _userSubscriptionRepository;
         private readonly IBaseMapper<Payment, HistoryPaymentDTO> _mapper;
@@ -109,6 +110,15 @@ namespace Project.API.Controllers {
                     SubscriptionId = userSubscription.Id
                 };
 
+                var user = await _context.Profiles.FindAsync(request.UserId);
+                if (user == null) {
+                    return NotFound(new APIResponse {
+                        errorMessages = new List<string> { "User not found" }
+                    });
+                }
+                user.VipUser = true;
+
+                await _profileRepository.Update(user);
                 await _paymentRepository.Create(payment);
 
                 var response = new CreatePaymentLinkResponse {
