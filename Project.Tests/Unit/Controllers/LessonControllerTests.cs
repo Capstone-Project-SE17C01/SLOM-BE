@@ -8,13 +8,13 @@ namespace Project.Tests.Unit.Controllers;
 public class LessonControllerTests {
     private readonly Mock<IUserLessonProgressRepository> _mockUserLessonProgressRepository = new();
     private readonly Mock<IWordRepository> _mockWordRepository = new();
-    private readonly Mock<IQuizRepository> _mockQuizRepository = new();
+    private readonly Mock<ILessonRepository> _mockLessonRepository = new();
 
     private LessonController CreateController() {
         return new LessonController(
             _mockUserLessonProgressRepository.Object,
             _mockWordRepository.Object,
-            _mockQuizRepository.Object
+            _mockLessonRepository.Object
         );
     }
 
@@ -227,74 +227,6 @@ public class LessonControllerTests {
 
     #endregion
 
-    #region GetListQuizLesson Tests
-
-    [Fact]
-    public async Task GetListQuizLesson_WithValidLessonId_ReturnsOkWithQuizzes() {
-        // Arrange
-        var controller = CreateController();
-        var lessonId = Guid.NewGuid();
-        var expectedQuizzes = new List<Quiz>
-        {
-            new Quiz { Id = Guid.NewGuid(), LessonId = Guid.NewGuid(), Question = "What is Hello?", CorrectAnswer = "Hello" },
-            new Quiz { Id = Guid.NewGuid(), LessonId = Guid.NewGuid(), Question = "What is Goodbye?", CorrectAnswer = "Goodbye" }
-        };
-
-        _mockQuizRepository.Setup(x => x.GetAllQuizByLessonId(lessonId))
-            .ReturnsAsync(expectedQuizzes);
-
-        // Act
-        var result = await controller.GetListQuizLesson(lessonId);
-
-        // Assert
-        result.Should().NotBeNull();
-        result.errorMessages.Should().BeNull();
-        result.result.Should().BeOfType<List<Quiz>>();
-        var quizzes = result.result as List<Quiz>;
-        quizzes!.Should().HaveCount(2);
-    }
-
-    [Fact]
-    public async Task GetListQuizLesson_WithNonExistentLessonId_ReturnsOkWithEmptyList() {
-        // Arrange
-        var controller = CreateController();
-        var lessonId = Guid.NewGuid();
-
-        _mockQuizRepository.Setup(x => x.GetAllQuizByLessonId(lessonId))
-            .ReturnsAsync(new List<Quiz>());
-
-        // Act
-        var result = await controller.GetListQuizLesson(lessonId);
-
-        // Assert
-        result.Should().NotBeNull();
-        result.errorMessages.Should().BeNull();
-        result.result.Should().BeOfType<List<Quiz>>();
-        var quizzes = result.result as List<Quiz>;
-        quizzes!.Should().BeEmpty();
-    }
-
-    [Fact]
-    public async Task GetListQuizLesson_WithEmptyLessonId_ReturnsOkWithEmptyList() {
-        // Arrange
-        var controller = CreateController();
-        var lessonId = Guid.Empty;
-
-        _mockQuizRepository.Setup(x => x.GetAllQuizByLessonId(lessonId))
-            .ReturnsAsync(new List<Quiz>());
-
-        // Act
-        var result = await controller.GetListQuizLesson(lessonId);
-
-        // Assert
-        result.Should().NotBeNull();
-        result.errorMessages.Should().BeNull();
-        result.result.Should().BeOfType<List<Quiz>>();
-        var quizzes = result.result as List<Quiz>;
-        quizzes!.Should().BeEmpty();
-    }
-
-    #endregion
 
     // Note: LessonController does not have exception handling, so we don't test exception scenarios
     // If exception handling is needed, it should be added to the controller first
