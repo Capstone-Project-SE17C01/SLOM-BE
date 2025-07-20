@@ -76,7 +76,7 @@ namespace Project.Infrastructure.Migrations {
                     email = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     bio = table.Column<string>(type: "text", nullable: true),
                     location = table.Column<string>(type: "text", nullable: true),
-                    vip_user = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),   
+                    vip_user = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
                     role_id = table.Column<Guid>(type: "uuid", nullable: true),
                     avatar_url = table.Column<string>(type: "text", nullable: true),
                     preferred_language = table.Column<Guid>(type: "uuid", nullable: true),

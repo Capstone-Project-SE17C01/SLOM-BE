@@ -13,13 +13,13 @@ namespace Project.Core.Entities.Business.DTOs.ProfileDTOs {
         public string? Bio { get; set; }
 
         public string? Location { get; set; }
-   
+
         public Guid? PreferredLanguageId { get; set; }
-   
+
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-   
+
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
-   
+
         public string? LanguageCode { get; set; }
 
         public bool VipUser { get; set; }
