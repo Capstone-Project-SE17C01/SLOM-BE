@@ -249,7 +249,8 @@ namespace Project.API.Controllers {
                         IdToken = authResponse.AuthenticationResult.IdToken,
                         AccessToken = authResponse.AuthenticationResult.AccessToken,
                         RefreshToken = authResponse.AuthenticationResult.RefreshToken,
-                        UserEmail = loginRequestDTO.Email
+                        UserEmail = loginRequestDTO.Email,
+                        RoleName = await _profileRepository.GetRoleNameByEmailAsync(loginRequestDTO.Email)
                     };
                     return Ok(new APIResponse() { result = loginResponse });
                 }

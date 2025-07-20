@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Project.Core.Entities.Business.DTOs;
 using Project.Core.Entities.Business.DTOs.CourseDTOs;
+using Project.Core.Entities.General;
 using Project.Core.Interfaces.IRepositories;
 
 namespace Project.API.Controllers {
@@ -86,6 +87,91 @@ namespace Project.API.Controllers {
             }
             catch (Exception) {
                 return BadRequest(new APIResponse { result = null, errorMessages = new List<string> { "Invalid request data for Get All Courses" } });
+            }
+        }
+
+        [HttpGet("GetAllCourse")]
+        public async Task<IActionResult> GetAllCourse() {
+            try {
+                var courses = await _courseRepository.GetAll();
+                return Ok(new APIResponse { result = courses });
+            }
+            catch (Exception ex) {
+                return BadRequest(new APIResponse { result = null, errorMessages = new List<string> { ex.Message } });
+            }
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetCourseById(Guid id) {
+            try {
+                var course = await _courseRepository.GetById(id);
+                if (course == null) {
+                    return NotFound(new APIResponse { result = null, errorMessages = new List<string> { "Course not found" } });
+                }
+                return Ok(new APIResponse { result = course });
+            }
+            catch (Exception ex) {
+                return BadRequest(new APIResponse { result = null, errorMessages = new List<string> { ex.Message } });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateCourse([FromBody] CourseRequestDTO courseDto) {
+            try {
+                if (courseDto == null) {
+                    return BadRequest(new APIResponse { result = null, errorMessages = new List<string> { "Invalid course data" } });
+                }
+                var course = new Course {
+                    Id = Guid.NewGuid(),
+                    Title = courseDto.Title,
+                    Description = courseDto.Description,
+                    IsPublished = courseDto.IsPublished,
+                    ThumbnailUrl = courseDto.ThumbnailUrl,
+                    CreatedAt = DateTime.UtcNow
+                };
+                await _courseRepository.Create(course);
+                return Ok(new APIResponse { result = course });
+            }
+            catch (Exception ex) {
+                return BadRequest(new APIResponse { result = null, errorMessages = new List<string> { ex.Message } });
+            }
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateCourse([FromBody] CourseRequestDTO courseDto) {
+            try {
+                if (courseDto == null) {
+                    return BadRequest(new APIResponse { result = null, errorMessages = new List<string> { "Invalid course data" } });
+                }
+                var course = await _courseRepository.GetById(courseDto.Id);
+                if (course == null) {
+                    return NotFound(new APIResponse { result = null, errorMessages = new List<string> { "Course not found" } });
+                }
+                course.Title = courseDto.Title;
+                course.Description = courseDto.Description;
+                course.IsPublished = courseDto.IsPublished;
+                course.ThumbnailUrl = courseDto.ThumbnailUrl;
+                course.UpdatedAt = DateTime.UtcNow;
+                await _courseRepository.Update(course);
+                return Ok(new APIResponse { result = course });
+            }
+            catch (Exception ex) {
+                return BadRequest(new APIResponse { result = null, errorMessages = new List<string> { ex.Message } });
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteCourse(Guid id) {
+            try {
+                var course = await _courseRepository.GetById(id);
+                if (course == null) {
+                    return NotFound(new APIResponse { result = null, errorMessages = new List<string> { "Course not found" } });
+                }
+                await _courseRepository.Delete(course);
+                return Ok(new APIResponse { result = "Course deleted successfully" });
+            }
+            catch (Exception ex) {
+                return BadRequest(new APIResponse { result = null, errorMessages = new List<string> { ex.Message } });
             }
         }
     }
