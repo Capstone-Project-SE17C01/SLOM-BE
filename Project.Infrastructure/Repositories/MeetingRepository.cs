@@ -158,5 +158,18 @@ namespace Project.Infrastructure.Repositories {
             await _context.SaveChangesAsync();
             return invitation;
         }
+
+        public async Task<int> CountActiveMeetingsAsync() {
+            return await _context.Meetings.CountAsync(m => m.Status == "Active");
+        }
+
+        public async Task<int> CountScheduleMeetingAsync() {
+            return await _context.Meetings.CountAsync(m => m.Status == "Scheduled");
+        }
+
+        public async Task<int> CountRecordMeetingAsync()
+        {
+            return await _context.MeetingRecordings.CountAsync();
+        }
     }
 }
