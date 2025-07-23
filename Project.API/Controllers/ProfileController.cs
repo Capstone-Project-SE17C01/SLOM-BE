@@ -37,6 +37,20 @@ namespace Project.API.Controllers {
             });
         }
 
+        [HttpGet("GetAll")]
+        public async Task<IActionResult> GetAllProfiles() {
+            var profiles = await _profileRepository.GetAll();
+            if (profiles == null || !profiles.Any()) {
+                return NotFound(new APIResponse {
+                    errorMessages = new List<string> { "No profiles found" }
+                });
+            }
+            var profileResponses = profiles.Select(profile => _mapper.MapModel(profile)).ToList();
+            return Ok(new APIResponse {
+                result = profileResponses
+            });
+        }
+
         [HttpGet("GetProfileByName")]
         public async Task<List<ProfileByNameResponse>> GetProfilesByName(string input, string currentUserEmail) {
             var profiles = await _profileRepository.GetProfileByName(input, currentUserEmail);
@@ -90,6 +104,27 @@ namespace Project.API.Controllers {
                 await _profileRepository.Update(existingProfile);
                 return Ok(new APIResponse {
                     result = _mapper.MapModel(existingProfile)
+                });
+            }
+            catch (Exception ex) {
+                return StatusCode(500, new APIResponse {
+                    errorMessages = new List<string> { ex.Message }
+                });
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteProfile(Guid id) {
+            try {
+                var profile = await _profileRepository.GetById(id);
+                if (profile == null) {
+                    return NotFound(new APIResponse {
+                        errorMessages = new List<string> { "Profile not found" }
+                    });
+                }
+                await _profileRepository.Delete(profile);
+                return Ok(new APIResponse {
+                    result = "Profile deleted successfully"
                 });
             }
             catch (Exception ex) {

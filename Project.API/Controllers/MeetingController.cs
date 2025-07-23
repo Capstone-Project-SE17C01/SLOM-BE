@@ -253,11 +253,9 @@ namespace Project.API.Controllers {
             if (string.IsNullOrEmpty(userId))
                 return BadRequest("User ID is required");
 
-            // Chỉ host mới có thể update meeting
             if (meeting.HostId != Guid.Parse(userId))
                 return Forbid("Only the host can update this meeting");
 
-            // Update meeting properties
             if (!string.IsNullOrEmpty(updateDto.Title))
                 meeting.Title = updateDto.Title;
 
@@ -347,6 +345,24 @@ namespace Project.API.Controllers {
             }
 
             return Ok();
+        }
+
+        [HttpGet("MeetingActive")]
+        public async Task<IActionResult> GetActiveMeeting() {
+            var rs = await _meetingRepository.CountActiveMeetingsAsync();
+            return Ok(rs);
+        }
+
+        [HttpGet("MeetingScheduled")]
+        public async Task<IActionResult> GetScheduledMeeting() {
+            var rs = await _meetingRepository.CountScheduleMeetingAsync();
+            return Ok(rs);
+        }
+
+        [HttpGet("MeetingRecord")]
+        public async Task<IActionResult> GetMeetingRecord() {
+            var rs = await _meetingRepository.CountRecordMeetingAsync();
+            return Ok(rs);
         }
     }
 }

@@ -17,5 +17,8 @@ namespace Project.Core.Interfaces.IRepositories {
         Task<MeetingRecording> AddRecordingAsync(MeetingRecording recording);
         Task<IEnumerable<MeetingRecording>> GetRecordingsByUserIdAsync(Guid userId);
         Task<MeetingInvitation> AddMeetingInvitationAsync(MeetingInvitation invitation);
+        Task<int> CountActiveMeetingsAsync();
+        Task<int> CountScheduleMeetingAsync();
+        Task<int> CountRecordMeetingAsync();
     }
 }
