@@ -3,7 +3,6 @@ using Project.Core.Entities.Business.DTOs;
 using Project.Core.Entities.Business.DTOs.LessonDTOs;
 using Project.Core.Entities.General;
 using Project.Core.Interfaces.IRepositories;
-using Project.Infrastructure.Repositories;
 
 namespace Project.API.Controllers {
     [Route("api/Lesson")]
@@ -43,10 +42,9 @@ namespace Project.API.Controllers {
         [HttpGet]
         public async Task<IActionResult> GetAllLessons() {
             try {
-                var lessons = await _lessonRepository.GetAll();
+                var lessons = await _lessonRepository.GetAllLessonHasModule();
                 return Ok(new APIResponse { result = lessons });
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 return BadRequest(new APIResponse { result = null, errorMessages = new List<string> { ex.Message } });
             }
         }
@@ -100,7 +98,12 @@ namespace Project.API.Controllers {
 
         [HttpDelete("{id}")]
         public async Task<APIResponse> DeleteLesson(Guid id) {
-            Lesson? lesson = await _lessonRepository.GetById(id);
+            Lesson? lesson = await _lessonRepository.GetByIdForDelete(id);
+            // Check if the lesson exists and has no associated quizzes or words
+            if (lesson == null || lesson.Quizzes.Any() || lesson.Words.Any()) {
+                return new APIResponse() { errorMessages = new List<string> { "Lesson has associated quizzes/words" }, result = null };
+            }
+
             if (lesson == null) {
                 return new APIResponse() { errorMessages = new List<string> { "Lesson not found" }, result = null };
             }

@@ -17,5 +17,24 @@ namespace Project.Infrastructure.Repositories {
                 .ToListAsync();
             return result;
         }
+
+        public async Task<List<Module>> GetAllModuleHasCourse() {
+            var result = await _dbContext.Modules
+                .Include(x => x.Course)
+                .OrderBy(x => x.OrderNumber)
+                .AsNoTracking()
+                .ToListAsync();
+            return result;
+        }
+
+        public async Task<Module?> GetByIdForDelete(Guid moduleId) {
+            var result = await _dbContext.Modules
+                .Where(x => x.Id == moduleId)
+                .Include(x => x.Lessons)
+                .AsNoTracking()
+                .FirstOrDefaultAsync();
+            return result;
+        }
+
     }
 }
