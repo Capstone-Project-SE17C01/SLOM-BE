@@ -167,8 +167,7 @@ namespace Project.Infrastructure.Repositories {
             return await _context.Meetings.CountAsync(m => m.Status == "Scheduled");
         }
 
-        public async Task<int> CountRecordMeetingAsync()
-        {
+        public async Task<int> CountRecordMeetingAsync() {
             return await _context.MeetingRecordings.CountAsync();
         }
     }
