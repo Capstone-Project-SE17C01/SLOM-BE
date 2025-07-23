@@ -34,7 +34,8 @@ namespace Project.API.Controllers {
             try {
                 var modules = await _moduleRepository.GetAllModuleHasCourse();
                 return new APIResponse { result = modules };
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 return new APIResponse { errorMessages = new List<string> { ex.Message }, result = null };
             }
         }
