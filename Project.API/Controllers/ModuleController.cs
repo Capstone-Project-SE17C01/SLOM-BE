@@ -32,10 +32,9 @@ namespace Project.API.Controllers {
         [HttpGet]
         public async Task<APIResponse> GetAllModules() {
             try {
-                var modules = await _moduleRepository.GetAll();
+                var modules = await _moduleRepository.GetAllModuleHasCourse();
                 return new APIResponse { result = modules };
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 return new APIResponse { errorMessages = new List<string> { ex.Message }, result = null };
             }
         }
@@ -75,7 +74,14 @@ namespace Project.API.Controllers {
 
         [HttpDelete("{id}")]
         public async Task<APIResponse> DeleteModule(Guid id) {
-            Module? module = await _moduleRepository.GetById(id);
+            Module? module = await _moduleRepository.GetByIdForDelete(id);
+            // Check if the module exists and has no lessons associated with it
+            if (module != null) {
+
+                if (module.Lessons != null && module.Lessons.Any()) {
+                    return new APIResponse() { errorMessages = new List<string> { "Cannot delete module with associated lessons" } };
+                }
+            }
             if (module == null) {
                 return new APIResponse() { errorMessages = new List<string> { "Module not found" } };
             }
