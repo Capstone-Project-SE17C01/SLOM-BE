@@ -52,7 +52,8 @@ namespace Project.API.Controllers {
                 };
 
                 return Ok(new APIResponse { result = summary });
-            } catch (Exception) {
+            }
+            catch (Exception) {
                 return StatusCode(500, new APIResponse { errorMessages = new List<string> { "Server Error" } });
             }
         }

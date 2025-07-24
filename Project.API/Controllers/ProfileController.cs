@@ -75,7 +75,8 @@ namespace Project.API.Controllers {
                         LanguageCode = request.NewLanguageCode,
                     }
                 });
-            } catch (Exception) {
+            }
+            catch (Exception) {
                 return NotFound(new APIResponse {
                     errorMessages = new List<string> { "ChangeLanguageFailed" }
                 });
@@ -105,7 +106,8 @@ namespace Project.API.Controllers {
                 return Ok(new APIResponse {
                     result = _mapper.MapModel(existingProfile)
                 });
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 return StatusCode(500, new APIResponse {
                     errorMessages = new List<string> { ex.Message }
                 });
@@ -128,7 +130,8 @@ namespace Project.API.Controllers {
                 return Ok(new APIResponse {
                     result = "Profile updated successfully"
                 });
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 return StatusCode(500, new APIResponse {
                     errorMessages = new List<string> { ex.Message }
                 });
@@ -148,7 +151,8 @@ namespace Project.API.Controllers {
                 return Ok(new APIResponse {
                     result = "Profile deleted successfully"
                 });
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 return StatusCode(500, new APIResponse {
                     errorMessages = new List<string> { ex.Message }
                 });
