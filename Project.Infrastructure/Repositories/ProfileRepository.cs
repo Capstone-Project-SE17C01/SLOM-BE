@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Project.Core.Entities.Business.DTOs.AdminDTOs;
 using Project.Core.Entities.Business.DTOs.ProfileDTOs;
 using Project.Core.Entities.General;
 using Project.Core.Exceptions;
@@ -33,6 +34,36 @@ namespace Project.Infrastructure.Repositories {
                 .FirstOrDefaultAsync(p => p.Email == email);
 
             return profile?.Role?.Name;
+        }
+
+        public async Task<int> CountUsersInUseTodayAsync() {
+            var today = DateTime.UtcNow.Date;
+            return await _dbContext.Profiles
+                .CountAsync(p => p.UpdatedAt.Date == today);
+        }
+        public async Task<List<TimeSeriesItem<int>>> GetNewUserStatsAsync() {
+            var today = DateTime.UtcNow.Date;
+            var startOfMonth = new DateTime(today.Year, today.Month, 1, 0, 0, 0, DateTimeKind.Utc);
+            var endOfMonth = startOfMonth.AddMonths(1).AddDays(-1);
+
+            return await _dbContext.Profiles
+                .Where(p => p.CreatedAt >= startOfMonth && p.CreatedAt <= endOfMonth)
+                .GroupBy(p => p.CreatedAt.Date)
+                .OrderBy(g => g.Key)
+                .Select(g => new TimeSeriesItem<int> {
+                    Date = DateTime.SpecifyKind(g.Key, DateTimeKind.Utc), // force UTC here
+                    Value = g.Count()
+                })
+                .ToListAsync();
+        }
+        public async Task<bool> EditUpdateAt(string email) {
+            var profile = await _dbContext.Profiles.FirstOrDefaultAsync(p => p.Email == email);
+            if (profile == null) {
+                throw new NotFoundException("Profile not found with the provided email.");
+            }
+            profile.UpdatedAt = DateTime.UtcNow;
+            _dbContext.Profiles.Update(profile);
+            return await _dbContext.SaveChangesAsync() > 0;
         }
     }
 }

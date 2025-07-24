@@ -29,6 +29,7 @@ namespace Project.API.Controllers {
             _paymentRepository = new PaymentRepository(context);
             _subscriptionPlanRepository = new SubscriptionPlanRepository(context);
             _userSubscriptionRepository = new UserSubscriptionRepository(context);
+            _profileRepository = new ProfileRepository(context);
             _mapper = mapper;
         }
 
@@ -39,8 +40,7 @@ namespace Project.API.Controllers {
                 return Ok(new APIResponse {
                     result = plans,
                 });
-            }
-            catch (Exception) {
+            } catch (Exception) {
                 return BadRequest(new APIResponse {
                     errorMessages = new List<string> { "failGetplan" }
                 });
@@ -71,8 +71,7 @@ namespace Project.API.Controllers {
                 try {
                     userSubscription = await _userSubscriptionRepository.GetUserSubscriptionByBothIdAsync(request.UserId, request.SubscriptionId);
 
-                }
-                catch {
+                } catch {
                     if (userSubscription.Id.Equals(Guid.Empty)) {
                         userSubscription = new UserSubscription {
                             Id = Guid.NewGuid(),
@@ -87,8 +86,7 @@ namespace Project.API.Controllers {
 
                     try {
                         await _userSubscriptionRepository.Create(userSubscription);
-                    }
-                    catch (Exception) {
+                    } catch (Exception) {
                         return BadRequest(new APIResponse {
                             errorMessages = new List<string> { "Error Create User Subscription" }
                         });
@@ -127,8 +125,7 @@ namespace Project.API.Controllers {
                 };
 
                 return Ok(new APIResponse { result = response });
-            }
-            catch (Exception) {
+            } catch (Exception) {
                 return BadRequest(new APIResponse {
                     errorMessages = new List<string> { "errorCreatePaymentLink" }
                 });
@@ -153,8 +150,7 @@ namespace Project.API.Controllers {
             PaymentLinkInformation paymentLinkInformation;
             try {
                 paymentLinkInformation = await _payOS.getPaymentLinkInformation(returnUrlQuery.OrderCode);
-            }
-            catch (Exception) {
+            } catch (Exception) {
                 return BadRequest(new APIResponse {
                     errorMessages = new List<string> { "errorRetrievingLinkInformation" }
                 });
@@ -169,14 +165,12 @@ namespace Project.API.Controllers {
                 newStatus = "PAID";
                 resultMessage = "Payment successful";
 
-            }
-            else if (returnUrlQuery.Status.Equals("CANCELLED", StringComparison.OrdinalIgnoreCase) ||
-                             returnUrlQuery.Cancel) {
+            } else if (returnUrlQuery.Status.Equals("CANCELLED", StringComparison.OrdinalIgnoreCase) ||
+                               returnUrlQuery.Cancel) {
                 newStatus = "CANCELLED";
                 resultMessage = "Payment cancelled";
 
-            }
-            else {
+            } else {
                 return BadRequest(new APIResponse {
                     errorMessages = new List<string> { "Payment failed" }
                 });
@@ -185,8 +179,7 @@ namespace Project.API.Controllers {
             try {
                 payment.Status = newStatus;
                 await _paymentRepository.Update(payment);
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 return BadRequest(new APIResponse {
                     errorMessages = new List<string> { $"Error updating payment: {ex.Message}" }
                 });
@@ -201,8 +194,7 @@ namespace Project.API.Controllers {
 
             if (newStatus.Equals("PAID", StringComparison.OrdinalIgnoreCase) && DateTime.UtcNow >= userSubscription.StartDate && DateTime.UtcNow <= userSubscription.EndDate) {
                 userSubscription.EndDate = userSubscription.EndDate.AddMonths(returnUrlQuery.Period);
-            }
-            else {
+            } else {
                 userSubscription.StartDate = DateTime.UtcNow;
                 userSubscription.EndDate = userSubscription.StartDate.AddMonths(returnUrlQuery.Period);
             }
@@ -210,8 +202,7 @@ namespace Project.API.Controllers {
             try {
                 userSubscription.Status = newStatus;
                 await _userSubscriptionRepository.Update(userSubscription);
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 return BadRequest(new APIResponse {
                     errorMessages = new List<string> { $"Error updating user subscription: {ex.Message}" }
                 });
@@ -229,8 +220,7 @@ namespace Project.API.Controllers {
                 List<HistoryPaymentDTO> historyPaymentInfos = _mapper.MapList(paymentInfos).ToList();
 
                 return Ok(new APIResponse { result = historyPaymentInfos });
-            }
-            catch (Exception) {
+            } catch (Exception) {
 
                 return BadRequest(new APIResponse {
                     errorMessages = new List<string> { "errorRetrievingLinkInformation" }

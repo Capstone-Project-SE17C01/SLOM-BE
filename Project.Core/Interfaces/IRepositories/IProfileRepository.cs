@@ -1,3 +1,4 @@
+using Project.Core.Entities.Business.DTOs.AdminDTOs;
 using Project.Core.Entities.Business.DTOs.ProfileDTOs;
 using Project.Core.Entities.General;
 
@@ -6,5 +7,8 @@ namespace Project.Core.Interfaces.IRepositories {
         Task<Profile?> GetProfileByEmail(string email);
         Task<List<ProfileByNameResponse>> GetProfileByName(string name, string currentUserEmail);
         Task<string?> GetRoleNameByEmailAsync(string email);
+        Task<int> CountUsersInUseTodayAsync();
+        Task<List<TimeSeriesItem<int>>> GetNewUserStatsAsync();
+        Task<bool> EditUpdateAt(string email);
     }
 }

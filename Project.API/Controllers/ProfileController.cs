@@ -75,8 +75,7 @@ namespace Project.API.Controllers {
                         LanguageCode = request.NewLanguageCode,
                     }
                 });
-            }
-            catch (Exception) {
+            } catch (Exception) {
                 return NotFound(new APIResponse {
                     errorMessages = new List<string> { "ChangeLanguageFailed" }
                 });
@@ -101,12 +100,35 @@ namespace Project.API.Controllers {
                 existingProfile.AvatarUrl = profile.AvatarUrl;
                 existingProfile.Bio = profile.Bio;
                 existingProfile.Location = profile.Location;
+                existingProfile.UpdatedAt = DateTime.UtcNow;
                 await _profileRepository.Update(existingProfile);
                 return Ok(new APIResponse {
                     result = _mapper.MapModel(existingProfile)
                 });
+            } catch (Exception ex) {
+                return StatusCode(500, new APIResponse {
+                    errorMessages = new List<string> { ex.Message }
+                });
             }
-            catch (Exception ex) {
+        }
+        [HttpPut("EditUpdateAt")]
+        public async Task<IActionResult> EditUpdateAt(string email) {
+            try {
+                if (string.IsNullOrEmpty(email)) {
+                    return BadRequest(new APIResponse {
+                        errorMessages = new List<string> { "Email cannot be null or empty" }
+                    });
+                }
+                bool result = await _profileRepository.EditUpdateAt(email);
+                if (!result) {
+                    return NotFound(new APIResponse {
+                        errorMessages = new List<string> { "Profile not found" }
+                    });
+                }
+                return Ok(new APIResponse {
+                    result = "Profile updated successfully"
+                });
+            } catch (Exception ex) {
                 return StatusCode(500, new APIResponse {
                     errorMessages = new List<string> { ex.Message }
                 });
@@ -126,8 +148,7 @@ namespace Project.API.Controllers {
                 return Ok(new APIResponse {
                     result = "Profile deleted successfully"
                 });
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 return StatusCode(500, new APIResponse {
                     errorMessages = new List<string> { ex.Message }
                 });
