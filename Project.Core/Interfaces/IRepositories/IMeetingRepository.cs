@@ -1,7 +1,7 @@
 using Project.Core.Entities.General;
 
 namespace Project.Core.Interfaces.IRepositories {
-    public interface IMeetingRepository {
+    public interface IMeetingRepository : IBaseRepository<Meeting> {
         Task<Meeting> CreateMeetingAsync(Meeting meeting);
         Task<Meeting?> GetMeetingByIdAsync(Guid id);
         Task<IEnumerable<Meeting>> GetActiveMeetingsAsync();

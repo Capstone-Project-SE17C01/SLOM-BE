@@ -364,5 +364,11 @@ namespace Project.API.Controllers {
             var rs = await _meetingRepository.CountRecordMeetingAsync();
             return Ok(rs);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllMeetings() {
+            var meetings = await _meetingRepository.GetAll();
+            return Ok(meetings);
+        }
     }
 }
