@@ -239,6 +239,17 @@ namespace Project.API.Controllers {
             }
         }
 
-
+        [HttpGet]
+        public async Task<IActionResult> GetAllPayment() {
+            try {
+                var payments = await _paymentRepository.GetAll();
+                return Ok(new APIResponse { result = payments });
+            }
+            catch (Exception) {
+                return BadRequest(new APIResponse {
+                    errorMessages = new List<string> { "errorRetrievingPayments" }
+                });
+            }
+        }
     }
 }
