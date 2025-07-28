@@ -35,7 +35,7 @@ namespace Project.API.Controllers {
 
                 var transcriptParams = new TranscriptParams {
                     AudioUrl = videoUrl,
-                    LanguageCode = TranscriptLanguageCode.En
+                    LanguageDetection = true
                 };
 
                 var transcript = await client.Transcripts.TranscribeAsync(transcriptParams);
