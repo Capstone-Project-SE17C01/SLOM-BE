@@ -33,7 +33,7 @@
     <PackageReference Include="AutoFixture.NUnit3" Version="4.18.0" />
     
     <!-- HTTP Client Testing -->
-    <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.1" />
     
     <!-- JSON and Serialization -->
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
