@@ -52,8 +52,8 @@ builder.Services.AddSwaggerGen(option => {
     });
 });
 builder.Services.AddSignalR();
-builder.Services.AddHostedService<ScheduledMeetingNotifier>();
-builder.Services.AddHostedService<ReminderCourseNotifier>();
+builder.Services.AddHostedService<ReminderMeeting>();
+builder.Services.AddHostedService<ReminderNotifier>();
 
 string region = builder.Configuration["AWS:Region"] ?? throw new NotFoundException();
 string userPoolId = builder.Configuration["AWS:UserPoolId"] ?? throw new NotFoundException();

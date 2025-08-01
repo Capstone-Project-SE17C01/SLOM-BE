@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OpenCvSharp;
 using Project.Core.Entities.Business.DTOs.ASLDTOs;
-using Project.Infrastructure.Model.ASLPredictor;
+using Project.Infrastructure.Services;
 
 namespace Project.API.Controllers {
     [ApiController]

@@ -48,4 +48,8 @@
 		<ProjectReference Include="..\Project.Infrastructure\Project.Infrastructure.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Notifier\" />
+	</ItemGroup>
+
 </Project>

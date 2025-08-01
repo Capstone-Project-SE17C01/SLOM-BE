@@ -1,11 +1,14 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Project.Infrastructure.Data;
 
-public class ReminderCourseNotifier : BackgroundService {
+public class ReminderNotifier : BackgroundService {
     private readonly IServiceProvider _serviceProvider;
-    private readonly ILogger<ReminderCourseNotifier> _logger;
+    private readonly ILogger<ReminderNotifier> _logger;
 
-    public ReminderCourseNotifier(IServiceProvider serviceProvider, ILogger<ReminderCourseNotifier> logger) {
+    public ReminderNotifier(IServiceProvider serviceProvider, ILogger<ReminderNotifier> logger) {
         _serviceProvider = serviceProvider;
         _logger = logger;
     }
