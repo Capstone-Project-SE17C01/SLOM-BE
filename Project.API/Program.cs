@@ -1,16 +1,16 @@
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.OData;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Protocols;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Project.API.Extensions;
 using Project.API.Middlewares;
 using Project.API.SignalR.Hubs;
-using Project.Infrastructure.Data;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using Microsoft.IdentityModel.Protocols;
 using Project.Core.Exceptions;
+using Project.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -69,12 +69,12 @@ builder.Services.AddAuthentication(options => {
 }).AddJwtBearer(options => {
     options.SaveToken = true;
     options.RequireHttpsMetadata = false;
-    
+
     var configurationManager = new ConfigurationManager<OpenIdConnectConfiguration>(
         cognitoOpenIdConfigUrl,
         new OpenIdConnectConfigurationRetriever(),
         new HttpDocumentRetriever());
-    
+
     options.TokenValidationParameters = new TokenValidationParameters {
         ValidateIssuerSigningKey = true,
         IssuerSigningKeyResolver = (token, securityToken, kid, parameters) => {
