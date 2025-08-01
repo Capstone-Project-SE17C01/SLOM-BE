@@ -8,10 +8,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <None Remove="Template\EmailTemplateRemind.html" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <Content Include="Template\EmailTemplateRemind.html">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
@@ -46,10 +42,6 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Project.Core\Project.Core.csproj" />
 		<ProjectReference Include="..\Project.Infrastructure\Project.Infrastructure.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Notifier\" />
 	</ItemGroup>
 
 </Project>
