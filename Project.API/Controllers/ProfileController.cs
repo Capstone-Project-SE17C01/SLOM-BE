@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Project.Core.Entities.Business.DTOs;
 using Project.Core.Entities.Business.DTOs.LanguageDTOs;
@@ -9,6 +10,7 @@ using Project.Core.Interfaces.IRepositories;
 namespace Project.API.Controllers {
     [Route("api/Profile")]
     [ApiController]
+    [Authorize]
     public class ProfileController : ControllerBase {
         private readonly IProfileRepository _profileRepository;
         private readonly ILanguageRepository _languageRepository;

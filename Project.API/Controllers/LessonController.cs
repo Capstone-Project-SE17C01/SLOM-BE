@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Project.Core.Entities.Business.DTOs;
 using Project.Core.Entities.Business.DTOs.LessonDTOs;
@@ -7,6 +8,7 @@ using Project.Core.Interfaces.IRepositories;
 namespace Project.API.Controllers {
     [Route("api/Lesson")]
     [ApiController]
+    [Authorize]
     public class LessonController : ControllerBase {
         private readonly IUserLessonProgressRepository _userLessonProgressRepository;
         private readonly IWordRepository _wordRepository;

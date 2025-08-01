@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Net.payOS;
 using Net.payOS.Types;
@@ -48,6 +49,7 @@ namespace Project.API.Controllers {
             }
         }
 
+        [Authorize]
         [HttpPost("CreatePaymentLink")]
         public async Task<IActionResult> CreatePaymentLink([FromBody] CreatePaymentRequest request) {
             try {
@@ -136,7 +138,7 @@ namespace Project.API.Controllers {
             }
         }
 
-
+        [Authorize]
         [HttpPost("UpdatePlan")]
         public async Task<IActionResult> UpdatePlan([FromBody] ReturnUrlQuery returnUrlQuery) {
             if (returnUrlQuery == null) {
@@ -223,6 +225,7 @@ namespace Project.API.Controllers {
             });
         }
 
+        [Authorize]
         [HttpGet("GetAllPaymentInformation")]
         public async Task<IActionResult> GetAllPaymentInformation(Guid userId) {
             try {
@@ -239,6 +242,7 @@ namespace Project.API.Controllers {
             }
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetAllPayment() {
             try {

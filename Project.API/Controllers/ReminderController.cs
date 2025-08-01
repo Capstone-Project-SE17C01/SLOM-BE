@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Project.Core.Entities.Business.DTOs;
 using Project.Core.Entities.Business.DTOs.ReminderDTOs;
@@ -9,6 +10,7 @@ namespace Project.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class ReminderController : ControllerBase {
     private readonly IReminderRepository _remindRepo;
     private readonly IBaseMapper<CreateReminderDTO, Reminder> _mapper;

@@ -2,7 +2,7 @@ using Microsoft.ML.OnnxRuntime;
 using Microsoft.ML.OnnxRuntime.Tensors;
 using OpenCvSharp;
 
-namespace Project.Infrastructure.Model.ASLPredictor {
+namespace Project.Infrastructure.Services {
     public class ASLPredictor : IDisposable {
         private readonly InferenceSession _session;
         private readonly Dictionary<int, string> _labels;
@@ -60,7 +60,7 @@ namespace Project.Infrastructure.Model.ASLPredictor {
             var inputTensor = new DenseTensor<float>(tensorData, shape);
 
             var inputName = _session.InputMetadata.Keys.First();
-            var inputs = new List<NamedOnnxValue> { NamedOnnxValue.CreateFromTensor<float>(inputName, inputTensor) };
+            var inputs = new List<NamedOnnxValue> { NamedOnnxValue.CreateFromTensor(inputName, inputTensor) };
 
             using var results = _session.Run(inputs);
             var output = results.First().AsEnumerable<float>().ToArray();

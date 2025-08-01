@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Project.Core.Entities.Business.DTOs;
 using Project.Core.Interfaces.IRepositories;
@@ -5,6 +6,7 @@ using Project.Core.Interfaces.IRepositories;
 namespace Project.API.Controllers {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ReportTypeController : ControllerBase {
         private readonly IReportTypeRepository _reportTypeRepo;
 

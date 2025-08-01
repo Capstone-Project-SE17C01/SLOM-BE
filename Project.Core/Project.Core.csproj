@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -7,17 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Interfaces\IServices\" />
-    <Folder Include="Services\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="14.0.0" />
     <PackageReference Include="payOS" Version="1.0.9" />
     <PackageReference Include="Amazon.AspNetCore.Identity.Cognito" Version="3.0.2" />
     <PackageReference Include="AWSSDK.CognitoIdentityProvider" Version="3.7.403.2" />
-
-
   </ItemGroup>
 
 </Project>

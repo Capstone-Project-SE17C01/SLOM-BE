@@ -1,11 +1,14 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Project.Infrastructure.Data;
 
-public class ScheduledMeetingNotifier : BackgroundService {
+public class ReminderMeeting : BackgroundService {
     private readonly IServiceProvider _serviceProvider;
-    private readonly ILogger<ScheduledMeetingNotifier> _logger;
+    private readonly ILogger<ReminderMeeting> _logger;
 
-    public ScheduledMeetingNotifier(IServiceProvider serviceProvider, ILogger<ScheduledMeetingNotifier> logger) {
+    public ReminderMeeting(IServiceProvider serviceProvider, ILogger<ReminderMeeting> logger) {
         _serviceProvider = serviceProvider;
         _logger = logger;
     }
