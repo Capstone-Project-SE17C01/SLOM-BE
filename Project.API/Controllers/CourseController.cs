@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Project.Core.Entities.Business.DTOs;
 using Project.Core.Entities.Business.DTOs.CourseDTOs;
@@ -7,6 +8,7 @@ using Project.Core.Interfaces.IRepositories;
 namespace Project.API.Controllers {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CourseController : ControllerBase {
         private readonly IProfileRepository _profileRepository;
         private readonly ICourseRepository _courseRepository;

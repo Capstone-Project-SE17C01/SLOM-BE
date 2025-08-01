@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Project.Core.Entities.Business.DTOs;
 using Project.Core.Entities.Business.DTOs.QuizDTOs;
@@ -7,6 +8,7 @@ using Project.Core.Interfaces.IRepositories;
 namespace Project.API.Controllers {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class QuizController : ControllerBase {
         private readonly IQuizRepository _quizRepository;
 

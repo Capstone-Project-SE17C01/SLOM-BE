@@ -1,5 +1,4 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Project.Core.Entities.General;
 using Project.Core.Interfaces.IRepositories;
@@ -7,6 +6,7 @@ using Project.Core.Interfaces.IRepositories;
 namespace Project.API.Controllers {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class FeedbackController : ControllerBase {
         private readonly IFeedbackRepository _repository;
 

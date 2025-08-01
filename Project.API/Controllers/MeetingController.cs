@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Project.Core.Entities.Business.DTOs.MeetingDTOs;
 using Project.Core.Entities.General;
@@ -7,6 +8,7 @@ using Project.Core.Interfaces.IServices;
 namespace Project.API.Controllers {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class MeetingController : ControllerBase {
         private readonly IMeetingRepository _meetingRepository;
         private readonly IEmailService _emailService;

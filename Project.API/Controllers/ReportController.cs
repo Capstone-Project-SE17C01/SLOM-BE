@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Project.Core.Entities.Business.DTOs;
 using Project.Core.Entities.Business.DTOs.ReportDTOs;
@@ -8,6 +9,7 @@ using Project.Core.Interfaces.IRepositories;
 namespace Project.API.Controllers {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ReportController : ControllerBase {
         private readonly IReportRepository _reportRepo;
         private readonly IBaseMapper<CreateReportRequestDTO, Report> _mapper;

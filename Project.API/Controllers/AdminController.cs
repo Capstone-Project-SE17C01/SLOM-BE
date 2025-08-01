@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Project.Core.Entities.Business.DTOs;
 using Project.Core.Entities.Business.DTOs.AdminDTOs;
@@ -6,6 +7,7 @@ using Project.Core.Interfaces.IRepositories;
 namespace Project.API.Controllers {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class AdminController : ControllerBase {
         private readonly IMeetingRepository _meetingRepository;
         private readonly ICourseRepository _courseRepository;

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OpenCvSharp;
 using Project.Core.Entities.Business.DTOs.ASLDTOs;
@@ -6,6 +7,7 @@ using Project.Infrastructure.Model.ASLPredictor;
 namespace Project.API.Controllers {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class ASLController : ControllerBase {
         private readonly ASLPredictor _predictor;
         private readonly ILogger<ASLController> _logger;

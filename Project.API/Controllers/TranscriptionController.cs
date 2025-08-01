@@ -1,11 +1,13 @@
 using AssemblyAI;
 using AssemblyAI.Transcripts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Project.Core.Entities.Business.DTOs;
 
 namespace Project.API.Controllers {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class TranscriptionController : ControllerBase {
         private readonly IConfiguration _configuration;
         private readonly ILogger<TranscriptionController> _logger;
