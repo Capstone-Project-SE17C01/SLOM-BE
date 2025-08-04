@@ -41,6 +41,9 @@ public partial class ApplicationDbContext : DbContext {
     public DbSet<ReportType> ReportTypes { get; set; }
     public DbSet<Reminder> Reminders { get; set; }
     public DbSet<Feedback> Feedbacks { get; set; }
+    public DbSet<Question> Questions { get; set; }
+    public DbSet<Answer> Answers { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder builder) {
         ApplicationDbContextConfigurations.Configure(builder);
