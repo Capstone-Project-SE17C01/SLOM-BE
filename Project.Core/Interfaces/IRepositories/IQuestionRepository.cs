@@ -7,5 +7,7 @@ namespace Project.Core.Interfaces.IRepositories {
         public Task<QuestionResponse> CreateQuestion(PostQuestionRequest request);
         public Task<QuestionResponse> UpdateQuestion(UpdateQuestionRequest request);
         public Task<bool> DeleteQuestion(Guid questionId);
+        public Task<List<string>> GetTags();
+        public Task<List<QuestionResponse>> GetQuestionsByTag(string[] tags, int pageNumber, Guid userId, bool isCurrentUser, bool isAdmin);
     }
 }

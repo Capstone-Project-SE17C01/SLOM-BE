@@ -38,7 +38,8 @@ namespace Project.Infrastructure.Repositories {
                     CreatedAt = x.CreatedAt,
                     Images = DeserializeStringToList(x.Images),
                     IsFull = questionAmount <= pageNumber * 10,
-                    Privacy = x.Privacy
+                    Privacy = x.Privacy,
+                    Tags = x.Tags
                 })
                 .ToListAsync();
 
@@ -58,7 +59,8 @@ namespace Project.Infrastructure.Repositories {
                 Content = request.Content,
                 Images = SerializeListToString(request.Images ?? new List<string>()),
                 Privacy = request.Privacy,
-                Creator = creator
+                Creator = creator,
+                Tags = request.Tags
             };
 
             var questionCreated = Create(newQuestion);
@@ -73,7 +75,8 @@ namespace Project.Infrastructure.Repositories {
                 CreatedAt = newQuestion.CreatedAt,
                 Images = DeserializeStringToList(newQuestion.Images),
                 QuestionId = newQuestion.Id,
-                Privacy = newQuestion.Privacy
+                Privacy = newQuestion.Privacy,
+                Tags = newQuestion.Tags
             };
         }
 
@@ -100,6 +103,7 @@ namespace Project.Infrastructure.Repositories {
             question.Content = request.Content;
             question.Images = SerializeListToString(request.Images ?? new List<string>());
             question.Privacy = request.Privacy;
+            question.Tags = request.Tags;
 
             _dbContext.Questions.Update(question);
             await _dbContext.SaveChangesAsync();
@@ -114,7 +118,8 @@ namespace Project.Infrastructure.Repositories {
                 Content = question.Content,
                 CreatedAt = question.CreatedAt,
                 Images = DeserializeStringToList(question.Images),
-                Privacy = question.Privacy
+                Privacy = question.Privacy,
+                Tags = question.Tags
             };
         }
 
@@ -137,6 +142,61 @@ namespace Project.Infrastructure.Repositories {
             await _dbContext.SaveChangesAsync();
 
             return true;
+        }
+
+        public async Task<List<string>> GetTags() {
+            var tags = await _dbContext.Questions
+                .Where(x => x.Tags != null && x.Tags.Any())
+                .SelectMany(x => x.Tags)
+                .Distinct()
+                .ToListAsync();
+            return tags;
+        }
+
+        public async Task<List<QuestionResponse>> GetQuestionsByTag(string[] tags, int pageNumber, Guid userId, bool isCurrentUser, bool isAdmin) {
+            var questions = _dbContext.Questions
+                .Include(x => x.Creator)
+                .Include(x => x.Answers)
+                .Where(x => x.Tags != null && tags.Any(tag => x.Tags.Contains(tag)));
+
+            if (isAdmin) {
+                if (isCurrentUser) {
+                    questions = questions.Where(x => !x.Answers.Any(a => a.CreatorId == userId));
+                }
+            }
+            else {
+                if (isCurrentUser) {
+                    questions = questions.Where(x => x.CreatorId == userId);
+                }
+                else {
+                    questions = questions.Where(x => x.Privacy != "Only admin can view and answer" || x.CreatorId == userId);
+                }
+            }
+
+            var questionAmount = await questions.CountAsync();
+
+            var questionList = await questions
+                .OrderByDescending(x => x.CreatedAt)
+                .Skip((pageNumber - 1) * 10)
+                .Take(10)
+                .AsNoTracking()
+                .Select(x => new QuestionResponse {
+                    QuestionId = x.Id,
+                    Author = new Author {
+                        ProfileImage = x.Creator.AvatarUrl ?? "",
+                        Username = x.Creator.Username ?? ""
+                    },
+                    AnswerAmount = x.Answers.Count,
+                    Content = x.Content,
+                    CreatedAt = x.CreatedAt,
+                    Images = DeserializeStringToList(x.Images),
+                    IsFull = questionAmount <= pageNumber * 10,
+                    Privacy = x.Privacy,
+                    Tags = x.Tags
+                })
+                .ToListAsync();
+
+            return questionList;
         }
     }
 }

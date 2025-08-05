@@ -13,5 +13,7 @@ namespace Project.Core.Entities.Business.DTOs.QuestionDTOs {
         public int AnswerAmount { get; set; }
         public bool IsFull { get; set; }
         public string Privacy { get; set; } = null!;
+        public List<string>? Tags { get; set; }
+
     }
 }

@@ -29,7 +29,8 @@ namespace Project.API.Controllers {
                 return Ok(new APIResponse {
                     result = question
                 });
-            } catch (Exception) {
+            }
+            catch (Exception) {
                 return StatusCode(500, new APIResponse {
                     errorMessages = new List<string> { "Error Video Suggest" }
                 });
@@ -49,7 +50,8 @@ namespace Project.API.Controllers {
                 return Ok(new APIResponse {
                     result = question
                 });
-            } catch (Exception) {
+            }
+            catch (Exception) {
                 return StatusCode(500, new APIResponse {
                     errorMessages = new List<string> { "Error Video Suggest" }
                 });
@@ -64,7 +66,8 @@ namespace Project.API.Controllers {
                 return Ok(new APIResponse {
                     result = createdQuestion
                 });
-            } catch (Exception) {
+            }
+            catch (Exception) {
                 return StatusCode(500, new APIResponse {
                     errorMessages = new List<string> { "Error Video Suggest" }
                 });
@@ -79,7 +82,8 @@ namespace Project.API.Controllers {
                 return Ok(new APIResponse {
                     result = createdAnswer
                 });
-            } catch (Exception) {
+            }
+            catch (Exception) {
                 return StatusCode(500, new APIResponse {
                     errorMessages = new List<string> { "Error Video Suggest" }
                 });
@@ -94,7 +98,8 @@ namespace Project.API.Controllers {
                 return Ok(new APIResponse {
                     result = createdAnswer
                 });
-            } catch (Exception) {
+            }
+            catch (Exception) {
                 return StatusCode(500, new APIResponse {
                     errorMessages = new List<string> { "Error Video Suggest" }
                 });
@@ -115,7 +120,8 @@ namespace Project.API.Controllers {
                 return Ok(new APIResponse {
                     result = "Question deleted successfully"
                 });
-            } catch (Exception) {
+            }
+            catch (Exception) {
                 return StatusCode(500, new APIResponse {
                     errorMessages = new List<string> { "Error deleting question" }
                 });
@@ -136,9 +142,50 @@ namespace Project.API.Controllers {
                 return Ok(new APIResponse {
                     result = "Answer deleted successfully"
                 });
-            } catch (Exception) {
+            }
+            catch (Exception) {
                 return StatusCode(500, new APIResponse {
                     errorMessages = new List<string> { "Error deleting answer" }
+                });
+            }
+        }
+
+        [HttpGet("GetTags")]
+        public async Task<IActionResult> GetTags() {
+            try {
+                var tags = await _questionRepository.GetTags();
+                if (tags == null || !tags.Any()) {
+                    return NotFound(new APIResponse {
+                        errorMessages = new List<string> { "No tags found" }
+                    });
+                }
+                return Ok(new APIResponse {
+                    result = tags
+                });
+            }
+            catch (Exception) {
+                return StatusCode(500, new APIResponse {
+                    errorMessages = new List<string> { "Error fetching tags" }
+                });
+            }
+        }
+
+        [HttpPost("GetQuestionByTag")]
+        public async Task<IActionResult> GetQuestionByTag(string[] tags, int pageNumber, Guid userId, bool isCurrentUser, bool isAdmin = false) {
+            try {
+                var question = await _questionRepository.GetQuestionsByTag(tags, pageNumber, userId, isCurrentUser, isAdmin);
+                if (question == null) {
+                    return NotFound(new APIResponse {
+                        errorMessages = new List<string> { "Not found question" }
+                    });
+                }
+                return Ok(new APIResponse {
+                    result = question
+                });
+            }
+            catch (Exception) {
+                return StatusCode(500, new APIResponse {
+                    errorMessages = new List<string> { "Error fetching question" }
                 });
             }
         }

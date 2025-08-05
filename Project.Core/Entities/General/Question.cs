@@ -8,6 +8,7 @@ namespace Project.Core.Entities.General {
         public Profile Creator { get; set; } = new Profile();
         public int AnswersAmount { get; set; } = 0;
         public string Privacy { get; set; } = null!;
+        public List<string>? Tags { get; set; }
 
         public ICollection<Answer> Answers { get; set; } = new List<Answer>();
     }
