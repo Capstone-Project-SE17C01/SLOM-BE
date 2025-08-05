@@ -787,6 +787,48 @@ namespace Project.Infrastructure.Data {
                     .OnDelete(DeleteBehavior.Cascade);
             });
 
+            modelBuilder.Entity<Question>(entity => {
+                entity.HasKey(e => e.Id).HasName("question_pkey");
+                entity.ToTable("questions");
+
+                entity.Property(e => e.Id).ValueGeneratedNever().HasColumnName("id");
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("now()").HasColumnName("created_at");
+                entity.Property(e => e.CreatorId).HasColumnName("creator_id");
+                entity.Property(e => e.Content).HasColumnName("content");
+                entity.Property(e => e.Images).HasColumnName("images");
+                entity.Property(e => e.AnswersAmount).HasColumnName("answer_amount");
+                entity.Property(e => e.Privacy).HasColumnName("privacy");
+
+                entity.HasOne(q => q.Creator)
+                    .WithMany(c => c.Questions)
+                    .HasForeignKey(q => q.CreatorId)
+                    .OnDelete(DeleteBehavior.SetNull)
+                    .HasConstraintName("question_user_id_fkey");
+            });
+
+            modelBuilder.Entity<Answer>(entity => {
+                entity.HasKey(e => e.Id).HasName("answer_pkey");
+                entity.ToTable("answers");
+
+                entity.Property(e => e.Id).ValueGeneratedNever().HasColumnName("id");
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("now()").HasColumnName("created_at");
+                entity.Property(e => e.CreatorId).HasColumnName("creator_id");
+                entity.Property(e => e.QuestionId).HasColumnName("question_id");
+                entity.Property(e => e.Content).HasColumnName("content");
+                entity.Property(e => e.Images).HasColumnName("images");
+
+                entity.HasOne(a => a.Creator)
+                    .WithMany(c => c.Answers)
+                    .HasForeignKey(a => a.CreatorId)
+                    .OnDelete(DeleteBehavior.SetNull)
+                    .HasConstraintName("user_question_id_fkey");
+
+                entity.HasOne(a => a.Question)
+                    .WithMany(q => q.Answers)
+                    .HasForeignKey(a => a.QuestionId)
+                    .OnDelete(DeleteBehavior.SetNull)
+                    .HasConstraintName("answer_question_id_fkey");
+            });
         }
 
         public static void SeedData(ModelBuilder modelBuilder) {

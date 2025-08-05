@@ -38,5 +38,7 @@ namespace Project.Core.Entities.General {
         public ICollection<UserMessage> ReceivedMessages { get; set; } = new List<UserMessage>();
         public Reminder? Reminder { get; set; }
         public Role? Role { get; set; }
+        public ICollection<Question> Questions { get; set; } = new List<Question>();
+        public ICollection<Answer> Answers { get; set; } = new List<Answer>();
     }
 }
