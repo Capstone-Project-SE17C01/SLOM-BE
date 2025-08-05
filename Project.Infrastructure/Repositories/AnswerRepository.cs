@@ -40,7 +40,8 @@ namespace Project.Infrastructure.Repositories {
 
             if (creator is null) {
                 throw new Exception("User not found");
-            } else if (question is null) {
+            }
+            else if (question is null) {
                 throw new Exception("Question not found");
             }
 

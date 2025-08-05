@@ -17,7 +17,8 @@ namespace Project.Infrastructure.Repositories {
             if (isAdmin) {
                 questionQuery = questions
                     .Where(x => (isCurrentUser ? x.Answers.FirstOrDefault(x => x.CreatorId == userId) == null : true));
-            } else {
+            }
+            else {
                 questionQuery = questions
                     .Where(x => (isCurrentUser ? x.CreatorId == userId : x.Privacy != "Only admin can view and answer" || x.CreatorId == userId));
             }
