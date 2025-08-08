@@ -348,6 +348,9 @@ namespace Project.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("host_id");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
                     b.Property<bool>("IsPrivate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")

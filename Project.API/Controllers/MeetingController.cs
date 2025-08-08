@@ -71,7 +71,8 @@ namespace Project.API.Controllers {
                 startTime = m.StartTime,
                 endTime = m.EndTime,
                 status = m.Status,
-                isPrivate = m.IsPrivate
+                isPrivate = m.IsPrivate,
+                isDeleted = m.IsDeleted
             }));
         }
 
@@ -118,7 +119,8 @@ namespace Project.API.Controllers {
                 hostName = m.Host?.Username,
                 startTime = m.StartTime,
                 endTime = m.EndTime,
-                status = m.Status
+                status = m.Status,
+                isDeleted = m.IsDeleted
             }));
         }
 
