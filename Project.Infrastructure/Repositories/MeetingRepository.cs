@@ -107,7 +107,7 @@ namespace Project.Infrastructure.Repositories {
             if (meeting == null)
                 return false;
 
-            _dbContext.Meetings.Remove(meeting);
+            meeting.IsDeleted = true;
             await _dbContext.SaveChangesAsync();
             return true;
         }
