@@ -70,6 +70,33 @@ namespace Project.Infrastructure.Repositories {
             };
         }
 
+        public async Task<AnswerResponse> UpdateAnswer(UpdateAnswerRequest request) {
+            var answer = await _dbContext.Answers
+                .Include(x => x.Creator)
+                .FirstOrDefaultAsync(x => x.Id == request.AnswerId);
+
+            if (answer == null) {
+                throw new Exception("Answer not found");
+            }
+
+            answer.Content = request.Content;
+            answer.Images = SerializeListToString(request.Images ?? new List<string>());
+
+            await Update(answer);
+
+            return new AnswerResponse {
+                AnswerId = answer.Id,
+                Author = new Author {
+                    ProfileImage = answer.Creator.AvatarUrl ?? "",
+                    Username = answer.Creator.Username ?? ""
+                },
+                Content = answer.Content,
+                CreatedAt = answer.CreatedAt,
+                Images = DeserializeStringToList(answer.Images),
+                QuestionId = answer.QuestionId
+            };
+        }
+
         public async Task<bool> DeleteAnswer(Guid answerId) {
             var answer = await _dbContext.Answers.FirstOrDefaultAsync(x => x.Id == answerId);
 

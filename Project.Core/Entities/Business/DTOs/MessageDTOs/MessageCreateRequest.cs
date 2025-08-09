@@ -4,5 +4,6 @@ namespace Project.Core.Entities.Business.DTOs.MessageDTOs {
         public required string ReceiverEmail { get; set; }
         public required string Content { get; set; }
         public DateTime DateTime { get; set; } = DateTime.Now;
+        public List<string> Images { get; set; } = null!;
     }
 }

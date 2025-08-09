@@ -17,7 +17,7 @@ namespace Project.Infrastructure.Repositories {
 
             UserMessage newMessage = new UserMessage() {
                 DateTime = request.DateTime,
-                Message = request.Content,
+                Message = SerializeMessage(request.Content, request.Images),
                 Receiver = receiver ?? new Profile(),
                 Sender = sender ?? new Profile(),
                 ReceiverId = receiver is null ? Guid.NewGuid() : receiver.Id,
@@ -37,7 +37,6 @@ namespace Project.Infrastructure.Repositories {
         public async Task<MessageResponse> GetMessage(MessageRequest request) {
             var otherUser = await _dbContext.Profiles.AsNoTracking().FirstOrDefaultAsync(x => x.Email == request.ReceiverEmail);
             var otherUserId = otherUser is null ? Guid.NewGuid() : otherUser.Id;
-
             var userMessages = _dbContext.UserMessages
                 .Where(x => (x.ReceiverId == request.UserId && x.SenderId == otherUserId)
                 || (x.ReceiverId == otherUserId && x.SenderId == request.UserId)).AsNoTracking();
@@ -48,7 +47,11 @@ namespace Project.Infrastructure.Repositories {
                 .Take(20)
                 .AsNoTracking()
                 .OrderBy(x => x.MessageId)
-                .Select(x => new MessageContent() { Id = x.MessageId, Content = x.Message, IsSender = request.UserId == x.SenderId })
+                .Select(x => new MessageContent() {
+                    Id = x.MessageId,
+                    Content = DeserializeMessageContent(x.Message),
+                    Images = DeserializeMessageImages(x.Message),
+                    IsSender = request.UserId == x.SenderId })
                 .ToListAsync();
 
             var messageQuantity = userMessages.Count() - (request.PageNumber * 20);
@@ -80,7 +83,7 @@ namespace Project.Infrastructure.Repositories {
 
                 response.Add(new MessageUserResponse() {
                     Avatar = otherUser is null ? String.Empty : otherUser.AvatarUrl ?? String.Empty,
-                    LastMessage = lastMessage is null ? String.Empty : lastMessage.Message ?? String.Empty,
+                    LastMessage = lastMessage is null ? String.Empty : (DeserializeMessageImages(lastMessage.Message) is null || DeserializeMessageImages(lastMessage.Message).Count() == 0 ? DeserializeMessageContent(lastMessage.Message) : "[image]") ?? String.Empty,
                     IsSender = (otherUser is null ? Guid.NewGuid() : otherUser.Id) == (lastMessage is null ? Guid.NewGuid() : lastMessage.ReceiverId),
                     LastSent = GetTimeAgo(lastMessage is null ? DateTime.MinValue : lastMessage.DateTime),
                     UserName = (otherUser is null ? String.Empty : otherUser.Username ?? ""),
@@ -108,5 +111,40 @@ namespace Project.Infrastructure.Repositories {
 
             return $"{(int)(timeSpan.TotalDays / 365)} years";
         }
+
+        private static string SerializeMessage(string content, List<string> images) {
+            var imagesJoined = string.Join(", ", images.Select(img => $"\"{img}\""));
+            return $"(message: \"{content}\", images: {{{imagesJoined}}})";
+        }
+
+        private static string DeserializeMessageContent(string message) {
+            var messagePrefix = "message: \"";
+            int msgStart = message.IndexOf(messagePrefix);
+            if (msgStart >= 0) {
+                msgStart += messagePrefix.Length;
+                int msgEnd = message.IndexOf("\"", msgStart);
+                if (msgEnd > msgStart) {
+                    return message.Substring(msgStart, msgEnd - msgStart);
+                }
+            }
+            return string.Empty;
+        }
+
+        private static List<string> DeserializeMessageImages(string message) {
+            var images = new List<string>();
+            var imagesPrefix = "images: {";
+            int imgStart = message.IndexOf(imagesPrefix);
+            if (imgStart >= 0) {
+                imgStart += imagesPrefix.Length;
+                int imgEnd = message.IndexOf("}", imgStart);
+                if (imgEnd > imgStart) {
+                    var imagesStr = message.Substring(imgStart, imgEnd - imgStart);
+                    images = imagesStr.Split(", ", StringSplitOptions.RemoveEmptyEntries)
+                        .Select(s => s.Trim('"')).ToList();
+                }
+            }
+            return images;
+        }
+
     }
 }

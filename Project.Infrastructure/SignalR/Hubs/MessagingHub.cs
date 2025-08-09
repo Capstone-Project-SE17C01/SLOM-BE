@@ -13,17 +13,18 @@ namespace Project.API.SignalR.Hubs {
             _messageService = messageService;
         }
 
-        public async Task PostMessage(string content, string senderEmail, string receiverEmail) {
+        public async Task PostMessage(string content, string senderEmail, string receiverEmail, List<string> images) {
             var userMessage = new MessageCreateRequest {
                 Content = content,
                 ReceiverEmail = receiverEmail,
                 SenderEmail = senderEmail,
-                DateTime = DateTime.UtcNow
+                DateTime = DateTime.UtcNow,
+                Images = images
             };
 
             var message = await _messageService.SendMessage(userMessage);
 
-            await Clients.Others.SendAsync("ReceiveMessage" + receiverEmail, message.MessageId, senderEmail, content, userMessage.DateTime);
+            await Clients.Others.SendAsync("ReceiveMessage" + receiverEmail, message.MessageId, senderEmail, content, userMessage.DateTime, images);
         }
 
         public async Task RetrieveMessageHistory() =>
