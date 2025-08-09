@@ -324,7 +324,7 @@ namespace Project.Infrastructure.Data {
                 entity.HasOne(d => d.Course)
                     .WithMany(p => p.Modules)
                     .HasForeignKey(d => d.CourseId)
-                    .OnDelete(DeleteBehavior.Cascade)
+                    .OnDelete(DeleteBehavior.Restrict)
                     .HasConstraintName("modules_course_id_fkey");
             });
 
@@ -349,7 +349,7 @@ namespace Project.Infrastructure.Data {
                 entity.HasOne(d => d.Module)
                     .WithMany(p => p.Lessons)
                     .HasForeignKey(d => d.ModuleId)
-                    .OnDelete(DeleteBehavior.Cascade)
+                    .OnDelete(DeleteBehavior.Restrict)
                     .HasConstraintName("lessons_module_id_fkey");
             });
 
@@ -388,7 +388,7 @@ namespace Project.Infrastructure.Data {
                 entity.HasOne(d => d.Lesson)
                     .WithMany(p => p.Quizzes)
                     .HasForeignKey(d => d.LessonId)
-                    .OnDelete(DeleteBehavior.Cascade)
+                    .OnDelete(DeleteBehavior.Restrict)
                     .HasConstraintName("quizzes_lesson_id_fkey");
 
                 entity.HasMany(e => e.Attempts)

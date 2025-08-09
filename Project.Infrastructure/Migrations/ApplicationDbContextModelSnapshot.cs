@@ -1473,7 +1473,7 @@ namespace Project.Infrastructure.Migrations
                     b.HasOne("Project.Core.Entities.General.Module", "Module")
                         .WithMany("Lessons")
                         .HasForeignKey("ModuleId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("lessons_module_id_fkey");
 
@@ -1550,7 +1550,7 @@ namespace Project.Infrastructure.Migrations
                     b.HasOne("Project.Core.Entities.General.Course", "Course")
                         .WithMany("Modules")
                         .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("modules_course_id_fkey");
 
@@ -1613,7 +1613,7 @@ namespace Project.Infrastructure.Migrations
                     b.HasOne("Project.Core.Entities.General.Lesson", "Lesson")
                         .WithMany("Quizzes")
                         .HasForeignKey("LessonId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("quizzes_lesson_id_fkey");
 

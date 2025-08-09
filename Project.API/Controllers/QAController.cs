@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Project.Core.Entities.Business.DTOs;
 using Project.Core.Entities.Business.DTOs.AnswerDTOs;
@@ -5,6 +6,7 @@ using Project.Core.Entities.Business.DTOs.QuestionDTOs;
 using Project.Core.Interfaces.IRepositories;
 
 namespace Project.API.Controllers {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class QAController : ControllerBase {
