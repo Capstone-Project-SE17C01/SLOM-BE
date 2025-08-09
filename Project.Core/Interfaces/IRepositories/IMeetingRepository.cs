@@ -20,5 +20,6 @@ namespace Project.Core.Interfaces.IRepositories {
         Task<int> CountActiveMeetingsAsync();
         Task<int> CountScheduleMeetingAsync();
         Task<int> CountRecordMeetingAsync();
+        Task<bool> DeleteMeetingRecordAsync(Guid id);
     }
 }

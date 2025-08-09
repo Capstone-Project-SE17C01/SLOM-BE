@@ -375,5 +375,14 @@ namespace Project.API.Controllers {
             var meetings = await _meetingRepository.GetAll();
             return Ok(meetings);
         }
+
+        [HttpDelete("record/{id}")]
+        public async Task<IActionResult> DeleteMeetingRecord(Guid id) {
+            var result = await _meetingRepository.DeleteMeetingRecordAsync(id);
+            if (result) {
+                return Ok(new { message = "Meeting record deleted successfully" });
+            }
+            return NotFound(new { message = "Meeting record not found" });
+        }
     }
 }

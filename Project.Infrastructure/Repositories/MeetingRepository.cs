@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Project.Core.Entities.General;
+using Project.Core.Exceptions;
 using Project.Core.Interfaces.IRepositories;
 using Project.Infrastructure.Data;
 
@@ -167,6 +168,12 @@ namespace Project.Infrastructure.Repositories {
 
         public async Task<int> CountRecordMeetingAsync() {
             return await _dbContext.MeetingRecordings.CountAsync();
+        }
+
+        public async Task<bool> DeleteMeetingRecordAsync(Guid id) {
+            var recording = _dbContext.MeetingRecordings.Find(id) ?? throw new NotFoundException();
+            _dbContext.MeetingRecordings.Remove(recording);
+            return await _dbContext.SaveChangesAsync() > 0;
         }
     }
 }
