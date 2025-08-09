@@ -114,7 +114,7 @@ namespace Project.API.Controllers {
                             CreatedAt = DateTime.UtcNow,
                             UpdatedAt = DateTime.UtcNow,
                             PreferredLanguageId = enLangId,
-                            AvatarUrl = "https://avatar.iran.liara.run/public/5",
+                            AvatarUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ4YreOWfDX3kK-QLAbAL4ufCPc84ol2MA8Xg&s",
                             Id = Guid.Parse(googleSub),
 
                         };
@@ -205,7 +205,7 @@ namespace Project.API.Controllers {
                         CreatedAt = DateTime.UtcNow,
                         UpdatedAt = DateTime.UtcNow,
                         PreferredLanguageId = enLangId,
-                        AvatarUrl = "https://avatar.iran.liara.run/public/5",
+                        AvatarUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ4YreOWfDX3kK-QLAbAL4ufCPc84ol2MA8Xg&s",
                         Id = Guid.Parse(response.UserSub),
                     };
                     try {
