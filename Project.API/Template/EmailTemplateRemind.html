@@ -3,112 +3,233 @@
 <head>
     <meta charset='UTF-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-    <title>Meeting Invitation</title>
+    <title>Study Reminder</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Inter', sans-serif;
             line-height: 1.6;
-            color: #333;
+            color: #1a1a1a;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
             max-width: 600px;
             margin: 0 auto;
-            padding: 20px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
         }
 
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #00875A 0%, #34D399 100%);
             color: white;
-            padding: 30px;
+            padding: 40px 30px;
             text-align: center;
-            border-radius: 10px 10px 0 0;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
         }
 
         .content {
-            background: #f9f9f9;
             padding: 30px;
-            border-radius: 0 0 10px 10px;
         }
 
-        .meeting-details {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            margin: 20px 0;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .reminder-details {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
         }
 
         .detail-row {
             display: flex;
-            margin: 10px 0;
+            align-items: flex-start;
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #edf2f7;
+        }
+
+        .detail-row:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
         }
 
         .detail-label {
-            font-weight: bold;
-            width: 120px;
-            color: #555;
+            flex: 0 0 130px;
+            font-weight: 500;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-
-        .detail-value {
-            flex: 1;
-        }
-
-        .join-button {
-            display: inline-block;
-            background: #4CAF50;
-            color: white;
-            padding: 15px 30px;
-            text-decoration: none;
-            border-radius: 5px;
-            font-weight: bold;
-            margin: 20px 0;
-        }
-
-            .join-button:hover {
-                background: #45a049;
-            }
 
         .custom-message {
-            background: #e3f2fd;
-            padding: 15px;
-            border-radius: 5px;
-            margin: 15px 0;
-            border-left: 4px solid #2196F3;
+            background: #f0f9ff;
+            border-left: 4px solid #0ea5e9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .motivation-quote {
+            background: linear-gradient(135deg, #00875A 0%, #34D399 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            margin: 30px 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .motivation-quote p {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .motivation-quote small {
+            opacity: 0.9;
+            font-size: 14px;
         }
 
         .footer {
             text-align: center;
-            color: #777;
-            font-size: 12px;
-            margin-top: 30px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .footer p {
+            margin-bottom: 10px;
+        }
+
+        .footer strong {
+            color: #334155;
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 10px;
+            }
+
+            .header {
+                padding: 30px 20px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .detail-row {
+                flex-direction: column;
+            }
+
+            .detail-label {
+                margin-bottom: 8px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>📚 Daily Study Reminder</h1>
-        <p>Sent by <strong>{{SenderName}}</strong></p>
-    </div>
-
-    <div class="content">
-        <h2>📌 Reminder Details</h2>
-        <div class="reminder-details">
-            <div class="detail-row">
-                <span class="detail-label">📋 Title:</span>
-                <span class="detail-value">{{RemindTitle}}</span>
-            </div>
-
-            {{RemindDescription}}
-
-            <div class="detail-row">
-                <span class="detail-label">⏰ Reminder Time:</span>
-                <span class="detail-value">{{RemindTime}}</span>
-            </div>
+    <div class="container">
+        <div class="header">
+            <h1>
+                <svg style="width:24px;height:24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M12 6V12L16 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Daily Study Reminder
+            </h1>
+            <p>Sent by <strong>{{SenderName}}</strong></p>
         </div>
 
-        {{CustomMessageSection}}
+        <div class="content">
+            <h2 class="section-title">
+                <svg style="width:20px;height:20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21.6602 10.44L20.6802 14.62C19.8402 18.23 18.1802 19.69 15.0602 19.39C14.5602 19.35 14.0202 19.26 13.4402 19.12L11.7602 18.72C7.59018 17.73 6.30018 15.67 7.28018 11.49L8.26018 7.30001C8.46018 6.45001 8.70018 5.71001 9.00018 5.10001C10.1702 2.68001 12.1602 2.03001 15.5002 2.82001L17.1702 3.21001C21.3602 4.19001 22.6402 6.26001 21.6602 10.44Z" stroke="#2d3748" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M15.0603 19.39C14.4403 19.81 13.6603 20.16 12.7103 20.47L11.1303 20.99C7.16034 22.27 5.07034 21.2 3.78034 17.23L2.50034 13.28C1.22034 9.31001 2.28034 7.21001 6.25034 5.93001L7.83034 5.41001C8.24034 5.28001 8.63034 5.17001 9.00034 5.10001C8.70034 5.71001 8.46034 6.45001 8.26034 7.30001L7.28034 11.49C6.30034 15.67 7.59034 17.73 11.7603 18.72L13.4403 19.12C14.0203 19.26 14.5603 19.35 15.0603 19.39Z" stroke="#2d3748" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Reminder Details
+            </h2>
 
-        <div class="footer" style="margin-top: 40px; text-align: center; font-size: 0.9em; color: #888;">
-            <p>This is an automated message from the <strong>SLOM Course Reminder</strong> system.</p>
-            <p>Stay consistent and good luck with your studies! 📖</p>
+            <div class="reminder-details">
+                <div class="detail-row">
+                    <span class="detail-label">
+                        <svg style="width:18px;height:18px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M22 10V15C22 20 20 22 15 22H9C4 22 2 20 2 15V9C2 4 4 2 9 2H14" stroke="#64748b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M22 10H18C15 10 14 9 14 6V2L22 10Z" stroke="#64748b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Title: {{RemindTitle}}
+                    </span>
+                </div>
+
+                {{RemindDescription}}
+
+                <div class="detail-row">
+                    <span class="detail-label">
+                        <svg style="width:18px;height:18px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 8V13" stroke="#64748b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="#64748b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Time: {{RemindTime}}
+                    </span>
+                </div>
+            </div>
+
+            {{CustomMessageSection}}
+
+            <div class="motivation-quote">
+                <svg style="width:32px;height:32px;margin-bottom:15px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M8 12L11 15L16 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <p>"Success is not final, failure is not fatal: it is the courage to continue that counts."</p>
+                <small>Keep pushing forward! 💪</small>
+            </div>
+
+            <div class="footer">
+                <p>This is an automated message from the <strong>SLOM Course Reminder</strong> system</p>
+                <p>Stay consistent and good luck with your studies! 📚</p>
+            </div>
         </div>
     </div>
 </body>

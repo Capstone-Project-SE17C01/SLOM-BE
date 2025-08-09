@@ -5,112 +5,292 @@
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
     <title>Meeting Invitation</title>
     <style>
-        body { 
-            font-family: Arial, sans-serif; 
-            line-height: 1.6; 
-            color: #333; 
-            max-width: 600px; 
-            margin: 0 auto; 
-            padding: 20px; 
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .header { 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
-            color: white; 
-            padding: 30px; 
-            text-align: center; 
-            border-radius: 10px 10px 0 0; 
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
         }
-        .content { 
-            background: #f9f9f9; 
-            padding: 30px; 
-            border-radius: 0 0 10px 10px; 
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
         }
-        .meeting-details { 
-            background: white; 
-            padding: 20px; 
-            border-radius: 8px; 
-            margin: 20px 0; 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+
+        .brand-header {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid #e9ecef;
         }
-        .detail-row { 
-            display: flex; 
-            margin: 10px 0; 
+
+        .logo {
+            width: 120px;
+            margin-bottom: 10px;
         }
-        .detail-label { 
-            font-weight: bold; 
-            width: 120px; 
-            color: #555; 
+
+        .header {
+            background: linear-gradient(135deg, #0061ff 0%, #60efff 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
         }
-        .detail-value { 
-            flex: 1; 
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-        .join-button { 
-            display: inline-block; 
-            background: #4CAF50; 
-            color: white; 
-            padding: 15px 30px; 
-            text-decoration: none; 
-            border-radius: 5px; 
-            font-weight: bold; 
-            margin: 20px 0; 
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
         }
-        .join-button:hover { 
-            background: #45a049; 
+
+        .content {
+            padding: 30px;
         }
-        .custom-message { 
-            background: #e3f2fd; 
-            padding: 15px; 
-            border-radius: 5px; 
-            margin: 15px 0; 
-            border-left: 4px solid #2196F3; 
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-        .footer { 
-            text-align: center; 
-            color: #777; 
-            font-size: 12px; 
-            margin-top: 30px; 
+
+        .meeting-details {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .detail-row {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #edf2f7;
+        }
+
+        .detail-row:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .detail-label {
+            flex: 0 0 130px;
+            font-weight: 500;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .custom-message {
+            background: #f0f9ff;
+            border-left: 4px solid #0ea5e9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .join-button {
+            display: inline-block;
+            background: #0061ff;
+            color: white;
+            padding: 16px 32px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 97, 255, 0.1);
+        }
+
+        .join-button:hover {
+            background: #0052d9;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(0, 97, 255, 0.2);
+        }
+
+        .join-button svg {
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px;
+            background: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .footer p {
+            margin-bottom: 10px;
+        }
+
+        .footer a {
+            color: #0061ff;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 10px;
+            }
+
+            .header {
+                padding: 30px 20px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .detail-row {
+                flex-direction: column;
+            }
+
+            .detail-label {
+                margin-bottom: 8px;
+            }
+
+            .join-button {
+                display: block;
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
-    <div class='header'>
-        <h1>📅 Meeting Invitation</h1>
-        <p>You're invited by {{SenderName}}</p>
-    </div>
-    <div class='content'>
-        <h2>Meeting Details</h2>
-        <div class='meeting-details'>
-            <div class='detail-row'>
-                <span class='detail-label'>📋 Title:</span>
-                <span class='detail-value'>{{MeetingTitle}}</span>
-            </div>
-            {{MeetingDescription}}
-            <div class='detail-row'>
-                <span class='detail-label'>🕐 Start Time:</span>
-                <span class='detail-value'>{{StartTime}}</span>
-            </div>
-            <div class='detail-row'>
-                <span class='detail-label'>🕑 End Time:</span>
-                <span class='detail-value'>{{EndTime}}</span>
-            </div>
-            <div class='detail-row'>
-                <span class='detail-label'>👥 Host:</span>
-                <span class='detail-value'>{{SenderName}}</span>
-            </div>
-            <div class='detail-row'>
-                <span class='detail-label'>🔒 Type:</span>
-                <span class='detail-value'>{{MeetingType}}</span>
-            </div>
-            {{GuestCodeSection}}
+    <div class="container">
+        <div class="header">
+            <h1>
+                <svg style="width:24px;height:24px;margin-right:8px;vertical-align:middle" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8 2V5" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M16 2V5" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M3.5 9.09H20.5" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M21 8.5V17C21 20 19.5 22 16 22H8C4.5 22 3 20 3 17V8.5C3 5.5 4.5 3.5 8 3.5H16C19.5 3.5 21 5.5 21 8.5Z" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Meeting Invitation
+            </h1>
+            <p>You've been invited by {{SenderName}}</p>
         </div>
-        {{CustomMessageSection}}
-        <div style='text-align: center;'>
-            <a href='{{MeetingLink}}' class='join-button'>🚀 Join Meeting</a>
+
+        <div class="content">
+            <h2 class="section-title">
+                <svg style="width:20px;height:20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8 2V5" stroke="#2d3748" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M16 2V5" stroke="#2d3748" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M3.5 9.09H20.5" stroke="#2d3748" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M21 8.5V17C21 20 19.5 22 16 22H8C4.5 22 3 20 3 17V8.5C3 5.5 4.5 3.5 8 3.5H16C19.5 3.5 21 5.5 21 8.5Z" stroke="#2d3748" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Meeting Details
+            </h2>
+
+            <div class="meeting-details">
+                <div class="detail-row">
+                    <span class="detail-label">
+                        <svg style="width:18px;height:18px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M22 10V15C22 20 20 22 15 22H9C4 22 2 20 2 15V9C2 4 4 2 9 2H14" stroke="#64748b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M22 10H18C15 10 14 9 14 6V2L22 10Z" stroke="#64748b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Title: {{MeetingTitle}}
+                    </span>
+                </div>
+
+                {{MeetingDescription}}
+
+                <div class="detail-row">
+                    <span class="detail-label">
+                        <svg style="width:18px;height:18px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 8V13" stroke="#64748b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="#64748b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Start Time: {{StartTime}}
+                    </span>
+                </div>
+
+                <div class="detail-row">
+                    <span class="detail-label">
+                        <svg style="width:18px;height:18px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 8V13" stroke="#64748b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="#64748b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        End Time: {{EndTime}}
+                    </span>
+                </div>
+
+                <div class="detail-row">
+                    <span class="detail-label">
+                        <svg style="width:18px;height:18px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 12C14.7614 12 17 9.76142 17 7C17 4.23858 14.7614 2 12 2C9.23858 2 7 4.23858 7 7C7 9.76142 9.23858 12 12 12Z" stroke="#64748b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M20.5899 22C20.5899 18.13 16.7399 15 11.9999 15C7.25991 15 3.40991 18.13 3.40991 22" stroke="#64748b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Host: {{SenderName}}
+                    </span>
+                </div>
+
+                <div class="detail-row">
+                    <span class="detail-label">
+                        <svg style="width:18px;height:18px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M6 10V8C6 4.69 7 2 12 2C17 2 18 4.69 18 8V10" stroke="#64748b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 18.5C13.3807 18.5 14.5 17.3807 14.5 16C14.5 14.6193 13.3807 13.5 12 13.5C10.6193 13.5 9.5 14.6193 9.5 16C9.5 17.3807 10.6193 18.5 12 18.5Z" stroke="#64748b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M17 22H7C3 22 2 21 2 17V15C2 11 3 10 7 10H17C21 10 22 11 22 15V17C22 21 21 22 17 22Z" stroke="#64748b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Type: {{MeetingType}}
+                    </span>
+                </div>
+
+                {{GuestCodeSection}}
+            </div>
+
+            {{CustomMessageSection}}
+
+            <div style="text-align: center;">
+                <a href="{{MeetingLink}}" class="join-button">
+                    <svg style="width:20px;height:20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M8.5 12H14.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M12.5 15L15.5 12L12.5 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span style="color: white">Join Meeting</span>
+                </a>
+            </div>
         </div>
-        <div class='footer'>
-            <p>This is an automated message from SLOM Meeting System.</p>
-            <p>Meeting Link: <a href='{{MeetingLink}}'>{{MeetingLink}}</a></p>
-            <p>Please save this email for future reference.</p>
+
+        <div class="footer">
+            <p>This is an automated message from SLOM Meeting System</p>
+            <p>Please save this email for future reference</p>
         </div>
     </div>
 </body>
