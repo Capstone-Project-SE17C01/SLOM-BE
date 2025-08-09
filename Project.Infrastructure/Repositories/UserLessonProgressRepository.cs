@@ -102,36 +102,122 @@ namespace Project.Infrastructure.Repositories {
                 .FirstOrDefault();
             var lesson = _dbContext.Lessons.Where(x => x.Id == lessonId).AsNoTracking()
                 .FirstOrDefault();
+            //get moduleId from lesson
+            var moduleId = await _dbContext.Lessons
+                .Where(x => x.Id == lessonId)
+                .Select(x => x.ModuleId)
+                .FirstOrDefaultAsync();
+            //get courseId from module
+            var courseId = await _dbContext.Modules
+                .Where(m => m.Id == moduleId)
+                .Select(m => m.CourseId)
+                .FirstOrDefaultAsync();
 
             if (user is null || lesson is null) {
                 throw new Exception(user is null ? "User not found" : "Lesson not found");
             }
 
+            //create new progress if not exists
             var userLessonProgress = await _dbContext.UserLessonProgress
                 .Where(x => x.UserId == userId && x.LessonId == lessonId).AsNoTracking()
                 .FirstOrDefaultAsync();
+            var moduleProgress = await _dbContext.UserModuleProgress
+                .Where(x => x.UserId == userId && x.ModuleId == moduleId).AsNoTracking()
+                .FirstOrDefaultAsync();
+            var courseProgress = await _dbContext.UserCourseProgress
+                .Where(x => x.UserId == userId && x.CourseId == courseId).AsNoTracking()
+                .FirstOrDefaultAsync();
+            bool createStatus = true;
 
-            if (userLessonProgress != null) {
-                await ActivateCurrentLessonAsync(userLessonProgress);
-                return true;
-            }
+            //if lesson progess is null, create new progress
+            if (userLessonProgress == null) {
+                userLessonProgress = new UserLessonProgress() {
+                    Id = Guid.NewGuid(),
+                    UserId = userId,
+                    LessonId = lessonId,
+                    IsActive = true,
+                    IsLearned = false,
+                    CompletedAt = null
+                };
+                try {
+                    await Create(userLessonProgress);
+                    createStatus = true;
+                } catch {
+                    createStatus = false;
+                }
 
-            UserLessonProgress progress = new UserLessonProgress() {
-                Id = Guid.NewGuid(),
-                LessonId = lessonId,
-                UserId = userId,
-                IsActive = true,
-                IsLearned = false,
-                CompletedAt = null
-            };
+                if (userLessonProgress != null) {
+                    await ActivateCurrentLessonAsync(userLessonProgress);
+                }
 
-            try {
-                await Create(progress);
-                return true;
+                #region create lesson progress for all lessons in module
+                //create lesson progress for all lessons in module, check if exists
+                var lessonsInModule = await _dbContext.Lessons
+                    .Where(x => x.ModuleId == moduleId)
+                    .Select(x => x.Id)
+                    .ToListAsync();
+                //check if user already has progress for these lessons
+                var existingProgresses = await _dbContext.UserLessonProgress
+                    .Where(x => x.UserId == userId && lessonsInModule.Contains(x.LessonId))
+                    .Select(x => x.LessonId)
+                    .ToListAsync();
+                //create new progresses for lessons that do not exist
+                var newProgresses = lessonsInModule
+                    .Where(x => !existingProgresses.Contains(x))
+                    .Select(x => new UserLessonProgress {
+                        Id = Guid.NewGuid(),
+                        UserId = userId,
+                        LessonId = x,
+                        IsActive = false,
+                        IsLearned = false,
+                        CompletedAt = null
+                    }).ToList();
+                //if new progresses exist, add to db
+                if (newProgresses.Any()) {
+                    try {
+                        await _dbContext.UserLessonProgress.AddRangeAsync(newProgresses);
+                        await SaveChangeAsync();
+                        createStatus = true;
+                    } catch {
+                        createStatus = false;
+                    }
+                }
+                #endregion
             }
-            catch {
-                return false;
+            //if module progress is null, create new progress
+            if (moduleProgress == null) {
+                moduleProgress = new UserModuleProgress() {
+                    Id = Guid.NewGuid(),
+                    ModuleId = moduleId,
+                    UserId = userId,
+                    IsActive = true,
+                    CompletedAt = null
+                };
+
+                try {
+                    await _userModuleRepo.Create(moduleProgress);
+                    createStatus = true;
+                } catch {
+                    createStatus = false;
+                }
             }
+            //if course progress is null, create new progress
+            if (courseProgress == null) {
+                courseProgress = new UserCourseProgress() {
+                    Id = Guid.NewGuid(),
+                    CourseId = courseId,
+                    UserId = userId,
+                    IsActive = true,
+                    CompletedAt = null
+                };
+                try {
+                    await _userCourseRepo.Create(courseProgress);
+                    createStatus = true;
+                } catch {
+                    createStatus = false;
+                }
+            }
+            return createStatus;
         }
 
         public async Task<bool> LearnedLessons(Guid userId, Guid lessonId) {
@@ -154,8 +240,7 @@ namespace Project.Infrastructure.Repositories {
             try {
                 await Update(progress);
                 return true;
-            }
-            catch (Exception) {
+            } catch (Exception) {
                 return false;
             }
         }
@@ -182,8 +267,7 @@ namespace Project.Infrastructure.Repositories {
                 await ActivateNextLessonAsync(progress);
 
                 return true;
-            }
-            catch (Exception) {
+            } catch (Exception) {
                 return false;
             }
 
@@ -248,8 +332,7 @@ namespace Project.Infrastructure.Repositories {
                     CompletedAt = null
                 };
                 await _userModuleRepo.Create(moduleProgressNew);
-            }
-            else {
+            } else {
                 moduleProgressNew.IsActive = true;
                 moduleProgressNew.CompletedAt = null;
                 await _userModuleRepo.Update(moduleProgressNew);
@@ -259,6 +342,7 @@ namespace Project.Infrastructure.Repositories {
         private async Task ActivateNextLessonAsync(UserLessonProgress completedProgress) {
             var userId = completedProgress.UserId;
 
+            //find activating lesson -> unactive
             var actives = await _dbContext.UserLessonProgress
                 .Where(x => x.UserId == userId && x.IsActive)
                 .ToListAsync();
@@ -268,6 +352,8 @@ namespace Project.Infrastructure.Repositories {
             });
             _dbContext.UserLessonProgress.UpdateRange(actives);
             await SaveChangeAsync();
+
+            //find next lesson -> active
 
             var next = await _dbContext.UserLessonProgress
                 .Include(p => p.Lesson)
@@ -283,8 +369,7 @@ namespace Project.Infrastructure.Repositories {
 
                 await Update(next);
 
-            }
-            else {
+            } else {
                 await ActivateFirstLessonOfNextModuleAsync(completedProgress);
             }
             await SaveChangeAsync();
@@ -319,8 +404,7 @@ namespace Project.Infrastructure.Repositories {
                     IsActive = true,
                     CompletedAt = null
                 };
-            }
-            else {
+            } else {
                 moduleProgressNew.IsActive = true;
                 moduleProgressNew.CompletedAt = null;
                 await _userModuleRepo.Update(moduleProgressNew);
@@ -350,8 +434,7 @@ namespace Project.Infrastructure.Repositories {
                     IsActive = true,
                     IsLearned = false
                 });
-            }
-            else {
+            } else {
                 nextProgress.IsActive = true;
                 await Update(nextProgress);
             }
