@@ -41,8 +41,7 @@ namespace Project.Infrastructure.Repositories {
                     userModuleProgress.CompletedAt = DateTime.UtcNow;
                     await _dbContext.SaveChangesAsync();
                 }
-            }
-            catch (Exception) {
+            } catch (Exception) {
                 throw new Exception("Error marking module as completed");
             }
         }
@@ -59,8 +58,7 @@ namespace Project.Infrastructure.Repositories {
                     .ToListAsync();
 
                 return lessons.Count == completedLessons.Count;
-            }
-            catch (Exception) {
+            } catch (Exception) {
                 return false;
             }
         }
