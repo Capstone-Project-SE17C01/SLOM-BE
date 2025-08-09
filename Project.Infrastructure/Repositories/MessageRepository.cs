@@ -51,7 +51,8 @@ namespace Project.Infrastructure.Repositories {
                     Id = x.MessageId,
                     Content = DeserializeMessageContent(x.Message),
                     Images = DeserializeMessageImages(x.Message),
-                    IsSender = request.UserId == x.SenderId })
+                    IsSender = request.UserId == x.SenderId
+                })
                 .ToListAsync();
 
             var messageQuantity = userMessages.Count() - (request.PageNumber * 20);
