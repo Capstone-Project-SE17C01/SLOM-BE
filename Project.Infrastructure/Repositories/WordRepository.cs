@@ -15,5 +15,20 @@ namespace Project.Infrastructure.Repositories {
                 .ToListAsync();
             return result;
         }
+
+        public async Task<List<Word>> GetAllWords() {
+            var result = await _dbContext.Words
+                .Include(x => x.Lesson)
+                .AsNoTracking()
+                .ToListAsync();
+            return result;
+        }
+
+        public async Task<Word?> GetWordById(Guid id) {
+            var result = await _dbContext.Words
+                .Include(x => x.Lesson)
+                .FirstOrDefaultAsync(x => x.Id == id);
+            return result;
+        }
     }
 }

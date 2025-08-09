@@ -130,6 +130,22 @@ namespace Project.API.Controllers {
             }
         }
 
+        [HttpPut("UpdateAnswer")]
+        public async Task<IActionResult> UpdateAnswer(UpdateAnswerRequest answer) {
+            try {
+                var updatedAnswer = await _answerRepository.UpdateAnswer(answer);
+
+                return Ok(new APIResponse {
+                    result = updatedAnswer
+                });
+            }
+            catch (Exception ex) {
+                return StatusCode(500, new APIResponse {
+                    errorMessages = new List<string> { ex.Message }
+                });
+            }
+        }
+
         [HttpDelete("DeleteAnswer/{answerId}")]
         public async Task<IActionResult> DeleteAnswer(Guid answerId) {
             try {

@@ -3,6 +3,7 @@ namespace Project.Core.Entities.Business.DTOs.MessageDTOs {
         public int Id { get; set; }
         public required string Content { get; set; }
         public bool IsSender { get; set; }
+        public List<string> Images { get; set; } = null!;
     }
 
     public class MessageResponse {
