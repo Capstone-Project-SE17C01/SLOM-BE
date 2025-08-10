@@ -1,7 +1,5 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Moq;
 using Project.Infrastructure.Data;
 
 namespace Project.Tests.Helpers {

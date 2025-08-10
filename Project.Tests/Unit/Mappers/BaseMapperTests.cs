@@ -1,5 +1,3 @@
-using FluentAssertions;
-using Moq;
 using Project.Core.Mapper;
 using Project.Tests.Helpers;
 using Xunit;

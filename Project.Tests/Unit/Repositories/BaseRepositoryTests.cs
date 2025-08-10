@@ -1,8 +1,4 @@
-using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
-using Moq;
 using Project.Core.Entities.General;
-using Project.Infrastructure.Data;
 using Project.Infrastructure.Repositories;
 using Project.Tests.Helpers;
 using Xunit;

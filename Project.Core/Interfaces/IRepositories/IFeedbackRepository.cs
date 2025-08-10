@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Project.Core.Entities.General;
 
 namespace Project.Core.Interfaces.IRepositories {
