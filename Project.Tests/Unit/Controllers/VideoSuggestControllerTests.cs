@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using Project.API.Controllers;
 using Project.Core.Entities.Business.DTOs;
 using Project.Core.Entities.Business.DTOs.VideoSuggestDTOs;
-using Project.Core.Entities.General;
 using Project.Core.Interfaces.IRepositories;
 using Xunit;
 
