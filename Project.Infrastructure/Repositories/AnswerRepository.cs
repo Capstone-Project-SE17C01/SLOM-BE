@@ -11,7 +11,7 @@ namespace Project.Infrastructure.Repositories {
 
         public async Task<List<AnswerResponse>> GetListAnswerByQuestion(Guid questionId, int page) {
             var answerQuery = _dbContext.Answers;
-            var answerAmount = answerQuery.Count();
+            var answerAmount = answerQuery.Where(x => x.QuestionId == questionId).Count();
 
             var listAnswer = await _dbContext.Answers
                 .OrderByDescending(x => x.CreatedAt)

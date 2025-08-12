@@ -64,7 +64,7 @@ namespace Project.Infrastructure.Repositories {
                 Tags = request.Tags
             };
 
-            var questionCreated = Create(newQuestion);
+                var questionCreated = await Create(newQuestion);
 
             return new QuestionResponse {
                 Author = new Author {
@@ -72,12 +72,12 @@ namespace Project.Infrastructure.Repositories {
                     Username = creator.Username ?? "",
                 },
                 AnswerAmount = 0,
-                Content = newQuestion.Content,
-                CreatedAt = newQuestion.CreatedAt,
-                Images = DeserializeStringToList(newQuestion.Images),
-                QuestionId = newQuestion.Id,
-                Privacy = newQuestion.Privacy,
-                Tags = newQuestion.Tags
+                Content = questionCreated.Content,
+                CreatedAt = questionCreated.CreatedAt,
+                Images = DeserializeStringToList(questionCreated.Images),
+                QuestionId = questionCreated.Id,
+                Privacy = questionCreated.Privacy,
+                Tags = questionCreated.Tags
             };
         }
 
