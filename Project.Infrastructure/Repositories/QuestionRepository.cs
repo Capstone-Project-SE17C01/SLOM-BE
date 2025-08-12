@@ -64,7 +64,7 @@ namespace Project.Infrastructure.Repositories {
                 Tags = request.Tags
             };
 
-                var questionCreated = await Create(newQuestion);
+            var questionCreated = await Create(newQuestion);
 
             return new QuestionResponse {
                 Author = new Author {
