@@ -41,6 +41,17 @@ namespace Project.API.Controllers {
             return new APIResponse() { errorMessages = null, result = words };
         }
 
+        [HttpGet("GetLessonByModule")]
+        public async Task<APIResponse> GetLessonByModuleId([FromQuery] Guid moduleId) {
+            try {
+                List<Lesson> lessons = await _lessonRepository.GetLessonByModuleId(moduleId);
+                return new APIResponse() { result = lessons };
+            }
+            catch (Exception ex) {
+                return new APIResponse() { errorMessages = new List<string> { ex.Message }, result = null };
+            }
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetAllLessons() {
             try {

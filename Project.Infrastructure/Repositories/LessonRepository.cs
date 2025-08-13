@@ -27,5 +27,15 @@ namespace Project.Infrastructure.Repositories {
             return result;
         }
 
+        public async Task<List<Lesson>> GetLessonByModuleId(Guid moduleId) {
+            var result = await _dbContext.Lessons
+                .Where(x => x.ModuleId == moduleId)
+                .Include(x => x.Module)
+                .OrderBy(x => x.OrderNumber)
+                .AsNoTracking()
+                .ToListAsync();
+            return result;
+        }
+
     }
 }
