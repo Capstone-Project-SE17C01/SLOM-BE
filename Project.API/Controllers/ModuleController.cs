@@ -22,6 +22,17 @@ namespace Project.API.Controllers {
             return new APIResponse() { result = modules };
         }
 
+        [HttpGet("GetModuleByCourse")]
+        public async Task<APIResponse> GetModuleByCourseId([FromQuery] Guid courseId) {
+            try {
+                List<Module> modules = await _moduleRepository.GetModuleByCourseId(courseId);
+                return new APIResponse() { result = modules };
+            }
+            catch (Exception ex) {
+                return new APIResponse() { errorMessages = new List<string> { ex.Message }, result = null };
+            }
+        }
+
         [HttpGet("GetModuleById")]
         public async Task<APIResponse> GetModuleById(Guid id) {
             Module? module = await _moduleRepository.GetById(id);
