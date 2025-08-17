@@ -23,5 +23,29 @@ namespace Project.API.Controllers {
         public async Task<MessageResponse> GetMessage(string userId, string receiverEmail, int pageNumber) {
             return await _messageRepository.GetMessage(new MessageRequest { UserId = Guid.Parse(userId), PageNumber = pageNumber, ReceiverEmail = receiverEmail });
         }
+
+        [HttpPut("MarkIsRead")]
+        public async Task<IActionResult> MarkIsRead(string senderEmail, string receiverEmail) {
+            try {
+                var result = await _messageRepository.MarkIsRead(senderEmail, receiverEmail);
+                if (result) {
+                    return Ok(new { success = true, message = "Messages marked as read successfully" });
+                }
+                return Ok(new { success = false, message = "No unread messages found" });
+            }
+            catch (Exception ex) {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet("GetMessageNotRead")]
+        public async Task<IActionResult> GetMessageNotRead(string userId) {
+            try {
+                var result = await _messageRepository.AmountNotRead(Guid.Parse(userId));
+                return Ok(new { success = true, result = result });
+            } catch (Exception ex) {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+        }
     }
 }

@@ -6,5 +6,7 @@ namespace Project.Core.Interfaces.IRepositories {
         Task<MessageCreateResponse> CreateMessage(MessageCreateRequest request);
         Task<List<MessageUserResponse>> GetMessageUser(Guid userId);
         Task<MessageResponse> GetMessage(MessageRequest request);
+        Task<bool> MarkIsRead(string senderEmail, string receiverEmail);
+        Task<int> AmountNotRead(Guid userId);
     }
 }

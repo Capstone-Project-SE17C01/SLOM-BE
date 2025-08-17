@@ -7,5 +7,6 @@ namespace Project.Core.Entities.General {
         public DateTime DateTime { get; set; }
         public required Profile Sender { get; set; }
         public required Profile Receiver { get; set; }
+        public required bool IsRead { get; set; }
     }
 }
