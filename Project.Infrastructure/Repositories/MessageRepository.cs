@@ -169,7 +169,7 @@ namespace Project.Infrastructure.Repositories {
                     .ToListAsync();
 
                 if (unreadMessages != null) {
-                    foreach(var unreadMessage in unreadMessages) {
+                    foreach (var unreadMessage in unreadMessages) {
                         unreadMessage.IsRead = true;
                     }
                     _dbContext.UserMessages.UpdateRange(unreadMessages);
@@ -191,8 +191,8 @@ namespace Project.Infrastructure.Repositories {
                     .ToListAsync();
             var count = 0;
 
-            foreach(var unReadMessage in unreadMessages) {
-                if(unReadMessage == null || !unReadMessage.IsRead) {
+            foreach (var unReadMessage in unreadMessages) {
+                if (unReadMessage == null || !unReadMessage.IsRead) {
                     count++;
                 }
             }

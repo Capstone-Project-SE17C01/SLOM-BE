@@ -43,7 +43,8 @@ namespace Project.API.Controllers {
             try {
                 var result = await _messageRepository.AmountNotRead(Guid.Parse(userId));
                 return Ok(new { success = true, result = result });
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 return BadRequest(new { success = false, message = ex.Message });
             }
         }

@@ -22,9 +22,10 @@ namespace Project.API.SignalR.Service {
 
         public async Task<Profile> GetUserProfile(string userEmail) {
             var user = await _profileRepository.GetProfileByEmail(userEmail);
-            if(user != null) {
+            if (user != null) {
                 return user;
-            } else {
+            }
+            else {
                 return new Profile();
             }
         }
