@@ -6,8 +6,6 @@ using Project.Infrastructure.Data;
 
 namespace Project.Infrastructure.Repositories {
     public class MessageRepository : BaseRepository<UserMessage>, IMessageRepository {
-
-
         public MessageRepository(ApplicationDbContext dbContext) : base(dbContext) {
         }
 
@@ -21,7 +19,8 @@ namespace Project.Infrastructure.Repositories {
                 Receiver = receiver ?? new Profile(),
                 Sender = sender ?? new Profile(),
                 ReceiverId = receiver is null ? Guid.NewGuid() : receiver.Id,
-                SenderId = sender is null ? Guid.NewGuid() : sender.Id
+                SenderId = sender is null ? Guid.NewGuid() : sender.Id,
+                IsRead = false
             };
 
             _dbContext.UserMessages.Add(newMessage);
@@ -61,6 +60,19 @@ namespace Project.Infrastructure.Repositories {
                 Data = data
             };
 
+            var unreadMessages = await _dbContext.UserMessages
+                    .Where(x => x.ReceiverId == request.UserId && x.Sender.Email == request.ReceiverEmail && !x.IsRead)
+                    .OrderByDescending(x => x.MessageId)
+                    .ToListAsync();
+
+            if (unreadMessages != null) {
+                foreach (var unreadMessage in unreadMessages) {
+                    unreadMessage.IsRead = true;
+                }
+                _dbContext.UserMessages.UpdateRange(unreadMessages);
+                await _dbContext.SaveChangesAsync();
+            }
+
             return result;
         }
 
@@ -81,21 +93,23 @@ namespace Project.Infrastructure.Repositories {
             foreach (var user in usersMessage) {
                 var otherUser = await _dbContext.Profiles.FirstOrDefaultAsync(x => x.Id == user.OtherUserId);
                 var lastMessage = await _dbContext.UserMessages.FirstOrDefaultAsync(x => x.MessageId == user.LatestMessageId);
+                var isUserSender = (otherUser is null ? Guid.NewGuid() : otherUser.Id) == (lastMessage is null ? Guid.NewGuid() : lastMessage.ReceiverId);
 
                 response.Add(new MessageUserResponse() {
                     Avatar = otherUser is null ? String.Empty : otherUser.AvatarUrl ?? String.Empty,
                     LastMessage = lastMessage is null ? String.Empty : (DeserializeMessageImages(lastMessage.Message) is null || DeserializeMessageImages(lastMessage.Message).Count() == 0 ? DeserializeMessageContent(lastMessage.Message) : "[image]") ?? String.Empty,
-                    IsSender = (otherUser is null ? Guid.NewGuid() : otherUser.Id) == (lastMessage is null ? Guid.NewGuid() : lastMessage.ReceiverId),
+                    IsSender = isUserSender,
                     LastSent = GetTimeAgo(lastMessage is null ? DateTime.MinValue : lastMessage.DateTime),
                     UserName = (otherUser is null ? String.Empty : otherUser.Username ?? ""),
-                    UserEmail = (otherUser is null ? String.Empty : otherUser.Email ?? "")
+                    UserEmail = (otherUser is null ? String.Empty : otherUser.Email ?? ""),
+                    IsSeen = lastMessage != null ? lastMessage.IsRead || isUserSender : true
                 });
             }
             return response;
         }
 
         private string GetTimeAgo(DateTime messageTime) {
-            var timeSpan = DateTime.Now - messageTime;
+            var timeSpan = DateTime.UtcNow - messageTime;
 
             if (timeSpan.TotalSeconds < 60)
                 return $"{(int)timeSpan.TotalSeconds} seconds";
@@ -147,5 +161,43 @@ namespace Project.Infrastructure.Repositories {
             return images;
         }
 
+        public async Task<bool> MarkIsRead(string senderEmail, string receiverEmail) {
+            try {
+                var unreadMessages = await _dbContext.UserMessages
+                    .Where(x => x.Sender.Email == senderEmail && x.Receiver.Email == receiverEmail && !x.IsRead)
+                    .OrderByDescending(x => x.MessageId)
+                    .ToListAsync();
+
+                if (unreadMessages != null) {
+                    foreach(var unreadMessage in unreadMessages) {
+                        unreadMessage.IsRead = true;
+                    }
+                    _dbContext.UserMessages.UpdateRange(unreadMessages);
+                    await _dbContext.SaveChangesAsync();
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception) {
+                return false;
+            }
+        }
+
+        public async Task<int> AmountNotRead(Guid userId) {
+            var unreadMessages = await _dbContext.UserMessages
+                    .Where(x => x.Receiver.Id == userId)
+                    .GroupBy(x => x.SenderId)
+                    .Select(x => x.OrderByDescending(x => x.MessageId).FirstOrDefault())
+                    .ToListAsync();
+            var count = 0;
+
+            foreach(var unReadMessage in unreadMessages) {
+                if(unReadMessage == null || !unReadMessage.IsRead) {
+                    count++;
+                }
+            }
+
+            return count;
+        }
     }
 }

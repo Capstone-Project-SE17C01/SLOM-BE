@@ -1258,6 +1258,13 @@ namespace Project.Infrastructure.Migrations {
                 oldClrType: typeof(Guid),
                 oldType: "uuid");
 
+            migrationBuilder.AddColumn<bool>(
+                name: "IsRead",
+                table: "user_messages",
+                type: "boolean",
+                nullable: false,
+                defaultValue: false);
+
             migrationBuilder.AddPrimaryKey(
                 name: "user_module_progress_pkey",
                 table: "user_module_progress",

@@ -1195,6 +1195,9 @@ namespace Project.Infrastructure.Migrations
                         .HasColumnName("sent_date")
                         .HasDefaultValueSql("now()");
 
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Message")
                         .IsRequired()
                         .HasColumnType("text")
