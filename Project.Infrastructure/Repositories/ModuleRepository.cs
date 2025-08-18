@@ -11,7 +11,7 @@ namespace Project.Infrastructure.Repositories {
         public async Task<List<Module>> GetModuleByCourseId(Guid courseId) {
             var result = await _dbContext.Modules
                 .Where(x => x.CourseId == courseId)
-                .Include(x => x.Lessons)
+                .Include(x => x.Lessons.OrderBy(l => l.OrderNumber))
                 .OrderBy(x => x.OrderNumber)
                 .AsNoTracking()
                 .ToListAsync();
