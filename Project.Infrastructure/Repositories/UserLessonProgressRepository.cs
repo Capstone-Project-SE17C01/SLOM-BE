@@ -142,7 +142,8 @@ namespace Project.Infrastructure.Repositories {
                 try {
                     await Create(userLessonProgress);
                     createStatus = true;
-                } catch {
+                }
+                catch {
                     createStatus = false;
                 }
 
@@ -178,12 +179,14 @@ namespace Project.Infrastructure.Repositories {
                         await _dbContext.UserLessonProgress.AddRangeAsync(newProgresses);
                         await SaveChangeAsync();
                         createStatus = true;
-                    } catch {
+                    }
+                    catch {
                         createStatus = false;
                     }
                 }
                 #endregion
-            } else {
+            }
+            else {
                 await ActivateCurrentLessonAsync(userLessonProgress);
             }
             //if module progress is null, create new progress
@@ -199,7 +202,8 @@ namespace Project.Infrastructure.Repositories {
                 try {
                     await _userModuleRepo.Create(moduleProgress);
                     createStatus = true;
-                } catch {
+                }
+                catch {
                     createStatus = false;
                 }
             }
@@ -215,7 +219,8 @@ namespace Project.Infrastructure.Repositories {
                 try {
                     await _userCourseRepo.Create(courseProgress);
                     createStatus = true;
-                } catch {
+                }
+                catch {
                     createStatus = false;
                 }
             }
@@ -242,7 +247,8 @@ namespace Project.Infrastructure.Repositories {
             try {
                 await Update(progress);
                 return true;
-            } catch (Exception) {
+            }
+            catch (Exception) {
                 return false;
             }
         }
@@ -269,7 +275,8 @@ namespace Project.Infrastructure.Repositories {
                 await ActivateNextLessonAsync(progress);
 
                 return true;
-            } catch (Exception) {
+            }
+            catch (Exception) {
                 return false;
             }
 
@@ -334,7 +341,8 @@ namespace Project.Infrastructure.Repositories {
                     CompletedAt = null
                 };
                 await _userModuleRepo.Create(moduleProgressNew);
-            } else {
+            }
+            else {
                 moduleProgressNew.IsActive = true;
                 moduleProgressNew.CompletedAt = null;
                 await _userModuleRepo.Update(moduleProgressNew);
@@ -371,7 +379,8 @@ namespace Project.Infrastructure.Repositories {
 
                 await Update(next);
 
-            } else {
+            }
+            else {
                 await ActivateFirstLessonOfNextModuleAsync(completedProgress);
             }
             await SaveChangeAsync();
@@ -406,7 +415,8 @@ namespace Project.Infrastructure.Repositories {
                     IsActive = true,
                     CompletedAt = null
                 };
-            } else {
+            }
+            else {
                 moduleProgressNew.IsActive = true;
                 moduleProgressNew.CompletedAt = null;
                 await _userModuleRepo.Update(moduleProgressNew);
@@ -436,7 +446,8 @@ namespace Project.Infrastructure.Repositories {
                     IsActive = true,
                     IsLearned = false
                 });
-            } else {
+            }
+            else {
                 nextProgress.IsActive = true;
                 await Update(nextProgress);
             }
