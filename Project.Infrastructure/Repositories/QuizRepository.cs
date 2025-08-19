@@ -17,5 +17,14 @@ namespace Project.Infrastructure.Repositories {
                 .ToListAsync();
             return result;
         }
+        public async Task<int> CountAsyncByCourseId(Guid courseId) {
+            var count = await _dbContext.Quizzes
+                .Where(q => q.Lesson != null
+                         && q.Lesson.Module != null
+                         && q.Lesson.Module.CourseId == courseId)
+                .GroupBy(q => q.LessonId)   
+                .CountAsync();              
+            return count;
+        }
     }
 }

@@ -35,6 +35,25 @@ namespace Project.Infrastructure.Repositories {
                 .Count();
         }
 
+        public async Task<int> CountLearnedAsync(Guid courseId, Guid userId) {
+            List<UserModuleProgress> userModuleProgresses = await _dbContext.UserModuleProgress
+                .Include(x => x.Module)
+                .Where(x => x.Module != null && x.Module.CourseId == courseId && x.UserId == userId)
+                .ToListAsync();
+            List<UserLessonProgress> userLessonProgresses = await _dbContext.UserLessonProgress
+                .Include(x => x.Lesson)
+                .Where(x =>
+                x.Lesson != null &&
+                userModuleProgresses.Select(m => m.ModuleId).Contains(x.Lesson.ModuleId) &&
+                x.UserId == userId
+                )
+                .ToListAsync();
+
+            return userLessonProgresses
+                .Where(x => x.IsLearned)
+                .Count();
+        }
+
         public async Task<int> CountLast7DaysCompletedLessonsAsync(Guid userId) {
             var last7Days = DateTime.UtcNow.AddDays(-7);
 
@@ -452,5 +471,7 @@ namespace Project.Infrastructure.Repositories {
                 await Update(nextProgress);
             }
         }
+
+        
     }
 }
