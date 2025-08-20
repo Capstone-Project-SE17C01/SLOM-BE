@@ -472,6 +472,6 @@ namespace Project.Infrastructure.Repositories {
             }
         }
 
-        
+
     }
 }

@@ -22,8 +22,8 @@ namespace Project.Infrastructure.Repositories {
                 .Where(q => q.Lesson != null
                          && q.Lesson.Module != null
                          && q.Lesson.Module.CourseId == courseId)
-                .GroupBy(q => q.LessonId)   
-                .CountAsync();              
+                .GroupBy(q => q.LessonId)
+                .CountAsync();
             return count;
         }
     }
