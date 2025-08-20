@@ -13,6 +13,7 @@ public class CourseControllerTests {
     private readonly Mock<ICourseRepository> _mockCourseRepository = new();
     private readonly Mock<IModuleRepository> _mockModuleRepository = new();
     private readonly Mock<ILessonRepository> _mockLessonRepository = new();
+    private readonly Mock<IQuizRepository> _mockQuizRepository = new();
     private readonly Mock<IUserCourseProgressRepository> _mockUserCourseProgressRepository = new();
     private readonly Mock<IUserModuleProgressRepository> _mockUserModuleProgressRepository = new();
     private readonly Mock<IUserLessonProgressRepository> _mockUserLessonProgressRepository = new();
@@ -23,6 +24,7 @@ public class CourseControllerTests {
             _mockCourseRepository.Object,
             _mockModuleRepository.Object,
             _mockLessonRepository.Object,
+            _mockQuizRepository.Object,
             _mockUserCourseProgressRepository.Object,
             _mockUserModuleProgressRepository.Object,
             _mockUserLessonProgressRepository.Object
@@ -38,12 +40,12 @@ public class CourseControllerTests {
         var userId = Guid.NewGuid();
         var courseId = Guid.NewGuid();
 
-        _mockCourseRepository.Setup(x => x.CountAsync()).ReturnsAsync(10);
-        _mockModuleRepository.Setup(x => x.CountAsync()).ReturnsAsync(50);
-        _mockLessonRepository.Setup(x => x.CountAsync()).ReturnsAsync(200);
-        _mockUserCourseProgressRepository.Setup(x => x.CountCompletedAsync(courseId, userId)).ReturnsAsync(2);
+        _mockModuleRepository.Setup(x => x.CountAsyncByCourseId(courseId)).ReturnsAsync(50);
+        _mockLessonRepository.Setup(x => x.CountAsyncByCourseId(courseId)).ReturnsAsync(200);
+        _mockQuizRepository.Setup(x => x.CountAsyncByCourseId(courseId)).ReturnsAsync(30);
         _mockUserModuleProgressRepository.Setup(x => x.CountCompletedAsync(courseId, userId)).ReturnsAsync(8);
-        _mockUserLessonProgressRepository.Setup(x => x.CountCompletedAsync(courseId, userId)).ReturnsAsync(25);
+        _mockUserLessonProgressRepository.Setup(x => x.CountLearnedAsync(courseId, userId)).ReturnsAsync(25);
+        _mockUserLessonProgressRepository.Setup(x => x.CountCompletedAsync(courseId, userId)).ReturnsAsync(10);
         _mockUserLessonProgressRepository.Setup(x => x.GetActiveLessonByUserIdAsync(userId)).ReturnsAsync(new Lesson { Id = Guid.NewGuid(), Title = "Active Lesson" });
         _mockUserLessonProgressRepository.Setup(x => x.CountLast7DaysCompletedLessonsAsync(userId)).ReturnsAsync(5);
         _mockUserModuleProgressRepository.Setup(x => x.CountLast7DaysCompletedModulesAsync(userId)).ReturnsAsync(2);
@@ -59,12 +61,12 @@ public class CourseControllerTests {
         var apiResponse = okResult.Value as APIResponse;
         apiResponse!.result.Should().BeOfType<SummaryResponseDTO>();
         var summary = apiResponse.result as SummaryResponseDTO;
-        summary!.TotalCourse.Should().Be(10);
-        summary.TotalModules.Should().Be(50);
+        summary!.TotalModules.Should().Be(50);
         summary.TotalLessons.Should().Be(200);
-        summary.TotalCoursesCompleted.Should().Be(2);
+        summary.TotalQuizzes.Should().Be(30);
         summary.TotalModulesCompleted.Should().Be(8);
-        summary.TotalLessonsCompleted.Should().Be(25);
+        summary.TotalLessonsLearned.Should().Be(25);
+        summary.TotalQuizzesCompleted.Should().Be(10);
         summary.ActiveLesson.Should().NotBeNull();
         summary.Activities.Should().NotBeNull();
         summary.Activities!.RecentLessonsCompleted.Should().Be(5);
@@ -79,7 +81,7 @@ public class CourseControllerTests {
         var userId = Guid.NewGuid();
         var courseId = Guid.NewGuid();
 
-        _mockCourseRepository.Setup(x => x.CountAsync()).ThrowsAsync(new Exception("Database error"));
+        _mockModuleRepository.Setup(x => x.CountAsyncByCourseId(courseId)).ThrowsAsync(new Exception("Database error"));
 
         // Act
         var result = await controller.GetSummary(userId, courseId);
@@ -99,11 +101,11 @@ public class CourseControllerTests {
         var userId = Guid.Empty;
         var courseId = Guid.Empty;
 
-        _mockCourseRepository.Setup(x => x.CountAsync()).ReturnsAsync(0);
-        _mockModuleRepository.Setup(x => x.CountAsync()).ReturnsAsync(0);
-        _mockLessonRepository.Setup(x => x.CountAsync()).ReturnsAsync(0);
-        _mockUserCourseProgressRepository.Setup(x => x.CountCompletedAsync(courseId, userId)).ReturnsAsync(0);
+        _mockModuleRepository.Setup(x => x.CountAsyncByCourseId(courseId)).ReturnsAsync(0);
+        _mockLessonRepository.Setup(x => x.CountAsyncByCourseId(courseId)).ReturnsAsync(0);
+        _mockQuizRepository.Setup(x => x.CountAsyncByCourseId(courseId)).ReturnsAsync(0);
         _mockUserModuleProgressRepository.Setup(x => x.CountCompletedAsync(courseId, userId)).ReturnsAsync(0);
+        _mockUserLessonProgressRepository.Setup(x => x.CountLearnedAsync(courseId, userId)).ReturnsAsync(0);
         _mockUserLessonProgressRepository.Setup(x => x.CountCompletedAsync(courseId, userId)).ReturnsAsync(0);
         _mockUserLessonProgressRepository.Setup(x => x.GetActiveLessonByUserIdAsync(userId)).ReturnsAsync((Lesson?)null);
         _mockUserLessonProgressRepository.Setup(x => x.CountLast7DaysCompletedLessonsAsync(userId)).ReturnsAsync(0);
@@ -118,12 +120,12 @@ public class CourseControllerTests {
         var okResult = result as OkObjectResult;
         var apiResponse = okResult!.Value as APIResponse;
         var summary = apiResponse!.result as SummaryResponseDTO;
-        summary!.TotalCourse.Should().Be(0);
-        summary.TotalModules.Should().Be(0);
+        summary!.TotalModules.Should().Be(0);
         summary.TotalLessons.Should().Be(0);
-        summary.TotalCoursesCompleted.Should().Be(0);
+        summary.TotalQuizzes.Should().Be(0);
         summary.TotalModulesCompleted.Should().Be(0);
-        summary.TotalLessonsCompleted.Should().Be(0);
+        summary.TotalLessonsLearned.Should().Be(0);
+        summary.TotalQuizzesCompleted.Should().Be(0);
         summary.ActiveLesson.Should().BeNull();
         summary.Activities.Should().NotBeNull();
         summary.Activities!.RecentLessonsCompleted.Should().Be(0);
@@ -275,12 +277,12 @@ public class CourseControllerTests {
         var userId = Guid.NewGuid();
         var courseId = Guid.NewGuid();
 
-        _mockCourseRepository.Setup(x => x.CountAsync()).ReturnsAsync(10);
-        _mockModuleRepository.Setup(x => x.CountAsync()).ReturnsAsync(50);
-        _mockLessonRepository.Setup(x => x.CountAsync()).ReturnsAsync(200);
-        _mockUserCourseProgressRepository.Setup(x => x.CountCompletedAsync(courseId, userId)).ReturnsAsync(2);
+        _mockModuleRepository.Setup(x => x.CountAsyncByCourseId(courseId)).ReturnsAsync(50);
+        _mockLessonRepository.Setup(x => x.CountAsyncByCourseId(courseId)).ReturnsAsync(200);
+        _mockQuizRepository.Setup(x => x.CountAsyncByCourseId(courseId)).ReturnsAsync(30);
         _mockUserModuleProgressRepository.Setup(x => x.CountCompletedAsync(courseId, userId)).ReturnsAsync(8);
-        _mockUserLessonProgressRepository.Setup(x => x.CountCompletedAsync(courseId, userId)).ReturnsAsync(25);
+        _mockUserLessonProgressRepository.Setup(x => x.CountLearnedAsync(courseId, userId)).ReturnsAsync(25);
+        _mockUserLessonProgressRepository.Setup(x => x.CountCompletedAsync(courseId, userId)).ReturnsAsync(10);
         _mockUserLessonProgressRepository.Setup(x => x.GetActiveLessonByUserIdAsync(userId)).ReturnsAsync((Lesson?)null);
         _mockUserLessonProgressRepository.Setup(x => x.CountLast7DaysCompletedLessonsAsync(userId)).ReturnsAsync(5);
         _mockUserModuleProgressRepository.Setup(x => x.CountLast7DaysCompletedModulesAsync(userId)).ReturnsAsync(2);

@@ -26,6 +26,13 @@ namespace Project.Infrastructure.Repositories {
                 .FirstOrDefaultAsync(x => x.Id == lessonId);
             return result;
         }
+        public async Task<int> CountAsyncByCourseId(Guid courseId) {
+            var count = await _dbContext.Lessons.
+                Include(x => x.Module)
+                .Where(x => x.Module != null && x.Module.CourseId == courseId)
+                .CountAsync();
+            return count;
+        }
 
         public async Task<List<Lesson>> GetLessonByModuleId(Guid moduleId) {
             var result = await _dbContext.Lessons

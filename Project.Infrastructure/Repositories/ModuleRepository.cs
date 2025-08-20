@@ -36,5 +36,12 @@ namespace Project.Infrastructure.Repositories {
             return result;
         }
 
+        public async Task<int> CountAsyncByCourseId(Guid courseId) {
+            var count = await _dbContext.Modules
+                .Where(x => x.CourseId == courseId)
+                .CountAsync();
+            return count;
+        }
+
     }
 }

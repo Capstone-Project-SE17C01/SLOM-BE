@@ -14,6 +14,8 @@ namespace Project.API.Controllers {
         private readonly ICourseRepository _courseRepository;
         private readonly IModuleRepository _moduleRepository;
         private readonly ILessonRepository _lessonRepository;
+        private readonly IQuizRepository _quizRepository;
+
         private readonly IUserCourseProgressRepository _userCourseProgressRepository;
         private readonly IUserModuleProgressRepository _userModuleProgressRepository;
         private readonly IUserLessonProgressRepository _userLessonProgressRepository;
@@ -23,6 +25,7 @@ namespace Project.API.Controllers {
             ICourseRepository courseRepository,
             IModuleRepository moduleRepository,
             ILessonRepository lessonRepository,
+            IQuizRepository quizRepository,
             IUserCourseProgressRepository userCourseProgressRepository,
             IUserModuleProgressRepository userModuleProgressRepository,
             IUserLessonProgressRepository userLessonProgressRepository) {
@@ -30,6 +33,7 @@ namespace Project.API.Controllers {
             _courseRepository = courseRepository;
             _moduleRepository = moduleRepository;
             _lessonRepository = lessonRepository;
+            _quizRepository = quizRepository;
             _userCourseProgressRepository = userCourseProgressRepository;
             _userModuleProgressRepository = userModuleProgressRepository;
             _userLessonProgressRepository = userLessonProgressRepository;
@@ -40,12 +44,12 @@ namespace Project.API.Controllers {
 
 
             try {
-                var totalCourses = await _courseRepository.CountAsync();
-                var totalModules = await _moduleRepository.CountAsync();
-                var totalLessons = await _lessonRepository.CountAsync();
-                var totalCoursesCompleted = await _userCourseProgressRepository.CountCompletedAsync(courseId, userId);
+                var totalModules = await _moduleRepository.CountAsyncByCourseId(courseId);
+                var totalLessons = await _lessonRepository.CountAsyncByCourseId(courseId);
+                var totalQuizzes = await _quizRepository.CountAsyncByCourseId(courseId);
+                var totalQuizzesCompleted = await _userLessonProgressRepository.CountCompletedAsync(courseId, userId);
+                var totalLessonsLearned = await _userLessonProgressRepository.CountLearnedAsync(courseId, userId);
                 var totalModulesCompleted = await _userModuleProgressRepository.CountCompletedAsync(courseId, userId);
-                var totalLessonsCompleted = await _userLessonProgressRepository.CountCompletedAsync(courseId, userId);
                 var activeLessonEntry = await _userLessonProgressRepository.GetActiveLessonByUserIdAsync(userId);
 
                 var recentLessonsCompleted = await _userLessonProgressRepository.CountLast7DaysCompletedLessonsAsync(userId);
@@ -53,12 +57,12 @@ namespace Project.API.Controllers {
                 var recentCoursesCompleted = await _userCourseProgressRepository.CountLast7DaysCompletedCoursesAsync(userId);
 
                 var summary = new SummaryResponseDTO {
-                    TotalCourse = totalCourses,
-                    TotalModules = totalModules,
-                    TotalLessons = totalLessons,
-                    TotalCoursesCompleted = totalCoursesCompleted,
                     TotalModulesCompleted = totalModulesCompleted,
-                    TotalLessonsCompleted = totalLessonsCompleted,
+                    TotalModules = totalModules,
+                    TotalLessonsLearned = totalLessonsLearned,
+                    TotalLessons = totalLessons,
+                    TotalQuizzesCompleted = totalQuizzesCompleted,
+                    TotalQuizzes = totalQuizzes,
                     ActiveLesson = activeLessonEntry,
                     Activities = new Activity {
                         RecentLessonsCompleted = recentLessonsCompleted,

@@ -5,5 +5,6 @@ namespace Project.Core.Interfaces.IRepositories {
         public Task<List<Lesson>> GetAllLessonHasModule();
         public Task<Lesson?> GetByIdForDelete(Guid lessonId);
         public Task<List<Lesson>> GetLessonByModuleId(Guid moduleId);
+        public Task<int> CountAsyncByCourseId(Guid courseId);
     }
 }
