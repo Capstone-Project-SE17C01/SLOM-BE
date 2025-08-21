@@ -25,7 +25,7 @@ namespace Project.API.Controllers {
         [HttpGet]
         public async Task<APIResponse> GetAllQuizzes() {
             try {
-                var quizzes = await _quizRepository.GetAll();
+                var quizzes = await _quizRepository.GetAllQuiz();
                 return new APIResponse { errorMessages = null, result = quizzes };
             }
             catch (Exception ex) {

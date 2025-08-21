@@ -19,6 +19,7 @@ namespace Project.Infrastructure.Repositories {
         public async Task<List<Word>> GetAllWords() {
             var result = await _dbContext.Words
                 .Include(x => x.Lesson)
+                .Include(x => x.Lesson != null ? x.Lesson.Module : null)
                 .AsNoTracking()
                 .ToListAsync();
             return result;

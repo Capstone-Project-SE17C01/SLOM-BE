@@ -25,7 +25,7 @@ namespace Project.API.Controllers {
         [HttpGet]
         public async Task<APIResponse> GetAllWords() {
             try {
-                var words = await _wordRepository.GetAll();
+                var words = await _wordRepository.GetAllWords();
                 return new APIResponse { errorMessages = null, result = words };
             }
             catch (Exception ex) {
