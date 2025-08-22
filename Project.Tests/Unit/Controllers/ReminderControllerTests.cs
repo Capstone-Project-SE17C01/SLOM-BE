@@ -101,7 +101,7 @@ public class ReminderControllerTests {
     }
 
     [Fact]
-    public async Task GetReminder_WithNonExistentEmail_ReturnsNotFound() {
+    public async Task GetReminder_WithNonExistentEmail_ReturnsOkWithErrorMessage() {
         // Arrange
         var controller = CreateController();
         var email = "nonexistent@example.com";
@@ -112,10 +112,10 @@ public class ReminderControllerTests {
         var result = await controller.GetReminder(email);
 
         // Assert
-        result.Should().BeOfType<NotFoundObjectResult>();
-        var notFoundResult = result as NotFoundObjectResult;
-        notFoundResult!.Value.Should().BeOfType<APIResponse>();
-        var apiResponse = notFoundResult.Value as APIResponse;
+        result.Should().BeOfType<OkObjectResult>();
+        var okResult = result as OkObjectResult;
+        okResult!.Value.Should().BeOfType<APIResponse>();
+        var apiResponse = okResult.Value as APIResponse;
         apiResponse!.errorMessages.Should().Contain("No active reminder found for this email");
     }
 
