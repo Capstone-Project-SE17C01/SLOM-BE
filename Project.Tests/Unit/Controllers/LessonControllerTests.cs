@@ -25,6 +25,7 @@ public class LessonControllerTests {
         // Arrange
         var controller = CreateController();
         var userId = Guid.NewGuid();
+        var courseId = Guid.NewGuid();
         var expectedLesson = new Lesson {
             Id = Guid.NewGuid(),
             Title = "Active Lesson",
@@ -32,11 +33,11 @@ public class LessonControllerTests {
             CreatedAt = DateTime.UtcNow
         };
 
-        _mockUserLessonProgressRepository.Setup(x => x.GetActiveLessonByUserIdAsync(userId))
+        _mockUserLessonProgressRepository.Setup(x => x.GetActiveLessonByUserIdAsync(userId, courseId))
             .ReturnsAsync(expectedLesson);
 
         // Act
-        var result = await controller.GetOngoingUserLesson(userId);
+        var result = await controller.GetOngoingUserLesson(userId, courseId);
 
         // Assert
         result.Should().NotBeNull();
@@ -52,12 +53,13 @@ public class LessonControllerTests {
         // Arrange
         var controller = CreateController();
         var userId = Guid.NewGuid();
+        var courseId = Guid.NewGuid();
 
-        _mockUserLessonProgressRepository.Setup(x => x.GetActiveLessonByUserIdAsync(userId))
+        _mockUserLessonProgressRepository.Setup(x => x.GetActiveLessonByUserIdAsync(userId, courseId))
             .ReturnsAsync((Lesson?)null);
 
         // Act
-        var result = await controller.GetOngoingUserLesson(userId);
+        var result = await controller.GetOngoingUserLesson(userId, courseId);
 
         // Assert
         result.Should().NotBeNull();
@@ -70,12 +72,13 @@ public class LessonControllerTests {
         // Arrange
         var controller = CreateController();
         var userId = Guid.Empty;
+        var courseId = Guid.NewGuid();
 
-        _mockUserLessonProgressRepository.Setup(x => x.GetActiveLessonByUserIdAsync(userId))
+        _mockUserLessonProgressRepository.Setup(x => x.GetActiveLessonByUserIdAsync(userId, courseId))
             .ReturnsAsync((Lesson?)null);
 
         // Act
-        var result = await controller.GetOngoingUserLesson(userId);
+        var result = await controller.GetOngoingUserLesson(userId, courseId);
 
         // Assert
         result.Should().NotBeNull();
@@ -92,17 +95,18 @@ public class LessonControllerTests {
         // Arrange
         var controller = CreateController();
         var userId = Guid.NewGuid();
+        var courseId = Guid.NewGuid();
         var expectedLessons = new List<Lesson>
         {
             new Lesson { Id = Guid.NewGuid(), Title = "Lesson 1", CreatedAt = DateTime.UtcNow },
             new Lesson { Id = Guid.NewGuid(), Title = "Lesson 2", CreatedAt = DateTime.UtcNow }
         };
 
-        _mockUserLessonProgressRepository.Setup(x => x.GetLearnedLessons(userId))
+        _mockUserLessonProgressRepository.Setup(x => x.GetLearnedLessons(userId, courseId))
             .ReturnsAsync(expectedLessons);
 
         // Act
-        var result = await controller.GetLearnedLesson(userId);
+        var result = await controller.GetLearnedLesson(userId, courseId);
 
         // Assert
         result.Should().NotBeNull();
@@ -119,12 +123,13 @@ public class LessonControllerTests {
         // Arrange
         var controller = CreateController();
         var userId = Guid.NewGuid();
+        var courseId = Guid.NewGuid();
 
-        _mockUserLessonProgressRepository.Setup(x => x.GetLearnedLessons(userId))
+        _mockUserLessonProgressRepository.Setup(x => x.GetLearnedLessons(userId, courseId))
             .ReturnsAsync(new List<Lesson>());
 
         // Act
-        var result = await controller.GetLearnedLesson(userId);
+        var result = await controller.GetLearnedLesson(userId, courseId);
 
         // Assert
         result.Should().NotBeNull();
@@ -139,12 +144,13 @@ public class LessonControllerTests {
         // Arrange
         var controller = CreateController();
         var userId = Guid.Empty;
+        var courseId = Guid.NewGuid();
 
-        _mockUserLessonProgressRepository.Setup(x => x.GetLearnedLessons(userId))
+        _mockUserLessonProgressRepository.Setup(x => x.GetLearnedLessons(userId, courseId))
             .ReturnsAsync(new List<Lesson>());
 
         // Act
-        var result = await controller.GetLearnedLesson(userId);
+        var result = await controller.GetLearnedLesson(userId, courseId);
 
         // Assert
         result.Should().NotBeNull();

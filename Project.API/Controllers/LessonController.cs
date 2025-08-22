@@ -24,14 +24,14 @@ namespace Project.API.Controllers {
         }
 
         [HttpGet("OngoingLesson")]
-        public async Task<APIResponse> GetOngoingUserLesson(Guid userId) {
-            Lesson? lesson = await _userLessonProgressRepository.GetActiveLessonByUserIdAsync(userId);
+        public async Task<APIResponse> GetOngoingUserLesson(Guid userId, Guid courseId) {
+            Lesson? lesson = await _userLessonProgressRepository.GetActiveLessonByUserIdAsync(userId, courseId);
             return new APIResponse() { errorMessages = null, result = lesson };
         }
 
         [HttpGet("GetListLearnedLesson")]
-        public async Task<APIResponse> GetLearnedLesson(Guid userId) {
-            List<Lesson> lessons = await _userLessonProgressRepository.GetLearnedLessons(userId);
+        public async Task<APIResponse> GetLearnedLesson(Guid userId, Guid courseId) {
+            List<Lesson> lessons = await _userLessonProgressRepository.GetLearnedLessons(userId, courseId);
             return new APIResponse() { errorMessages = null, result = lessons };
         }
 
@@ -46,8 +46,7 @@ namespace Project.API.Controllers {
             try {
                 List<Lesson> lessons = await _lessonRepository.GetLessonByModuleId(moduleId);
                 return new APIResponse() { result = lessons };
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 return new APIResponse() { errorMessages = new List<string> { ex.Message }, result = null };
             }
         }
@@ -57,8 +56,7 @@ namespace Project.API.Controllers {
             try {
                 var lessons = await _lessonRepository.GetAllLessonHasModule();
                 return Ok(new APIResponse { result = lessons });
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 return BadRequest(new APIResponse { result = null, errorMessages = new List<string> { ex.Message } });
             }
         }
