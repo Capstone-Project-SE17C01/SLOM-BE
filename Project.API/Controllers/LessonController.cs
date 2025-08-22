@@ -46,7 +46,8 @@ namespace Project.API.Controllers {
             try {
                 List<Lesson> lessons = await _lessonRepository.GetLessonByModuleId(moduleId);
                 return new APIResponse() { result = lessons };
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 return new APIResponse() { errorMessages = new List<string> { ex.Message }, result = null };
             }
         }
@@ -56,7 +57,8 @@ namespace Project.API.Controllers {
             try {
                 var lessons = await _lessonRepository.GetAllLessonHasModule();
                 return Ok(new APIResponse { result = lessons });
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 return BadRequest(new APIResponse { result = null, errorMessages = new List<string> { ex.Message } });
             }
         }

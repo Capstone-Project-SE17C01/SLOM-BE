@@ -72,7 +72,8 @@ namespace Project.API.Controllers {
                 };
 
                 return Ok(new APIResponse { result = summary });
-            } catch (Exception) {
+            }
+            catch (Exception) {
                 return BadRequest(new APIResponse { result = null, errorMessages = new List<string> { "Invalid request data for Get Summary" } });
             }
         }
@@ -89,7 +90,8 @@ namespace Project.API.Controllers {
                     RemainingCourses = remainingCourses
                 };
                 return Ok(new APIResponse { result = listCourseResponse });
-            } catch (Exception) {
+            }
+            catch (Exception) {
                 return BadRequest(new APIResponse { result = null, errorMessages = new List<string> { "Invalid request data for Get All Courses" } });
             }
         }
@@ -99,7 +101,8 @@ namespace Project.API.Controllers {
             try {
                 var courses = await _courseRepository.GetAll();
                 return Ok(new APIResponse { result = courses });
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 return BadRequest(new APIResponse { result = null, errorMessages = new List<string> { ex.Message } });
             }
         }
@@ -112,7 +115,8 @@ namespace Project.API.Controllers {
                     return NotFound(new APIResponse { result = null, errorMessages = new List<string> { "Course not found" } });
                 }
                 return Ok(new APIResponse { result = course });
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 return BadRequest(new APIResponse { result = null, errorMessages = new List<string> { ex.Message } });
             }
         }
@@ -133,7 +137,8 @@ namespace Project.API.Controllers {
                 };
                 await _courseRepository.Create(course);
                 return Ok(new APIResponse { result = course });
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 return BadRequest(new APIResponse { result = null, errorMessages = new List<string> { ex.Message } });
             }
         }
@@ -155,7 +160,8 @@ namespace Project.API.Controllers {
                 course.UpdatedAt = DateTime.UtcNow;
                 await _courseRepository.Update(course);
                 return Ok(new APIResponse { result = course });
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 return BadRequest(new APIResponse { result = null, errorMessages = new List<string> { ex.Message } });
             }
         }
@@ -169,7 +175,8 @@ namespace Project.API.Controllers {
                 }
                 await _courseRepository.Delete(course);
                 return Ok(new APIResponse { result = "Course deleted successfully" });
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 return BadRequest(new APIResponse { result = null, errorMessages = new List<string> { ex.Message } });
             }
         }
