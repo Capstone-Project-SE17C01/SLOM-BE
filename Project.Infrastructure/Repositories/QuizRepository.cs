@@ -26,5 +26,14 @@ namespace Project.Infrastructure.Repositories {
                 .CountAsync();
             return count;
         }
+
+        public async Task<List<Quiz>> GetAllQuiz() {
+            var result = await _dbContext.Quizzes
+                .Include(x => x.Lesson)
+                .Include(x => x.Lesson != null ? x.Lesson.Module : null)
+                .AsNoTracking()
+                .ToListAsync();
+            return result;
+        }
     }
 }
