@@ -31,6 +31,8 @@ namespace Project.Infrastructure.Repositories {
             var result = await _dbContext.Quizzes
                 .Include(x => x.Lesson)
                 .Include(x => x.Lesson != null ? x.Lesson.Module : null)
+                .Include(x => x.QuizOptions)
+                .OrderByDescending(x => x.CreatedAt)
                 .AsNoTracking()
                 .ToListAsync();
             return result;
