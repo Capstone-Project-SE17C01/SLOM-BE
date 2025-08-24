@@ -11,9 +11,11 @@ namespace Project.API.Controllers {
     [Authorize]
     public class QuizController : ControllerBase {
         private readonly IQuizRepository _quizRepository;
+        private readonly IQuizOptionRepository _quizOptionRepository;
 
-        public QuizController(IQuizRepository quizRepository) {
+        public QuizController(IQuizRepository quizRepository, IQuizOptionRepository quizOptionRepository) {
             _quizRepository = quizRepository;
+            _quizOptionRepository = quizOptionRepository;
         }
 
         [HttpGet("GetListQuizLesson")]
@@ -47,14 +49,25 @@ namespace Project.API.Controllers {
             if (quizRequestDTO == null) {
                 return new APIResponse() { errorMessages = new List<string> { "Invalid quiz data" }, result = null };
             }
-            Quiz newQuiz = new Quiz {
+            var quizId = Guid.NewGuid();
+
+            List<QuizOption> quizOptions = quizRequestDTO.QuizOptions.Select(x => new QuizOption {
                 Id = Guid.NewGuid(),
+                IsCorrect = quizRequestDTO.CorrectAnswer == x,
+                Text = x
+            }).ToList();
+
+            await _quizOptionRepository.CreateRange(quizOptions);
+
+            Quiz newQuiz = new Quiz {
+                Id = quizId,
                 LessonId = quizRequestDTO.LessonId,
                 Question = quizRequestDTO.Question,
                 CorrectAnswer = quizRequestDTO.CorrectAnswer,
                 Explanation = quizRequestDTO.Explanation,
                 MaxScore = quizRequestDTO.MaxScore,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
+                QuizOptions = quizOptions
             };
             await _quizRepository.Create(newQuiz);
             return new APIResponse() { errorMessages = null, result = newQuiz };
@@ -69,10 +82,30 @@ namespace Project.API.Controllers {
             if (existingQuiz == null) {
                 return new APIResponse() { errorMessages = new List<string> { "Quiz not found" }, result = null };
             }
+
+            var existingOptions = await _quizRepository.GetById(quizRequestDTO.Id);
+            var options = existingOptions.QuizOptions;
+
+            if (options.Any()) {
+                foreach (var option in options) {
+                    await _quizOptionRepository.Delete(option);
+                }
+            }
+
+            List<QuizOption> quizOptions = quizRequestDTO.QuizOptions.Select(x => new QuizOption {
+                Id = Guid.NewGuid(),
+                QuizId = quizRequestDTO.Id,
+                IsCorrect = quizRequestDTO.CorrectAnswer == x,
+                Text = x,
+            }).ToList();
+
+            await _quizOptionRepository.CreateRange(quizOptions);
+
             existingQuiz.Question = quizRequestDTO.Question;
             existingQuiz.CorrectAnswer = quizRequestDTO.CorrectAnswer;
             existingQuiz.Explanation = quizRequestDTO.Explanation;
             existingQuiz.MaxScore = quizRequestDTO.MaxScore;
+            existingQuiz.QuizOptions = quizOptions;
             await _quizRepository.Update(existingQuiz);
             return new APIResponse() { errorMessages = null, result = existingQuiz };
         }

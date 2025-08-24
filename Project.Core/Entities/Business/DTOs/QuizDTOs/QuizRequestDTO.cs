@@ -11,5 +11,7 @@ namespace Project.Core.Entities.Business.DTOs.QuizDTOs {
         public string? Explanation { get; set; }
 
         public int? MaxScore { get; set; }
+
+        public ICollection<string> QuizOptions { get; set; } = new List<string>();
     }
 }
