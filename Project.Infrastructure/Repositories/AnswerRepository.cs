@@ -23,7 +23,7 @@ namespace Project.Infrastructure.Repositories {
                     AnswerId = x.Id,
                     Author = new Author {
                         ProfileImage = x.Creator.AvatarUrl ?? "",
-                        Username = x.Creator.Username ?? ""
+                        Username = (x.Creator.Username ?? "") + (x.Creator.Role == null ? "" : x.Creator.Role.Name == "ADMIN" ? " (Admin)" : "")
                     },
                     CreatedAt = x.CreatedAt,
                     Content = x.Content,
