@@ -756,7 +756,7 @@ namespace Project.Infrastructure.Data {
                 entity.Property(e => e.UserId)
                     .HasColumnName("user_id")
                     .IsRequired();
-                
+
                 entity.Property(e => e.TransactionId)
                     .HasColumnName("transaction_id")
                     .IsRequired(false);
