@@ -242,11 +242,10 @@ namespace Project.API.Controllers {
             }
         }
 
-        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetAllPayment() {
             try {
-                var payments = await _paymentRepository.GetAll();
+                var payments = await _paymentRepository.GetAllPaymentAndReportAsync();
                 return Ok(new APIResponse { result = payments });
             }
             catch (Exception) {

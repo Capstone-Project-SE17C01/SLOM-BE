@@ -756,6 +756,10 @@ namespace Project.Infrastructure.Data {
                 entity.Property(e => e.UserId)
                     .HasColumnName("user_id")
                     .IsRequired();
+                
+                entity.Property(e => e.TransactionId)
+                    .HasColumnName("transaction_id")
+                    .IsRequired(false);
 
                 entity.HasOne(r => r.ReportType)
                     .WithMany(rt => rt.Reports)
@@ -766,6 +770,11 @@ namespace Project.Infrastructure.Data {
                     .WithMany()
                     .HasForeignKey(r => r.UserId)
                     .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(r => r.Transaction)
+                    .WithMany()
+                    .HasForeignKey(r => r.TransactionId)
+                    .OnDelete(DeleteBehavior.SetNull);
             });
 
             modelBuilder.Entity<Reminder>(entity => {

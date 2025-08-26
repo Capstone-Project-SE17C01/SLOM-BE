@@ -16,9 +16,10 @@ namespace Project.Core.Entities.General {
 
         public Guid UserId { get; set; }
 
+        public Guid? TransactionId { get; set; }
+
+        public Payment? Transaction { get; set; }
+
         public Profile? User { get; set; }
     }
-
-
-
 }

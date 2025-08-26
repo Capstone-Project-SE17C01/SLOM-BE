@@ -7,6 +7,7 @@ namespace Project.Core.Interfaces.IRepositories {
         Task<List<Payment>> GetListPaymentByUserIdAsync(Guid userId);
         Task<decimal> GetTotalRevenueAsync();
         Task<List<TimeSeriesItem<decimal>>> GetRevenueStatsAsync();
+        Task<List<Payment>> GetAllPaymentAndReportAsync();
 
     }
 }

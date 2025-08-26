@@ -11,5 +11,7 @@ namespace Project.Core.Entities.Business.DTOs.ReportDTOs {
         public bool Status { get; set; }
 
         public Guid UserId { get; set; }
+
+        public Guid? TransactionId { get; set; }
     }
 }

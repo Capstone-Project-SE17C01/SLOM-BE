@@ -20,6 +20,7 @@ namespace Project.Core.Entities.General {
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
+        public ICollection<Report>? Reports { get; set; }
         public Profile User { get; set; } = null!;
         public UserSubscription Subscription { get; set; } = null!;
     }

@@ -49,5 +49,18 @@ namespace Project.Infrastructure.Repositories {
             return revenueStats;
         }
 
+        public async Task<List<Payment>> GetAllPaymentAndReportAsync() {
+            var payment = await _dbContext.Payments
+                .AsNoTracking()
+                .ToListAsync();
+
+            foreach (var item in payment) {
+                item.Reports = await _dbContext.Reports
+                    .AsNoTracking()
+                    .Where(r => r.TransactionId == item.Id)
+                    .ToListAsync();
+            }
+            return payment;
+        }
     }
 }
