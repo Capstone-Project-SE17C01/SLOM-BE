@@ -911,6 +911,9 @@ namespace Project.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
+                    b.Property<Guid?>("PaymentId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("ReportTypeId")
                         .HasColumnType("uuid")
                         .HasColumnName("report_type_id");
@@ -925,13 +928,21 @@ namespace Project.Infrastructure.Migrations
                         .HasColumnType("character varying(255)")
                         .HasColumnName("title");
 
+                    b.Property<Guid?>("TransactionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("transaction_id");
+
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid")
                         .HasColumnName("user_id");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("PaymentId");
+
                     b.HasIndex("ReportTypeId");
+
+                    b.HasIndex("TransactionId");
 
                     b.HasIndex("UserId");
 
@@ -1667,11 +1678,20 @@ namespace Project.Infrastructure.Migrations
 
             modelBuilder.Entity("Project.Core.Entities.General.Report", b =>
                 {
+                    b.HasOne("Project.Core.Entities.General.Payment", null)
+                        .WithMany("Reports")
+                        .HasForeignKey("PaymentId");
+
                     b.HasOne("Project.Core.Entities.General.ReportType", "ReportType")
                         .WithMany("Reports")
                         .HasForeignKey("ReportTypeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("Project.Core.Entities.General.Payment", "Transaction")
+                        .WithMany()
+                        .HasForeignKey("TransactionId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Project.Core.Entities.General.Profile", "User")
                         .WithMany()
@@ -1680,6 +1700,8 @@ namespace Project.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("ReportType");
+
+                    b.Navigation("Transaction");
 
                     b.Navigation("User");
                 });
@@ -1904,6 +1926,11 @@ namespace Project.Infrastructure.Migrations
                     b.Navigation("Lessons");
 
                     b.Navigation("UserModuleProgress");
+                });
+
+            modelBuilder.Entity("Project.Core.Entities.General.Payment", b =>
+                {
+                    b.Navigation("Reports");
                 });
 
             modelBuilder.Entity("Project.Core.Entities.General.Profile", b =>
