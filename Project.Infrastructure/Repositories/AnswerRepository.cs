@@ -13,7 +13,7 @@ namespace Project.Infrastructure.Repositories {
             var answerQuery = _dbContext.Answers;
             var answerAmount = answerQuery.Where(x => x.QuestionId == questionId).Count();
 
-            var listAnswer = await _dbContext.Answers
+            var listAnswer = await _dbContext.Answers 
                 .OrderByDescending(x => x.CreatedAt)
                 .Where(x => x.QuestionId == questionId)
                 .Skip((page - 1) * 10)
